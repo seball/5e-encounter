@@ -1,0 +1,59 @@
+:root {
+    --color-bg: #1D262B;
+    --font: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+    --color-text: #FFF7ED;
+    --color-spec1: #DB59D0;
+    --color-spec2: #4488D6;
+  }
+
+
+body.theme {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font);
+}
+
+.theme {
+    button,
+    input,
+    select {
+      font-family: var(--font);
+      font-size: 1em;
+      color: var(--color-bg);
+      border-radius: 3px ;
+      border: 1px solid var(--color-text);
+      transition:all .2s ease; 
+      padding:3px;
+      &:hover {
+        border: 1px solid var(--color-spec2);
+        color: var(--color-bg);
+      }
+      &:disabled {
+        color: var(--color-bg);
+        border: 1px solid var(--color-text);
+        cursor: not-allowed;
+        opacity:.3;
+      }
+    }
+    
+    button {
+      color:var(--color-text);
+      cursor: pointer;
+      text-align: center;
+       background:rgba(255,255,255,.1);
+      &:hover{
+        background:rgba(0,0,0,.1);
+            color: var(--color-spec2);
+      }
+    }
+    
+    button:disabled,
+    .disabled {
+      color: var(--color-text);
+      &:hover{
+      background:rgba(255,255,255,.1);
+      }
+    }
+}
+
+

@@ -1,0 +1,17 @@
+<div class="character-card">
+    <h2>Character</h2>
+    <div class="hp-section">
+      <p>HP: {{ currentHp }} / {{ maxHp }}</p>
+    </div>
+    <div class="initiative-section">
+      <p>Initiative: {{ initiative + initiativeModifier }}</p>
+      <button (click)="adjustInitiative(-1)">-</button>
+      <span>{{ initiative }}</span>
+      <button (click)="adjustInitiative(1)">+</button>
+    </div>
+    <div class="hp-adjustment">
+      <button (click)="heal()">Heal</button>
+      <input type="number" [(ngModel)]="hpAdjustment" />
+      <button (click)="damage()">Damage</button>
+    </div>
+  </div>
