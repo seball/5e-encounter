@@ -3,9 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build-pages": "ng build --base-href https://seball.github.io/5e-encounter/",
-    "deploy-pages": "ngh --dir=dist/5e-encounter/browser",
+    "start": "ng serve",  
+    "deploy-pages": "ng build --base-href https://seball.github.io/5e-encounter/ & ngh --dir=dist/5e-encounter/browser",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
