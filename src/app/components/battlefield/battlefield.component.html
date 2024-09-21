@@ -1,0 +1,26 @@
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-3">
+        <h2>Allies</h2>
+        <app-create-character [characterType]="'ally'"></app-create-character>
+        <div *ngFor="let character of allies">
+          <app-character [character]="character"></app-character>
+        </div>
+      </div>
+      <div class="col-6">
+     <!-- todo -->
+      </div>
+      <div class="col-3">
+        <h2>Enemies</h2>
+        <app-create-character [characterType]="'enemy'"></app-create-character>
+        <div *ngFor="let character of enemies">
+          <app-character [character]="character"></app-character>
+        </div>  
+      </div>
+  </div>
+
+
+
+
+  

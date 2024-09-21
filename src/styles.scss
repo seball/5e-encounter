@@ -4,6 +4,7 @@
     --color-text: #FFF7ED;
     --color-spec1: #DB59D0;
     --color-spec2: #4488D6;
+    
   }
 
 
@@ -11,6 +12,7 @@ body.theme {
     background-color: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font);
+    font-size: x-small;
 }
 
 .theme {

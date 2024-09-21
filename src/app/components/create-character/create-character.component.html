@@ -1,0 +1,6 @@
+<button (click)="addCharacter()" class="btn" [ngClass]="{
+  'btn-primary': characterType === 'ally',
+  'btn-danger': characterType === 'enemy'
+}">
+  Add {{ characterType | titlecase }}
+</button>
