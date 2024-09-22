@@ -1,0 +1,50 @@
+<div class="stat-block wide" *ngIf="monster">
+    <hr class="orange-border" />
+    <div class="section-left">
+      <app-creature-heading
+        [name]="monster.name"
+        [size]="monster.size"
+        [type]="monster.type"
+        [alignment]="monster.alignment">
+      </app-creature-heading>
+      <app-top-stats
+        [armorClass]="monster.armor_class[0].value"
+        [armorType]="monster.armor_class[0].type"
+        [hitPoints]="monster.hit_points"
+        [hitDice]="monster.hit_dice"
+        [speed]="monster.speed.walk">
+      </app-top-stats>
+
+      <app-abilities
+        [strength]="monster.strength"
+        [dexterity]="monster.dexterity"
+        [constitution]="monster.constitution"
+        [intelligence]="monster.intelligence"
+        [wisdom]="monster.wisdom"
+        [charisma]="monster.charisma">
+      </app-abilities>
+
+      <app-properties
+        [damageImmunities]="monster.damage_immunities"
+        [conditionImmunities]="monster.condition_immunities"
+        [senses]="monster.senses.blindsight + ', passive Perception ' + monster.senses.passive_perception"
+        [languages]="monster.languages || '—'"
+        [challengeRating]="monster.challenge_rating"
+        [xp]="monster.xp">
+      </app-properties>
+
+      <app-special-abilities
+        [abilities]="monster.special_abilities">
+      </app-special-abilities>
+    </div>
+    <div class="section-right">
+      <app-actions
+        [actions]="monster.actions">
+      </app-actions>
+
+      <app-actions *ngIf="monster.legendary_actions?.length"
+        [actions]="monster.legendary_actions">
+      </app-actions> 
+    </div>
+    <hr class="orange-border bottom" />
+  </div>
