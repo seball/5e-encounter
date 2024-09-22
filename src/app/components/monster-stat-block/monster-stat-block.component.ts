@@ -24,7 +24,7 @@ export class MonsterStatBlockComponent implements OnInit {
   constructor(private monsterService: Dnd5eApiService) {}
 
   ngOnInit() {
-    this.monsterService.getMonster('animated-armor').subscribe(
+    this.monsterService.getMonster('goblin').subscribe(
       (data: Monster) => {
         this.monster = data;
       },

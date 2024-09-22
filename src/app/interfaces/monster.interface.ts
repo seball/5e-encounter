@@ -12,16 +12,14 @@ export interface Monster {
     hit_points: number;
     hit_dice: string;
     hit_points_roll: string;
-    speed: {
-      walk: string;
-    };
+    speed: Speed;
     strength: number;
     dexterity: number;
     constitution: number;
     intelligence: number;
     wisdom: number;
     charisma: number;
-    proficiencies: any[];
+    proficiencies: MonsterProficieny[];
     damage_vulnerabilities: string[];
     damage_resistances: string[];
     damage_immunities: string[];
@@ -30,10 +28,7 @@ export interface Monster {
       name: string;
       url: string;
     }>;
-    senses: {
-      blindsight: string;
-      passive_perception: number;
-    };
+    senses: Senses;
     languages: string;
     challenge_rating: number;
     proficiency_bonus: number;
@@ -60,4 +55,32 @@ export interface Monster {
     image: string;
     url: string;
     legendary_actions: any[];
+}
+
+export interface Speed {
+  burrow?: string,
+  climb?: string,
+  fly?: string,
+  hover?: boolean,
+  swim?: string,
+  walk?: string,
+}
+
+export interface Senses {
+  blindsight?: string;
+  darkvision?: string;
+  passive_perception: number;
+  tremorsense?: string;
+  truesight?: string;
+}
+
+export interface MonsterProficieny {
+  proficiency: Proficiency; 
+  value: number;
+}
+
+export interface Proficiency {
+  index: string;
+  name: string;
+  url: string;
 }

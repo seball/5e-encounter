@@ -13,21 +13,20 @@ app-monster-stat-block {
         display: inline;
         font-size: 1.5em;
         line-height: 1.2em;
-       
       }
+      
       h4 {
         color: var(--color-spec1);
-        
       }
   
       p {
-        font-size: 1em;
         margin-inline: 1em;
+        font-size: 1em;
       }
     }
-
-    .tapered-rule{
-        fill: var(--color-spec2);
+  
+    .tapered-rule {
+      fill: var(--color-spec2);
     }
   }
   
