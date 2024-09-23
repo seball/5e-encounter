@@ -1,0 +1,8 @@
+<div class="actions">
+    <h3>Actions</h3>
+    <hr/>
+    <div class="property-block" *ngFor="let action of actions">
+      <h4>{{action.name}}.</h4>
+      <p [innerHTML]="action.desc"></p>
+    </div>
+  </div>

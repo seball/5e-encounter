@@ -17,7 +17,7 @@ export class CharacterService {
       currentHp: 100,
       initiativeModifier: 0,
       initiative: 0,
-      avatarSrc: type === 'ally' ? `/assets/elf.jpg` : `/assets/barbarian.jpg`,
+      avatarSrc: type === 'ally' ? `assets/elf.jpg` : `assets/barbarian.jpg`,
     };
     
     const currentCharacters = this.charactersSubject.value;
