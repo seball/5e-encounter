@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { TaperedRuleComponent } from "../../../shared/ui/tapered-rule/tapered-rule.component";
+import { TaperedRuleComponent } from '../../../shared/ui/tapered-rule/tapered-rule.component';
 import { Speed } from '../../../interfaces/monster.interface';
 
 @Component({
@@ -7,7 +7,7 @@ import { Speed } from '../../../interfaces/monster.interface';
   standalone: true,
   imports: [TaperedRuleComponent],
   templateUrl: './top-stats.component.html',
-  styleUrl: './top-stats.component.css'
+  styleUrl: './top-stats.component.css',
 })
 export class TopStatsComponent {
   @Input() armorClass: number = 0;

@@ -1,29 +1,29 @@
 <div *ngIf="getSavingThrowsString() as savingThrows" class="property-line">
   <h4>Saving Throws</h4>
-  <p>{{savingThrows}}</p>
+  <p>{{ savingThrows }}</p>
 </div>
 <div *ngIf="getSkillsString() as skills" class="property-line">
   <h4>Skills</h4>
-  <p>{{skills}}</p>
+  <p>{{ skills }}</p>
 </div>
 <div *ngIf="damageImmunities.length" class="property-line">
   <h4>Damage Immunities</h4>
-  <p>{{getDamageImmunitiesString()}}</p>
+  <p>{{ getDamageImmunitiesString() }}</p>
 </div>
 <div *ngIf="conditionImmunities.length" class="property-line">
   <h4>Condition Immunities</h4>
-  <p>{{getConditionImmunitesString()}}</p>
+  <p>{{ getConditionImmunitesString() }}</p>
 </div>
 <div class="property-line">
   <h4>Senses</h4>
-  <p>{{getSensesString()}}</p>
+  <p>{{ getSensesString() }}</p>
 </div>
 <div class="property-line">
   <h4>Languages</h4>
-  <p>{{languages}}</p>
+  <p>{{ languages }}</p>
 </div>
 <div class="property-line">
   <h4>Challenge</h4>
-  <p>{{challengeRating}} ({{xp}} XP)</p>
+  <p>{{ challengeRating }} ({{ xp }} XP)</p>
 </div>
 <app-tapered-rule></app-tapered-rule>

@@ -8,9 +8,8 @@ describe('TaperedRuleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TaperedRuleComponent]
-    })
-    .compileComponents();
+      imports: [TaperedRuleComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TaperedRuleComponent);
     component = fixture.componentInstance;

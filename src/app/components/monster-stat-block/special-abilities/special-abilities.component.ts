@@ -6,8 +6,8 @@ import { Component, Input } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './special-abilities.component.html',
-  styleUrl: './special-abilities.component.css'
+  styleUrl: './special-abilities.component.css',
 })
 export class SpecialAbilitiesComponent {
-  @Input() abilities: Array<{name: string, desc: string}> = [];
+  @Input() abilities: Array<{ name: string; desc: string }> = [];
 }

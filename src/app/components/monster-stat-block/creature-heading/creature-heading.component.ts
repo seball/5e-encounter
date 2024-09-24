@@ -1,5 +1,5 @@
-import { Component, Input, ViewEncapsulation } from '@angular/core';
-import { TaperedRuleComponent } from "../../../shared/ui/tapered-rule/tapered-rule.component";
+import { Component, Input } from '@angular/core';
+import { TaperedRuleComponent } from '../../../shared/ui/tapered-rule/tapered-rule.component';
 
 @Component({
   selector: 'app-creature-heading',
@@ -7,7 +7,6 @@ import { TaperedRuleComponent } from "../../../shared/ui/tapered-rule/tapered-ru
   styleUrl: './creature-heading.component.css',
   standalone: true,
   imports: [TaperedRuleComponent],
-  
 })
 export class CreatureHeadingComponent {
   @Input() name: string = '';

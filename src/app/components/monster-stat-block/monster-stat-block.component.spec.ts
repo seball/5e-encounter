@@ -9,9 +9,8 @@ describe('MonsterStatBlockComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MonsterStatBlockComponent, CommonModule]
-    })
-    .compileComponents();
+      imports: [MonsterStatBlockComponent, CommonModule],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MonsterStatBlockComponent);
     component = fixture.componentInstance;

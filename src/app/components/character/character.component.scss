@@ -1,32 +1,31 @@
 .character-card {
-    min-width: 200;
-    border: 1px solid var(--color-text);
-    padding: 10px;
-    margin: 1rem auto 1rem auto;
+  min-width: 200;
+  border: 1px solid var(--color-text);
+  padding: 10px;
+  margin: 1rem auto 1rem auto;
 }
 
 .character-card input {
-    height: 20px;
-    background: transparent;
-    color: inherit;
-    border: none;
-    border-bottom: 1px solid currentColor;
-    outline: transparent;
-    font-size: inherit;
-    max-width: 50px;
-    font-size: inherit;
-    text-align: center;
-  }
+  height: 20px;
+  background: transparent;
+  color: inherit;
+  border: none;
+  border-bottom: 1px solid currentColor;
+  outline: transparent;
+  font-size: inherit;
+  max-width: 50px;
+  font-size: inherit;
+  text-align: center;
+}
 
-  
-.name-section {    
+.name-section {
+  text-align: start;
+  font-size: 1rem;
+  input {
     text-align: start;
-    font-size: 1rem;
-    input {
-      text-align: start;
-      max-width: 20vw;
-    }
+    max-width: 20vw;
   }
+}
 
 .edit-buttons button {
   color: var(--color-spec1);
@@ -34,7 +33,7 @@
   float: right;
 }
 
-input[type=number]::-webkit-inner-spin-button {
+input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 

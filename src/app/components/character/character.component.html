@@ -1,50 +1,76 @@
 <div class="character-card">
-    <div class="row">
-      <div class="col-9">
-        <div class="name-section" (dblclick)="enterEditMode()">
-          <div *ngIf="!editMode">{{ character.name }}</div>
-          <input *ngIf="editMode" type="text" [(ngModel)]="character.name" (keydown)="handleEnterKey($event)" />
+  <div class="row">
+    <div class="col-9">
+      <div class="name-section" (dblclick)="enterEditMode()">
+        <div *ngIf="!editMode">{{ character.name }}</div>
+        <input
+          *ngIf="editMode"
+          type="text"
+          [(ngModel)]="character.name"
+          (keydown)="handleEnterKey($event)" />
+      </div>
+
+      <div class="hp-section" (dblclick)="enterEditMode()">
+        <div *ngIf="!editMode">
+          HP: {{ character.currentHp }} / {{ character.maxHp }}
         </div>
-  
-        <div class="hp-section" (dblclick)="enterEditMode()">
-          <div *ngIf="!editMode">HP: {{ character.currentHp }} / {{ character.maxHp }}</div>
-          <div *ngIf="editMode">
-            <label for="currentHp">HP:</label>
-            <input id="currentHp" type="number" [(ngModel)]="character.currentHp" (keydown)="handleEnterKey($event)" />
-            <label for="maxHp"> / </label>
-            <input id="maxHp" type="number" [(ngModel)]="character.maxHp" (keydown)="handleEnterKey($event)" />
-          </div>
-        </div>
-  
-        <div class="initiative-section" (dblclick)="enterEditMode()">
-          <div *ngIf="!editMode">
-            Init: {{ character.initiative + character.initiativeModifier }} / Mod: {{ character.initiativeModifier | numberToString }} / Roll: {{ character.initiative }}
-          </div>
-          <div *ngIf="editMode">
-            Init: {{ character.initiative + character.initiativeModifier }}
-            <span> / </span>
-            <label for="initiativeModifier">Mod:</label>
-            <input id="initiativeModifier" type="number" [(ngModel)]="character.initiativeModifier" (keydown)="handleEnterKey($event)" />
-            <span> / </span>
-            <label for="initiative">Roll:</label>
-            <input id="initiative" type="number" [(ngModel)]="character.initiative" (keydown)="handleEnterKey($event)" />
-          </div>
+        <div *ngIf="editMode">
+          <label for="currentHp">HP:</label>
+          <input
+            id="currentHp"
+            type="number"
+            [(ngModel)]="character.currentHp"
+            (keydown)="handleEnterKey($event)" />
+          <label for="maxHp"> / </label>
+          <input
+            id="maxHp"
+            type="number"
+            [(ngModel)]="character.maxHp"
+            (keydown)="handleEnterKey($event)" />
         </div>
       </div>
-  
-      <div class="col-3">
-        <div class="avatar">
-          <img src="{{character.avatarSrc}}" alt="Description of image" class="img-fluid" />
+
+      <div class="initiative-section" (dblclick)="enterEditMode()">
+        <div *ngIf="!editMode">
+          Init: {{ character.initiative + character.initiativeModifier }} / Mod:
+          {{ character.initiativeModifier | numberToString }} / Roll:
+          {{ character.initiative }}
+        </div>
+        <div *ngIf="editMode">
+          Init: {{ character.initiative + character.initiativeModifier }}
+          <span> / </span>
+          <label for="initiativeModifier">Mod:</label>
+          <input
+            id="initiativeModifier"
+            type="number"
+            [(ngModel)]="character.initiativeModifier"
+            (keydown)="handleEnterKey($event)" />
+          <span> / </span>
+          <label for="initiative">Roll:</label>
+          <input
+            id="initiative"
+            type="number"
+            [(ngModel)]="character.initiative"
+            (keydown)="handleEnterKey($event)" />
         </div>
       </div>
     </div>
-  
-    <div class="row justify-content-between">
-      <div class="hp-adjustment col-6">
-        <button (click)="heal()">Heal</button>
-        <input type="number" [(ngModel)]="hpAdjustment" />
-        <button (click)="damage()">Damage</button>
+
+    <div class="col-3">
+      <div class="avatar">
+        <img
+          src="{{ character.avatarSrc }}"
+          alt="Description of image"
+          class="img-fluid" />
       </div>
     </div>
   </div>
-  
+
+  <div class="row justify-content-between">
+    <div class="hp-adjustment col-6">
+      <button (click)="heal()">Heal</button>
+      <input type="number" [(ngModel)]="hpAdjustment" />
+      <button (click)="damage()">Damage</button>
+    </div>
+  </div>
+</div>

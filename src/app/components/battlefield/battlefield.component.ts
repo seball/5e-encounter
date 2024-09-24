@@ -1,17 +1,23 @@
 import { Component } from '@angular/core';
-import { CreateCharacterComponent } from "../create-character/create-character.component";
+import { CreateCharacterComponent } from '../create-character/create-character.component';
 import { Character } from '../../interfaces/character.interface';
 import { CharacterService } from '../../services/character.service';
 import { CommonModule } from '@angular/common';
-import { CharacterComponent } from "../character/character.component";
-import { MonsterStatBlockComponent } from "../monster-stat-block/monster-stat-block.component";
+import { CharacterComponent } from '../character/character.component';
+import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-block.component';
 
 @Component({
   selector: 'app-battlefield',
   standalone: true,
-  imports: [CreateCharacterComponent, CommonModule, CharacterComponent, MonsterStatBlockComponent, MonsterStatBlockComponent],
+  imports: [
+    CreateCharacterComponent,
+    CommonModule,
+    CharacterComponent,
+    MonsterStatBlockComponent,
+    MonsterStatBlockComponent,
+  ],
   templateUrl: './battlefield.component.html',
-  styleUrl: './battlefield.component.css'
+  styleUrl: './battlefield.component.css',
 })
 export class BattleFieldComponent {
   allies: Character[] = [];

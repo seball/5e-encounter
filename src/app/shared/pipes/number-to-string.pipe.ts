@@ -2,10 +2,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'numberToString',
-  standalone: true
+  standalone: true,
 })
 export class NumberToStringPipe implements PipeTransform {
-
   transform(value: number): string {
     if (value > 0) {
       return `+${value}`;
@@ -15,5 +14,4 @@ export class NumberToStringPipe implements PipeTransform {
       return '0';
     }
   }
-
 }

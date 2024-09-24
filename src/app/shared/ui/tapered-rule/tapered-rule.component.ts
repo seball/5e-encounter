@@ -4,7 +4,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
   selector: 'app-tapered-rule',
   templateUrl: './tapered-rule.component.html',
   styleUrls: ['./tapered-rule.component.scss'],
-  standalone: true
+  standalone: true,
 })
 export class TaperedRuleComponent implements OnInit {
   screenWidth: number = window.innerWidth;
@@ -14,7 +14,7 @@ export class TaperedRuleComponent implements OnInit {
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
+  onResize() {
     this.calculateScreenWidth();
   }
 

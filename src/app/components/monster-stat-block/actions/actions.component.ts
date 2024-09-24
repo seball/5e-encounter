@@ -6,8 +6,8 @@ import { Component, Input } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './actions.component.html',
-  styleUrl: './actions.component.css'
+  styleUrl: './actions.component.css',
 })
 export class ActionsComponent {
-  @Input() actions: Array<{name: string, desc: string}> = [];
+  @Input() actions: Array<{ name: string; desc: string }> = [];
 }

@@ -8,9 +8,8 @@ describe('TopStatsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TopStatsComponent]
-    })
-    .compileComponents();
+      imports: [TopStatsComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TopStatsComponent);
     component = fixture.componentInstance;

@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
-import { TaperedRuleComponent } from "../../../shared/ui/tapered-rule/tapered-rule.component";
+import { TaperedRuleComponent } from '../../../shared/ui/tapered-rule/tapered-rule.component';
 
 @Component({
   selector: 'app-abilities',
   standalone: true,
   imports: [TaperedRuleComponent],
   templateUrl: './abilities.component.html',
-  styleUrl: './abilities.component.scss'
+  styleUrl: './abilities.component.scss',
 })
 export class AbilitiesComponent {
   @Input() strength: number = 10;
