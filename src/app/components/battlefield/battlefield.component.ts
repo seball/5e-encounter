@@ -20,13 +20,13 @@ import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-bl
   styleUrl: './battlefield.component.css',
 })
 export class BattleFieldComponent {
-  allies: Character[] = [];
-  enemies: Character[] = [];
-
-  constructor(private characterService: CharacterService) {
-    this.characterService.characters$.subscribe(characters => {
-      this.allies = characters.filter(char => char.type === 'ally');
-      this.enemies = characters.filter(char => char.type === 'enemy');
-    });
+  public get allies(): Character[] {
+    return this.characterService.characters().filter(char => char.type === 'ally');
   }
+
+  public get enemies(): Character[] {
+    return this.characterService.characters().filter(char => char.type === 'enemy');
+  }
+
+  constructor(private characterService: CharacterService) {}
 }

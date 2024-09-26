@@ -15,7 +15,7 @@ export class CreateCharacterComponent {
 
   constructor(private characterService: CharacterService) {}
 
-  addCharacter() {
+  public addCharacter(): void {
     this.characterService.addCharacter(this.characterType);
   }
 }
