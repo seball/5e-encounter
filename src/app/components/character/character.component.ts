@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NumberToStringPipe } from '../../shared/pipes/number-to-string.pipe';
@@ -13,6 +13,7 @@ import { Character } from '../../interfaces/character.interface';
 })
 export class CharacterComponent {
   @Input() character!: Character;
+  @Output() delete = new EventEmitter<string>();
 
   editMode: boolean = false;
   hpAdjustment: number = 0;
@@ -52,4 +53,5 @@ export class CharacterComponent {
       this.save();
     }
   }
+
 }

@@ -17,7 +17,7 @@ import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-bl
     MonsterStatBlockComponent,
   ],
   templateUrl: './battlefield.component.html',
-  styleUrl: './battlefield.component.css',
+  styleUrl: './battlefield.component.scss',
 })
 export class BattleFieldComponent {
   public get allies(): Character[] {
@@ -29,4 +29,10 @@ export class BattleFieldComponent {
   }
 
   constructor(private characterService: CharacterService) {}
+
+  public onCharacterDelete(name: string) {
+    if(confirm("Are you sure to delete " + name)){
+      this.characterService.deleteCharacter(name);
+    }
+  }
 }
