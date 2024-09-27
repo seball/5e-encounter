@@ -1,20 +1,28 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
 import { Character } from '../interfaces/character.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CharacterService {
-  private charactersSubject = new BehaviorSubject<Character[]>([]);
-  characters$: Observable<Character[]> = this.charactersSubject.asObservable();
+  private charactersSignal = signal<Character[]>([]);
 
-  addCharacter(type: 'ally' | 'enemy') {
+  constructor() {
+    const savedCharacters = localStorage.getItem('characters');
+    if (savedCharacters) {
+      this.charactersSignal.set(JSON.parse(savedCharacters));
+    }
+  }
+
+  get characters() {
+    return this.charactersSignal.asReadonly();
+  }
+
+  public addCharacter(type: 'ally' | 'enemy'): void {
     const newCharacter: Character = {
-      name:
-        type === 'ally'
-          ? `Ally ${this.charactersSubject.value.length + 1}`
-          : `Enemy ${this.charactersSubject.value.length + 1}`,
+      name: type === 'ally'
+        ? `Ally ${this.charactersSignal().length + 1}`
+        : `Enemy ${this.charactersSignal().length + 1}`,
       type: type,
       maxHp: 100,
       currentHp: 100,
@@ -23,11 +31,9 @@ export class CharacterService {
       avatarSrc: type === 'ally' ? `assets/elf.jpg` : `assets/barbarian.jpg`,
     };
 
-    const currentCharacters = this.charactersSubject.value;
-    this.charactersSubject.next([...currentCharacters, newCharacter]);
-  }
+    const updatedCharacters = [...this.charactersSignal(), newCharacter];
+    this.charactersSignal.set(updatedCharacters);
 
-  getCharacters(): Observable<Character[]> {
-    return this.characters$;
+    localStorage.setItem('characters', JSON.stringify(updatedCharacters));
   }
 }
