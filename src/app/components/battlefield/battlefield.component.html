@@ -4,7 +4,7 @@
       <h2>Allies</h2>
       <app-create-character [characterType]="'ally'"></app-create-character>
       <div *ngFor="let character of allies">
-        <app-character [character]="character"></app-character>
+        <app-character [character]="character" (delete)="onCharacterDelete($event)"></app-character>
       </div>
     </div>
     <div class="col-6">
@@ -14,7 +14,7 @@
       <h2>Enemies</h2>
       <app-create-character [characterType]="'enemy'"></app-create-character>
       <div *ngFor="let character of enemies">
-        <app-character [character]="character"></app-character>
+        <app-character [character]="character" (delete)="onCharacterDelete($event)"></app-character>
       </div>
     </div>
   </div>

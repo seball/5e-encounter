@@ -1,4 +1,11 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NumberToStringPipe } from '../../shared/pipes/number-to-string.pipe';
@@ -25,6 +32,8 @@ export class CharacterComponent {
   @Input() character!: Character;
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
   @ViewChild('targetDiv', { static: true }) targetDiv!: ElementRef;
+  @Output() delete = new EventEmitter<string>();
+
   editMode: boolean = false;
   hpAdjustment: number = 0;
 
@@ -79,4 +88,9 @@ export class CharacterComponent {
       title: 'Delete',
     },
   ];
+  handleEnterKey(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.save();
+    }
+  }
 }

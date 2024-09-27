@@ -36,4 +36,11 @@ export class CharacterService {
 
     localStorage.setItem('characters', JSON.stringify(updatedCharacters));
   }
+
+  public deleteCharacter(name: string): void {
+    const updatedCharacters = this.charactersSignal().filter(x => x.name !== name);
+    this.charactersSignal.set(updatedCharacters);
+
+    localStorage.setItem('characters', JSON.stringify(updatedCharacters));
+  }
 }
