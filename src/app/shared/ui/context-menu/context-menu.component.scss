@@ -1,0 +1,14 @@
+#context-menu {
+  position: absolute;
+  display: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: #fff7ed;
+  color: #1d262b;
+  z-index: 2147483647;
+  font-size: 1.5em;
+}
+#context-menu.active {
+  display: block;
+}

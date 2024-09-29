@@ -1,0 +1,18 @@
+.context-menu-item {
+  display: flex;
+  cursor: pointer;
+  padding: 4px;
+  align-items: center;
+  border-bottom: 1px solid #1d262b;
+  line-height: 0em;
+  min-width: 150px;
+}
+
+.context-menu-icon {
+  position: relative;
+  margin-right: 10px;
+  color: #1d262b;
+}
+.context-menu-item:hover {
+  background-color: #c7c7c7;
+}

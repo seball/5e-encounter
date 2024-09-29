@@ -1,0 +1,10 @@
+<ul
+  id="context-menu"
+  [class.active]="isVisible"
+  [ngStyle]="{ left: posX + 'px', top: posY + 'px' }">
+  <ng-container *ngFor="let item of menuItems">
+    <app-context-menu-item [icon]="item.icon" (action)="onMenuItemClick(item)">
+      {{ item.title }}
+    </app-context-menu-item>
+  </ng-container>
+</ul>
