@@ -1,16 +1,12 @@
-<div class="character-card">
+<div class="character-card" #targetDiv>
   <div class="row">
     <div class="col-9">
-      <div class="name-section" (dblclick)="enterEditMode()">
+      <div class="name-section">
         <div *ngIf="!editMode">{{ character.name }}</div>
-        <input
-          *ngIf="editMode"
-          type="text"
-          [(ngModel)]="character.name"
-          (keydown)="handleEnterKey($event)" />
+        <input *ngIf="editMode" type="text" [(ngModel)]="character.name" />
       </div>
 
-      <div class="hp-section" (dblclick)="enterEditMode()">
+      <div class="hp-section">
         <div *ngIf="!editMode">
           HP: {{ character.currentHp }} / {{ character.maxHp }}
         </div>
@@ -19,18 +15,13 @@
           <input
             id="currentHp"
             type="number"
-            [(ngModel)]="character.currentHp"
-            (keydown)="handleEnterKey($event)" />
+            [(ngModel)]="character.currentHp" />
           <label for="maxHp"> / </label>
-          <input
-            id="maxHp"
-            type="number"
-            [(ngModel)]="character.maxHp"
-            (keydown)="handleEnterKey($event)" />
+          <input id="maxHp" type="number" [(ngModel)]="character.maxHp" />
         </div>
       </div>
 
-      <div class="initiative-section" (dblclick)="enterEditMode()">
+      <div class="initiative-section">
         <div *ngIf="!editMode">
           Init: {{ character.initiative + character.initiativeModifier }} / Mod:
           {{ character.initiativeModifier | numberToString }} / Roll:
@@ -43,15 +34,13 @@
           <input
             id="initiativeModifier"
             type="number"
-            [(ngModel)]="character.initiativeModifier"
-            (keydown)="handleEnterKey($event)" />
+            [(ngModel)]="character.initiativeModifier" />
           <span> / </span>
           <label for="initiative">Roll:</label>
           <input
             id="initiative"
             type="number"
-            [(ngModel)]="character.initiative"
-            (keydown)="handleEnterKey($event)" />
+            [(ngModel)]="character.initiative" />
         </div>
       </div>
     </div>
@@ -73,4 +62,7 @@
       <button (click)="damage()">Damage</button>
     </div>
   </div>
+  <app-context-menu
+    [targetElement]="targetDiv"
+    [menuItems]="contextMenuItems"></app-context-menu>
 </div>
