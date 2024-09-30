@@ -1,11 +1,3 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NumberToStringPipe } from '../../shared/pipes/number-to-string.pipe';
@@ -15,6 +7,14 @@ import {
   MenuItem,
 } from '../../shared/ui/context-menu/context-menu.component';
 import { ContextMenuIconType } from '../../shared/ui/context-menu/context-menu-item/context-menu-item.component';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 
 @Component({
   selector: 'app-character',
