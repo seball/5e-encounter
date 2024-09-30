@@ -5,6 +5,7 @@ import { CharacterService } from '../../services/character.service';
 import { CommonModule } from '@angular/common';
 import { CharacterComponent } from '../character/character.component';
 import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-block.component';
+import { CreateEnemyComponent } from "../create-enemy/create-enemy.component";
 
 @Component({
   selector: 'app-battlefield',
@@ -15,7 +16,8 @@ import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-bl
     CharacterComponent,
     MonsterStatBlockComponent,
     MonsterStatBlockComponent,
-  ],
+    CreateEnemyComponent
+],
   templateUrl: './battlefield.component.html',
   styleUrl: './battlefield.component.scss',
 })

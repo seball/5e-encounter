@@ -12,7 +12,7 @@
     </div>
     <div class="col-3">
       <h2>Enemies</h2>
-      <app-create-character [characterType]="'enemy'"></app-create-character>
+      <app-create-enemy></app-create-enemy>
       <div *ngFor="let character of enemies">
         <app-character [character]="character" (delete)="onCharacterDelete($event)"></app-character>
       </div>

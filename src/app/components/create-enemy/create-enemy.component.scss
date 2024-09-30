@@ -1,0 +1,26 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+
+  &__row-wrapper{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__row-wrapper:not(:first-child) {
+    margin-top: 2em;
+  }
+
+
+  &__add-button{
+    margin-left: 1em;
+  }
+
+
+  &__kind-search-select{
+    width: 19.3em;
+  
+  }
+}
+

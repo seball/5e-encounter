@@ -1,0 +1,18 @@
+<section class="form-container">
+  <div class="form-container__row-wrapper">
+    <span class="form-container__kind-label">Kind:</span>
+    <ng-select
+      class="form-container__kind-search-select"
+      [items]="this.monsterEntries"
+      bindLabel="name"
+      bindValue="index">
+    </ng-select>
+  </div>
+
+  <div class="form-container__row-wrapper">
+    <span class="form-container__name-label">Name:</span
+    ><input class="form-container__name-input" type="text" />
+
+    <button class="form-container__add-button">Add Enemy</button>
+  </div>
+</section>
