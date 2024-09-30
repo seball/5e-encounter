@@ -21,17 +21,21 @@ import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-bl
 })
 export class BattleFieldComponent {
   public get allies(): Character[] {
-    return this.characterService.characters().filter(char => char.type === 'ally');
+    return this.characterService
+      .characters()
+      .filter(char => char.type === 'ally');
   }
 
   public get enemies(): Character[] {
-    return this.characterService.characters().filter(char => char.type === 'enemy');
+    return this.characterService
+      .characters()
+      .filter(char => char.type === 'enemy');
   }
 
   constructor(private characterService: CharacterService) {}
 
   public onCharacterDelete(name: string) {
-    if(confirm("Are you sure to delete " + name)){
+    if (confirm('Are you sure to delete ' + name)) {
       this.characterService.deleteCharacter(name);
     }
   }

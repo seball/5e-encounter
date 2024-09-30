@@ -1,4 +1,5 @@
 export interface Character {
+  id: string;
   name: string;
   type: 'ally' | 'enemy';
   maxHp: number;

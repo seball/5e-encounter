@@ -67,6 +67,10 @@ export class CharacterComponent {
     this.editMode = true;
   }
 
+  deleteCharacter(): void {
+    this.delete.emit(this.character.id);
+  }
+
   contextMenuItems: MenuItem[] = [
     {
       action: () => {
@@ -81,9 +85,7 @@ export class CharacterComponent {
       title: 'Edit',
     },
     {
-      action: () => {
-        alert('delete');
-      },
+      action: () => this.deleteCharacter(),
       icon: ContextMenuIconType.Delete,
       title: 'Delete',
     },

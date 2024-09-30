@@ -61,9 +61,6 @@
       <input type="number" [(ngModel)]="hpAdjustment" />
       <button (click)="damage()">Damage</button>
     </div>
-    <div class="delete col-6 d-flex justify-content-end">
-      <button (click)="this.delete.emit(this.character.name)">Delete</button>
-    </div>
   </div>
   <app-context-menu
     [targetElement]="targetDiv"
