@@ -1,0 +1,23 @@
+.menu {
+  border: 2px dashed;
+  border-radius: 3px;
+}
+
+.upper-box,
+.lower-box {
+  margin: auto;
+  width: 80%;
+}
+
+.upper-box {
+  padding-top: 2em;
+}
+
+.lower-box {
+  padding-bottom: 2em;
+}
+
+button {
+  min-height: 36px;
+  width: 100%;
+}

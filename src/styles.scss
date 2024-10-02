@@ -11,7 +11,7 @@ body.theme {
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font);
-  font-size: x-small;
+  font-size: small;
 }
 
 .theme {
@@ -53,6 +53,42 @@ body.theme {
     color: var(--color-text);
     &:hover {
       background: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  //ng-select custom styles
+  .ng-select.custom {
+    color: var(--color-text);
+    font-family: var(--font);
+    font-size: 1em;
+
+    .ng-option {
+      &.ng-option-disabled {
+        color: var(--color-bg);
+      }
+
+      &.ng-option-marked {
+        background-color: var(--color-spec2);
+        color: var(--color-text);
+      }
+    }
+
+    .ng-select-container {
+      background-color: #1d262b;
+    }
+
+    .ng-value,
+    input {
+      color: var(--color-text);
+      vertical-align: bottom;
+    }
+
+    .ng-input {
+      top: 8px !important;
+    }
+
+    .ng-clear-wrapper {
+      display: none;
     }
   }
 }
