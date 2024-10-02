@@ -1,39 +1,59 @@
-:root {
-  --color-bg: #1d262b;
-  --font: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter',
-    monospace;
-  --color-text: #fff7ed;
-  --color-spec1: #db59d0;
-  --color-spec2: #4488d6;
+$color-bg: #1d262b;
+$color-text: #fff7ed;
+$color-spec1: #db59d0;
+$color-spec2: #4488d6;
+$font-stack: 'Courier New', Courier, 'Lucida Sans Typewriter',
+  'Lucida Typewriter', monospace;
+
+@mixin theme-input {
+  font-family: $font-stack;
+  font-size: 1em;
+  color: $color-bg;
+  border-radius: 3px;
+  border: 1px solid $color-text;
+  transition: all 0.2s ease;
+  padding: 3px;
+
+  &:disabled {
+    color: $color-bg;
+    border: 1px solid $color-text;
+    cursor: not-allowed;
+    opacity: 0.3;
+  }
 }
 
-body.theme {
+:root {
+  --color-bg: #{$color-bg};
+  --color-text: #{$color-text};
+  --color-spec1: #{$color-spec1};
+  --color-spec2: #{$color-spec2};
+  --font: #{$font-stack};
+}
+
+.theme {
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font);
   font-size: small;
-}
 
-.theme {
   button,
-  input,
   select {
-    font-family: var(--font);
-    font-size: 1em;
-    color: var(--color-bg);
-    border-radius: 3px;
-    border: 1px solid var(--color-text);
-    transition: all 0.2s ease;
-    padding: 3px;
-    &:hover {
-      border: 1px solid var(--color-spec2);
-      color: var(--color-bg);
-    }
-    &:disabled {
-      color: var(--color-bg);
-      border: 1px solid var(--color-text);
-      cursor: not-allowed;
-      opacity: 0.3;
+    @include theme-input;
+  }
+
+  input {
+    @include theme-input;
+    height: 20px;
+    background: transparent;
+    color: inherit;
+    border: none;
+    border-bottom: 1px solid currentColor;
+    outline: transparent;
+    max-width: 50px;
+    text-align: center;
+
+    &[type='number']::-webkit-inner-spin-button {
+      -webkit-appearance: none;
     }
   }
 
@@ -42,21 +62,24 @@ body.theme {
     cursor: pointer;
     text-align: center;
     background: rgba(255, 255, 255, 0.1);
+
     &:hover {
       background: rgba(0, 0, 0, 0.1);
       color: var(--color-spec2);
     }
-  }
+    &:active {
+      border: 1px solid var(--color-spec2);
+    }
 
-  button:disabled,
-  .disabled {
-    color: var(--color-text);
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
+    &:disabled,
+    &.disabled {
+      color: var(--color-text);
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
     }
   }
 
-  //ng-select custom styles
   .ng-select.custom {
     color: var(--color-text);
     font-family: var(--font);
@@ -74,7 +97,7 @@ body.theme {
     }
 
     .ng-select-container {
-      background-color: #1d262b;
+      background-color: var(--color-bg);
     }
 
     .ng-value,

@@ -1,4 +1,5 @@
 export interface Character {
+  armorClass: number;
   id: string;
   name: string;
   type: 'ally' | 'enemy';

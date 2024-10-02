@@ -53,6 +53,7 @@ export class CharacterService {
       initiative: 0,
       initiativeModifier: this.getInitiativeMod(monsterData.dexterity) || 0,
       name: monsterData.name,
+      armorClass: monsterData.armor_class[0].value,
     };
   }
 
@@ -68,12 +69,20 @@ export class CharacterService {
       initiativeModifier: 0,
       initiative: 0,
       avatarSrc: `assets/${type === 'ally' ? 'elf' : 'barbarian'}.jpg`,
+      armorClass: 15,
     };
     this.updateCharacters([...this.charactersSignal(), newCharacter]);
   }
 
   public deleteCharacter(id: string): void {
     const updatedCharacters = this.charactersSignal().filter(c => c.id !== id);
+    this.updateCharacters(updatedCharacters);
+  }
+
+  public updateCharacter(updatedCharacter: Character): void {
+    const updatedCharacters = this.charactersSignal().map(character =>
+      character.id === updatedCharacter.id ? updatedCharacter : character
+    );
     this.updateCharacters(updatedCharacters);
   }
 
