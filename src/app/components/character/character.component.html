@@ -1,4 +1,7 @@
-<div class="character-card" #targetDiv>
+<div
+  class="character-card"
+  [ngClass]="{ 'edit-mode': editMode, 'view-mode': !editMode }"
+  #targetDiv>
   <div class="row">
     <div class="col-9">
       <div class="name-section">
@@ -8,7 +11,8 @@
 
       <div class="hp-section">
         <div *ngIf="!editMode">
-          HP: {{ character.currentHp }} / {{ character.maxHp }}
+          HP: {{ character.currentHp }} / {{ character.maxHp }} | AC:
+          {{ character.armorClass }}
         </div>
         <div *ngIf="editMode">
           <label for="currentHp">HP:</label>
@@ -18,24 +22,30 @@
             [(ngModel)]="character.currentHp" />
           <label for="maxHp"> / </label>
           <input id="maxHp" type="number" [(ngModel)]="character.maxHp" />
+          <span> | </span>
+          <label for="armorClass">AC:</label>
+          <input
+            id="armorClass"
+            type="number"
+            [(ngModel)]="character.armorClass" />
         </div>
       </div>
 
       <div class="initiative-section">
         <div *ngIf="!editMode">
-          Init: {{ character.initiative + character.initiativeModifier }} / Mod:
-          {{ character.initiativeModifier | numberToString }} / Roll:
+          Init: {{ character.initiative + character.initiativeModifier }} | Mod:
+          {{ character.initiativeModifier | numberToString }} | Roll:
           {{ character.initiative }}
         </div>
         <div *ngIf="editMode">
           Init: {{ character.initiative + character.initiativeModifier }}
-          <span> / </span>
+          <span> | </span>
           <label for="initiativeModifier">Mod:</label>
           <input
             id="initiativeModifier"
             type="number"
             [(ngModel)]="character.initiativeModifier" />
-          <span> / </span>
+          <span> | </span>
           <label for="initiative">Roll:</label>
           <input
             id="initiative"

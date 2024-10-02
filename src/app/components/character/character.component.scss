@@ -1,46 +1,55 @@
-.character-card {
-  min-width: 200;
-  border: 1px solid var(--color-text);
-  padding: 10px;
-  margin: 1rem auto 1rem auto;
-}
+app-character {
+  $card-min-width: 200px;
+  $card-margin: 1rem;
+  $card-padding: 10px;
+  $name-font-size: 1rem;
+  $name-max-width: 20vw;
 
-.character-card input {
-  height: 20px;
-  background: transparent;
-  color: inherit;
-  border: none;
-  border-bottom: 1px solid currentColor;
-  outline: transparent;
-  font-size: inherit;
-  max-width: 50px;
-  font-size: inherit;
-  text-align: center;
-}
+  .character-card {
+    min-width: $card-min-width;
+    border: 1px solid var(--color-text);
+    padding: $card-padding;
+    margin: $card-margin auto;
+  }
 
-.name-section {
-  text-align: start;
-  font-size: 1rem;
-  input {
+  .name-section {
     text-align: start;
-    max-width: 20vw;
+    font-size: $name-font-size;
+
+    input {
+      text-align: start;
+      max-width: $name-max-width;
+    }
   }
-}
 
-.edit-buttons button {
-  color: var(--color-spec1);
-  border: 1px solid var(--color-spec1);
-  float: right;
-}
-
-input[type='number']::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-}
-
-.avatar {
-  width: 100%;
-  img {
+  .avatar {
     width: 100%;
+    float: right;
+
+    img {
+      width: 100%;
+    }
   }
-  float: right;
+
+  %button-visibility {
+    .edit {
+      display: none;
+    }
+    .save {
+      display: initial;
+    }
+  }
+
+  .edit-mode {
+    @extend %button-visibility;
+  }
+
+  .view-mode {
+    .edit {
+      display: initial;
+    }
+    .save {
+      display: none;
+    }
+  }
 }

@@ -5,6 +5,7 @@ import {
   PencilIcon,
   TerminalIcon,
   ViewIcon,
+  SaveIcon,
 } from 'lucide-angular';
 
 export enum ContextMenuIconType {
@@ -12,6 +13,7 @@ export enum ContextMenuIconType {
   View = 'view',
   Edit = 'edit',
   Default = 'default',
+  Save = 'save',
 }
 
 @Component({
@@ -27,6 +29,7 @@ export class ContextMenuItemComponent {
     [ContextMenuIconType.View]: ViewIcon,
     [ContextMenuIconType.Edit]: PencilIcon,
     [ContextMenuIconType.Default]: TerminalIcon,
+    [ContextMenuIconType.Save]: SaveIcon,
   };
 
   @Input() icon: ContextMenuIconType = ContextMenuIconType.Default;

@@ -14,7 +14,9 @@ import {
   Input,
   Output,
   ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
+import { CharacterService } from '../../services/character.service';
 
 @Component({
   selector: 'app-character',
@@ -27,6 +29,7 @@ import {
   ],
   templateUrl: './character.component.html',
   styleUrls: ['./character.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class CharacterComponent {
   @Input() character!: Character;
@@ -36,6 +39,7 @@ export class CharacterComponent {
 
   editMode: boolean = false;
   hpAdjustment: number = 0;
+  constructor(private readonly characterService: CharacterService) {}
 
   ngOnInit() {
     if (!this.character) {
@@ -61,6 +65,7 @@ export class CharacterComponent {
 
   save(): void {
     this.editMode = false;
+    this.characterService.updateCharacter(this.character);
   }
 
   edit(): void {
@@ -85,14 +90,14 @@ export class CharacterComponent {
       title: 'Edit',
     },
     {
+      action: () => this.save(),
+      icon: ContextMenuIconType.Save,
+      title: 'Save',
+    },
+    {
       action: () => this.deleteCharacter(),
       icon: ContextMenuIconType.Delete,
       title: 'Delete',
     },
   ];
-  handleEnterKey(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      this.save();
-    }
-  }
 }
