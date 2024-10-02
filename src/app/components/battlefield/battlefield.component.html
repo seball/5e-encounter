@@ -2,20 +2,24 @@
   <div class="row justify-content-center">
     <div class="col-3">
       <h2>Allies</h2>
-      <app-create-character [characterType]="'ally'"></app-create-character>
       <div *ngFor="let character of allies">
-        <app-character [character]="character" (delete)="onCharacterDelete($event)"></app-character>
+        <app-character
+          [character]="character"
+          (delete)="onCharacterDelete($event)"></app-character>
       </div>
+      <app-create-character [characterType]="'ally'"></app-create-character>
     </div>
     <div class="col-6">
       <app-monster-stat-block></app-monster-stat-block>
     </div>
     <div class="col-3">
       <h2>Enemies</h2>
-      <app-create-character [characterType]="'enemy'"></app-create-character>
       <div *ngFor="let character of enemies">
-        <app-character [character]="character" (delete)="onCharacterDelete($event)"></app-character>
+        <app-character
+          [character]="character"
+          (delete)="onCharacterDelete($event)"></app-character>
       </div>
+      <app-create-character [characterType]="'enemy'"></app-create-character>
     </div>
   </div>
 </div>
