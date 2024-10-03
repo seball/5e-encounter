@@ -1,20 +1,21 @@
 import { Component, Input } from '@angular/core';
 import { TaperedRuleComponent } from '../../../shared/ui/tapered-rule/tapered-rule.component';
 import { Speed } from '../../../interfaces/statblock.interface';
+import { EditableCheckboxListComponent } from '../../../shared/ui/editable-checkbox-list/editable-checkbox-list.component';
 
 @Component({
   selector: 'app-top-stats',
   standalone: true,
-  imports: [TaperedRuleComponent],
+  imports: [TaperedRuleComponent, EditableCheckboxListComponent],
   templateUrl: './top-stats.component.html',
-  styleUrl: './top-stats.component.css',
+  styleUrl: './top-stats.component.scss',
 })
 export class TopStatsComponent {
   @Input() armorClass: number = 0;
   @Input() armorType: string = '';
   @Input() hitPoints: number = 0;
   @Input() hitDice: string = '';
-  @Input() speed: Speed = {};
+  @Input() speed: any = {};
 
   getSpeedString(): string {
     const speedParts: string[] = [];

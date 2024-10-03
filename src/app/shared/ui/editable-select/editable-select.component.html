@@ -1,0 +1,11 @@
+<span *ngIf="!editMode">
+  {{ displayValue }}
+</span>
+<span *ngIf="editMode">
+  <ng-select
+    [items]="items"
+    [placeholder]="placeholder"
+    [(ngModel)]="value"
+    (change)="onSelect($event)">
+  </ng-select>
+</span>

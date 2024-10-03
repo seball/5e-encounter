@@ -1,0 +1,17 @@
+<div *ngFor="let item of checkboxItems; let last = last" class="checkbox-item">
+  <label>
+    <input
+      *ngIf="editMode"
+      type="checkbox"
+      [(ngModel)]="item.checked"
+      (change)="onItemChange()" />
+    {{ item.key }}
+  </label>
+  <app-editable-input
+    [editMode]="editMode"
+    [value]="item.value"
+    [type]="getInputType(item.value)"
+    (valueChange)="onValueChange(item.key, $event)">
+  </app-editable-input>
+  <span *ngIf="!editMode"> {{ last ? '' : ', ' }} </span>
+</div>

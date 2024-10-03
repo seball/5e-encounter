@@ -43,7 +43,6 @@ $font-stack: 'Courier New', Courier, 'Lucida Sans Typewriter',
 
   input {
     @include theme-input;
-    height: 20px;
     background: transparent;
     color: inherit;
     border: none;
@@ -80,7 +79,7 @@ $font-stack: 'Courier New', Courier, 'Lucida Sans Typewriter',
     }
   }
 
-  .ng-select.custom {
+  .ng-select {
     color: var(--color-text);
     font-family: var(--font);
     font-size: 1em;

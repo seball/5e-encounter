@@ -17,6 +17,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { CharacterService } from '../../services/character.service';
+import { EditableInputComponent } from '../../shared/ui/editable-input/editable-input.component';
 
 @Component({
   selector: 'app-character',
@@ -26,6 +27,7 @@ import { CharacterService } from '../../services/character.service';
     FormsModule,
     NumberToStringPipe,
     ContextMenuComponent,
+    EditableInputComponent,
   ],
   templateUrl: './character.component.html',
   styleUrls: ['./character.component.scss'],
@@ -34,12 +36,24 @@ import { CharacterService } from '../../services/character.service';
 export class CharacterComponent {
   @Input() character!: Character;
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
-  @ViewChild('targetDiv', { static: true }) targetDiv!: ElementRef;
+  @ViewChild('characterCard', { static: true }) characterCard!: ElementRef;
   @Output() delete = new EventEmitter<string>();
 
   editMode: boolean = false;
   hpAdjustment: number = 0;
   constructor(private readonly characterService: CharacterService) {}
+
+  get name(): string {
+    return this.character.statblock?.name || this.character.name;
+  }
+
+  set name(value: string) {
+    if (this.character.statblock) {
+      this.character.statblock.name = value;
+    } else {
+      this.character.name = value;
+    }
+  }
 
   ngOnInit() {
     if (!this.character) {

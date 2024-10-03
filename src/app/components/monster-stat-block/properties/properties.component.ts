@@ -35,6 +35,7 @@ export class PropertiesComponent {
   }
 
   getSensesString(): string {
+    console.log(this.senses);
     const sensesParts: string[] = [];
     const senses = this.senses;
     Object.keys(senses).forEach(key => {

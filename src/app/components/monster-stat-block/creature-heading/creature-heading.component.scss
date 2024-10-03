@@ -1,0 +1,15 @@
+app-creature-heading {
+  h1 input {
+    min-width: 100%;
+    text-align: left !important;
+    font-size: 1em !important;
+  }
+
+  ng-select {
+    font-size: small !important;
+  }
+
+  .base-characteristics {
+    display: flex;
+  }
+}

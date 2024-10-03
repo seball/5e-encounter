@@ -1,11 +1,12 @@
-<div *ngIf="statblock() as statblock">
+<div *ngIf="statblock() as statblock" #statblockDiv>
   <hr class="border-top" />
   <div>
     <app-creature-heading
-      [name]="statblock.name"
-      [size]="statblock.size"
-      [type]="statblock.type"
-      [alignment]="statblock.alignment">
+      [editMode]="editMode"
+      [(name)]="statblock.name"
+      [(size)]="statblock.size"
+      [(type)]="statblock.type"
+      [(alignment)]="statblock.alignment">
     </app-creature-heading>
     <app-top-stats
       [armorClass]="statblock.armor_class[0].value"
@@ -45,4 +46,7 @@
     </app-actions>
   </div>
   <hr class="border-bottom" />
+  <app-context-menu
+    [targetElement]="statblockDiv"
+    [menuItems]="contextMenuItems"></app-context-menu>
 </div>

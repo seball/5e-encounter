@@ -1,57 +1,48 @@
 <div
   class="character-card"
   [ngClass]="{ 'edit-mode': editMode, 'view-mode': !editMode }"
-  #targetDiv>
+  #characterCard>
   <div class="row">
     <div class="col-9">
       <div class="name-section">
-        <div *ngIf="!editMode">{{ character.name }}</div>
-        <input *ngIf="editMode" type="text" [(ngModel)]="character.name" />
+        <app-editable-input
+          [editMode]="editMode"
+          [type]="'text'"
+          [(value)]="name"></app-editable-input>
       </div>
 
       <div class="hp-section">
-        <div *ngIf="!editMode">
-          HP: {{ character.currentHp }} / {{ character.maxHp }} | AC:
-          {{ character.armorClass }}
-        </div>
-        <div *ngIf="editMode">
-          <label for="currentHp">HP:</label>
-          <input
-            id="currentHp"
-            type="number"
-            [(ngModel)]="character.currentHp" />
-          <label for="maxHp"> / </label>
-          <input id="maxHp" type="number" [(ngModel)]="character.maxHp" />
-          <span> | </span>
-          <label for="armorClass">AC:</label>
-          <input
-            id="armorClass"
-            type="number"
-            [(ngModel)]="character.armorClass" />
-        </div>
+        <app-editable-input
+          [editMode]="editMode"
+          [type]="'number'"
+          [(value)]="character.currentHp"
+          prefix="HP:"></app-editable-input>
+        <app-editable-input
+          [editMode]="editMode"
+          [type]="'number'"
+          [(value)]="character.maxHp"
+          prefix=" / "></app-editable-input>
+
+        <app-editable-input
+          [editMode]="editMode"
+          [type]="'number'"
+          [(value)]="character.armorClass"
+          prefix="| AC:"></app-editable-input>
       </div>
 
       <div class="initiative-section">
-        <div *ngIf="!editMode">
-          Init: {{ character.initiative + character.initiativeModifier }} | Mod:
-          {{ character.initiativeModifier | numberToString }} | Roll:
-          {{ character.initiative }}
-        </div>
-        <div *ngIf="editMode">
-          Init: {{ character.initiative + character.initiativeModifier }}
-          <span> | </span>
-          <label for="initiativeModifier">Mod:</label>
-          <input
-            id="initiativeModifier"
-            type="number"
-            [(ngModel)]="character.initiativeModifier" />
-          <span> | </span>
-          <label for="initiative">Roll:</label>
-          <input
-            id="initiative"
-            type="number"
-            [(ngModel)]="character.initiative" />
-        </div>
+        Init: {{ character.initiative + character.initiativeModifier }}
+        <app-editable-input
+          [editMode]="editMode"
+          [type]="'number'"
+          [(value)]="character.initiativeModifier"
+          [useNumberSign]="true"
+          prefix="| Mod:"></app-editable-input>
+        <app-editable-input
+          [editMode]="editMode"
+          [type]="'number'"
+          [(value)]="character.initiative"
+          prefix="| Roll:"></app-editable-input>
       </div>
     </div>
 
@@ -73,6 +64,6 @@
     </div>
   </div>
   <app-context-menu
-    [targetElement]="targetDiv"
+    [targetElement]="characterCard"
     [menuItems]="contextMenuItems"></app-context-menu>
 </div>

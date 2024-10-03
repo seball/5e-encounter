@@ -1,5 +1,37 @@
 <div class="creature-heading">
-  <h1>{{ name }}</h1>
-  <h4>{{ size }} {{ type }}, {{ alignment }}</h4>
+  <h1>
+    <app-editable-input
+      [editMode]="editMode"
+      [type]="'text'"
+      [(value)]="name"
+      (valueChange)="nameChange.emit($event.toString())"></app-editable-input>
+  </h1>
+  <h4>
+    <div class="base-characteristics">
+      <app-editable-select
+        placeholder="Size"
+        [(value)]="size"
+        [editMode]="editMode"
+        [items]="sizeTypes"
+        (valueChange)="sizeChange.emit($event?.toString())">
+      </app-editable-select>
+      <span>&nbsp;</span>
+      <app-editable-select
+        placeholder="Type"
+        [(value)]="type"
+        [editMode]="editMode"
+        [items]="monsterTypes"
+        (valueChange)="typeChange.emit($event?.toString())">
+      </app-editable-select>
+      <span>,&nbsp;</span>
+      <app-editable-select
+        placeholder="Alignment"
+        [(value)]="alignment"
+        [editMode]="editMode"
+        [items]="alignmentTypes"
+        (valueChange)="alignmentChange.emit($event?.toString())">
+      </app-editable-select>
+    </div>
+  </h4>
 </div>
 <app-tapered-rule></app-tapered-rule>

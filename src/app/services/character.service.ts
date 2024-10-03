@@ -93,6 +93,7 @@ export class CharacterService {
     const updatedCharacters = this.charactersSignal().map(character =>
       character.id === updatedCharacter.id ? updatedCharacter : character
     );
+    console.log(updatedCharacter);
     this.updateCharacters(updatedCharacters);
   }
 

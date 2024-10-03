@@ -1,0 +1,13 @@
+<span *ngIf="!editMode">
+  <ng-container *ngIf="useNumberSign; else textValue">
+    {{ prefix }} {{ value | numberToString }}
+  </ng-container>
+  <ng-template #textValue> {{ prefix }} {{ value }} </ng-template>
+</span>
+<span *ngIf="editMode">
+  <label *ngIf="prefix">{{ prefix }}</label>
+  <input
+    [type]="type"
+    [(ngModel)]="value"
+    (ngModelChange)="onValueChange($event)" />
+</span>
