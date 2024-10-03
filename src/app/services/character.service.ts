@@ -2,20 +2,26 @@ import { Injectable, signal } from '@angular/core';
 import { Character } from '../interfaces/character.interface';
 import { v4 as uuid } from 'uuid';
 import { Dnd5eApiService } from './dnd5eapi.service';
-import { Monster } from '../interfaces/monster.interface';
+import { Statblock } from '../interfaces/statblock.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CharacterService {
   private charactersSignal = signal<Character[]>([]);
+  private activeCharacterIdSignal = signal<string | null>(null);
 
   constructor(private readonly dnd5eApiService: Dnd5eApiService) {
     this.loadCharacters();
+    this.loadActiveCharacterId();
   }
 
   get characters() {
     return this.charactersSignal.asReadonly();
+  }
+
+  get activeCharacterId() {
+    return this.activeCharacterIdSignal.asReadonly();
   }
 
   public addPredefinedCharacter(
@@ -24,7 +30,7 @@ export class CharacterService {
   ): void {
     this.dnd5eApiService.getMonster(monsterIndex).subscribe({
       next: monsterData => {
-        const newCharacter = this.createCharacterFromMonsterData(
+        const newCharacter = this.createCharacterFromStatblock(
           monsterData,
           characterType
         );
@@ -39,21 +45,22 @@ export class CharacterService {
     });
   }
 
-  private createCharacterFromMonsterData(
-    monsterData: Monster,
+  private createCharacterFromStatblock(
+    statblock: Statblock,
     characterType: 'ally' | 'enemy'
   ): Character {
-    const imageName = monsterData.index || 'default';
+    const imageName = statblock.index || 'default';
     return {
       avatarSrc: `assets/${imageName}.jpg`,
-      currentHp: monsterData.hit_points,
-      maxHp: monsterData.hit_points,
+      currentHp: statblock.hit_points,
+      maxHp: statblock.hit_points,
       id: uuid(),
       type: characterType,
       initiative: 0,
-      initiativeModifier: this.getInitiativeMod(monsterData.dexterity) || 0,
-      name: monsterData.name,
-      armorClass: monsterData.armor_class[0].value,
+      initiativeModifier: this.getInitiativeMod(statblock.dexterity) || 0,
+      name: statblock.name,
+      armorClass: statblock.armor_class[0].value,
+      statblock: statblock,
     };
   }
 
@@ -77,6 +84,9 @@ export class CharacterService {
   public deleteCharacter(id: string): void {
     const updatedCharacters = this.charactersSignal().filter(c => c.id !== id);
     this.updateCharacters(updatedCharacters);
+    if (this.activeCharacterIdSignal() === id) {
+      this.deactivateCharacter();
+    }
   }
 
   public updateCharacter(updatedCharacter: Character): void {
@@ -84,6 +94,28 @@ export class CharacterService {
       character.id === updatedCharacter.id ? updatedCharacter : character
     );
     this.updateCharacters(updatedCharacters);
+  }
+
+  public activateCharacter(id: string): void {
+    if (this.charactersSignal().some(c => c.id === id)) {
+      this.activeCharacterIdSignal.set(id);
+      this.saveActiveCharacterId();
+    }
+  }
+
+  public deactivateCharacter(): void {
+    this.activeCharacterIdSignal.set(null);
+    this.saveActiveCharacterId();
+  }
+
+  public getActiveCharacterStatblock(): Statblock | undefined {
+    const activeId = this.activeCharacterIdSignal();
+    if (!activeId) return undefined;
+
+    const activeCharacter = this.charactersSignal().find(
+      c => c.id === activeId
+    );
+    return activeCharacter?.statblock;
   }
 
   private updateCharacters(characters: Character[]): void {
@@ -101,7 +133,22 @@ export class CharacterService {
   private saveCharacters(): void {
     localStorage.setItem('characters', JSON.stringify(this.charactersSignal()));
   }
-  public getInitiativeMod(dexterity: number): number {
+
+  private loadActiveCharacterId(): void {
+    const savedActiveCharacterId = localStorage.getItem('activeCharacterId');
+    if (savedActiveCharacterId) {
+      this.activeCharacterIdSignal.set(savedActiveCharacterId);
+    }
+  }
+
+  private saveActiveCharacterId(): void {
+    localStorage.setItem(
+      'activeCharacterId',
+      this.activeCharacterIdSignal() || ''
+    );
+  }
+
+  private getInitiativeMod(dexterity: number): number {
     return Math.floor((dexterity - 10) / 2);
   }
 }

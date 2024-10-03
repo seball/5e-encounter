@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, map, of } from 'rxjs';
-import { Monster } from '../interfaces/monster.interface';
+import { Statblock } from '../interfaces/statblock.interface';
 
 export interface ApiResult {
   index: string;
@@ -22,9 +22,9 @@ export class Dnd5eApiService {
 
   constructor(private http: HttpClient) {}
 
-  getMonster(index: string): Observable<Monster> {
+  getMonster(index: string): Observable<Statblock> {
     return this.http
-      .get<Monster>(`${this.apiUrl}/monsters/${index}`)
+      .get<Statblock>(`${this.apiUrl}/monsters/${index}`)
       .pipe(catchError(this.handleError));
   }
 

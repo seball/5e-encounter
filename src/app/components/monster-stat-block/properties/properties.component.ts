@@ -3,7 +3,7 @@ import { TaperedRuleComponent } from '../../../shared/ui/tapered-rule/tapered-ru
 import {
   MonsterProficieny,
   Senses,
-} from '../../../interfaces/monster.interface';
+} from '../../../interfaces/statblock.interface';
 import { CommonModule } from '@angular/common';
 import { NumberToStringPipe } from '../../../shared/pipes/number-to-string.pipe';
 

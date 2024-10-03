@@ -1,4 +1,4 @@
-export interface Monster {
+export interface Statblock {
   index: string;
   name: string;
   size: string;

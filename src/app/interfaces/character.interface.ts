@@ -1,3 +1,5 @@
+import { Statblock } from './statblock.interface';
+
 export interface Character {
   armorClass: number;
   id: string;
@@ -8,4 +10,5 @@ export interface Character {
   initiativeModifier: number;
   initiative: number;
   avatarSrc: string;
+  statblock?: Statblock;
 }

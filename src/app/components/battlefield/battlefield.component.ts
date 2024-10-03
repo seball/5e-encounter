@@ -14,7 +14,6 @@ import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-bl
     CommonModule,
     CharacterComponent,
     MonsterStatBlockComponent,
-    MonsterStatBlockComponent,
   ],
   templateUrl: './battlefield.component.html',
   styleUrl: './battlefield.component.scss',

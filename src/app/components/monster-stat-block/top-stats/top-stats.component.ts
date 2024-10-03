@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TaperedRuleComponent } from '../../../shared/ui/tapered-rule/tapered-rule.component';
-import { Speed } from '../../../interfaces/monster.interface';
+import { Speed } from '../../../interfaces/statblock.interface';
 
 @Component({
   selector: 'app-top-stats',

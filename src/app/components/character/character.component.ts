@@ -76,11 +76,13 @@ export class CharacterComponent {
     this.delete.emit(this.character.id);
   }
 
+  viewCharacter(): void {
+    this.characterService.activateCharacter(this.character.id);
+  }
+
   contextMenuItems: MenuItem[] = [
     {
-      action: () => {
-        alert('view');
-      },
+      action: () => this.viewCharacter(),
       icon: ContextMenuIconType.View,
       title: 'View',
     },

@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Dnd5eApiService } from '../../services/dnd5eapi.service';
-import { Monster } from '../../interfaces/monster.interface';
+import { Component, computed, OnInit, ViewEncapsulation } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { CreatureHeadingComponent } from './creature-heading/creature-heading.component';
 import { TopStatsComponent } from './top-stats/top-stats.component';
@@ -8,6 +7,7 @@ import { AbilitiesComponent } from './abilities/abilities.component';
 import { PropertiesComponent } from './properties/properties.component';
 import { SpecialAbilitiesComponent } from './special-abilities/special-abilities.component';
 import { ActionsComponent } from './actions/actions.component';
+import { CharacterService } from '../../services/character.service';
 
 @Component({
   selector: 'app-monster-stat-block',
@@ -26,18 +26,11 @@ import { ActionsComponent } from './actions/actions.component';
   encapsulation: ViewEncapsulation.None,
 })
 export class MonsterStatBlockComponent implements OnInit {
-  monster!: Monster;
+  statblock = computed(() =>
+    this.characterService.getActiveCharacterStatblock()
+  );
 
-  constructor(private monsterService: Dnd5eApiService) {}
+  constructor(private readonly characterService: CharacterService) {}
 
-  ngOnInit() {
-    this.monsterService.getMonster('goblin').subscribe(
-      (data: Monster) => {
-        this.monster = data;
-      },
-      error => {
-        console.error('Error fetching monster data:', error);
-      }
-    );
-  }
+  ngOnInit() {}
 }
