@@ -8,6 +8,7 @@ import {
 import { TaperedRuleComponent } from '../../../shared/ui/tapered-rule/tapered-rule.component';
 import { EditableInputComponent } from '../../../shared/ui/editable-input/editable-input.component';
 import { EditableSelectComponent } from '../../../shared/ui/editable-select/editable-select.component';
+import { createStringEmitter } from '../../../utils/string-emitter.util';
 
 @Component({
   selector: 'app-creature-heading',
@@ -32,6 +33,11 @@ export class CreatureHeadingComponent {
   @Output() sizeChange = new EventEmitter<string>();
   @Output() typeChange = new EventEmitter<string>();
   @Output() alignmentChange = new EventEmitter<string>();
+
+  onNameChange = createStringEmitter(this.nameChange);
+  onSizeChange = createStringEmitter(this.sizeChange);
+  onTypeChange = createStringEmitter(this.typeChange);
+  onAlignmentChange = createStringEmitter(this.alignmentChange);
 
   sizeTypes = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
   monsterTypes = [

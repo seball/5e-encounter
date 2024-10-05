@@ -4,7 +4,7 @@
       [editMode]="editMode"
       [type]="'text'"
       [(value)]="name"
-      (valueChange)="nameChange.emit($event.toString())"></app-editable-input>
+      (valueChange)="onNameChange($event)"></app-editable-input>
   </h1>
   <h4>
     <div class="base-characteristics">
@@ -13,7 +13,7 @@
         [(value)]="size"
         [editMode]="editMode"
         [items]="sizeTypes"
-        (valueChange)="sizeChange.emit($event?.toString())">
+        (valueChange)="onSizeChange($event)">
       </app-editable-select>
       <span>&nbsp;</span>
       <app-editable-select
@@ -21,7 +21,7 @@
         [(value)]="type"
         [editMode]="editMode"
         [items]="monsterTypes"
-        (valueChange)="typeChange.emit($event?.toString())">
+        (valueChange)="onTypeChange($event)">
       </app-editable-select>
       <span>,&nbsp;</span>
       <app-editable-select
@@ -29,7 +29,7 @@
         [(value)]="alignment"
         [editMode]="editMode"
         [items]="alignmentTypes"
-        (valueChange)="alignmentChange.emit($event?.toString())">
+        (valueChange)="onAlignmentChange($event)">
       </app-editable-select>
     </div>
   </h4>

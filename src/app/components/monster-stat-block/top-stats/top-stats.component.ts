@@ -1,35 +1,68 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewEncapsulation,
+} from '@angular/core';
 import { TaperedRuleComponent } from '../../../shared/ui/tapered-rule/tapered-rule.component';
+import {
+  EditableCheckboxListComponent,
+  OptionConfig,
+} from '../../../shared/ui/editable-checkbox-list/editable-checkbox-list.component';
+import { EditableCheckboxComponent } from '../../../shared/ui/editable-checkbox/editable-checkbox.component';
 import { Speed } from '../../../interfaces/statblock.interface';
-import { EditableCheckboxListComponent } from '../../../shared/ui/editable-checkbox-list/editable-checkbox-list.component';
-
+import { CommonModule } from '@angular/common';
+import { EditableInputComponent } from '../../../shared/ui/editable-input/editable-input.component';
+import { createStringEmitter } from '../../../utils/string-emitter.util';
+import { createNumberEmitter } from '../../../utils/number-emitter.util';
 @Component({
   selector: 'app-top-stats',
   standalone: true,
-  imports: [TaperedRuleComponent, EditableCheckboxListComponent],
+  imports: [
+    TaperedRuleComponent,
+    EditableCheckboxListComponent,
+    EditableCheckboxComponent,
+    CommonModule,
+    EditableInputComponent,
+  ],
+  encapsulation: ViewEncapsulation.None,
   templateUrl: './top-stats.component.html',
   styleUrl: './top-stats.component.scss',
 })
 export class TopStatsComponent {
+  @Input() editMode: boolean = false;
   @Input() armorClass: number = 0;
   @Input() armorType: string = '';
   @Input() hitPoints: number = 0;
   @Input() hitDice: string = '';
-  @Input() speed: any = {};
+  @Input() speed: Speed = {};
+  @Input() id: string = '';
 
-  getSpeedString(): string {
-    const speedParts: string[] = [];
-    const speed = this.speed;
-    Object.keys(speed).forEach(key => {
-      const value = (speed as any)[key];
-      if (value) {
-        if (key === 'fly' && speed.hover) {
-          speedParts.push(`${key} ${value} (hover)`);
-        } else {
-          speedParts.push(`${key} ${value}`);
-        }
-      }
-    });
-    return speedParts.join(', ');
+  @Output() speedChange = new EventEmitter<{
+    [key: string]: string | number | boolean;
+  }>();
+
+  @Output() armorClassChange = new EventEmitter<number>();
+  @Output() armorTypeChange = new EventEmitter<string>();
+  @Output() hitPointsChange = new EventEmitter<number>();
+  @Output() hitDiceChange = new EventEmitter<string>();
+
+  onArmorClassChange = createNumberEmitter(this.armorClassChange);
+  onArmorTypeChange = createStringEmitter(this.armorTypeChange);
+  onHitPointsChange = createNumberEmitter(this.hitPointsChange);
+  onHitDiceChange = createStringEmitter(this.hitDiceChange);
+
+  options: OptionConfig = {
+    cover: 'checkbox',
+    fly: 'text',
+    swim: 'text',
+    burrow: 'text',
+    climb: 'text',
+    walk: 'text',
+  };
+
+  get speedItems() {
+    return this.speed as { [key: string]: string | number | boolean };
   }
 }

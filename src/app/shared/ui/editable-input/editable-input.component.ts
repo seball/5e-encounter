@@ -13,14 +13,15 @@ import { NumberToStringPipe } from '../../pipes/number-to-string.pipe';
 export class EditableInputComponent {
   @Input() editMode: boolean = false;
   @Input() useNumberSign: boolean = false;
-  @Input() value!: string | number;
-  @Input() type: 'text' | 'number' | 'checkbox' = 'text';
+  @Input() value: string | number = '';
+  @Input() type: 'text' | 'number' = 'text';
   @Input() prefix: string = '';
+  @Input() suffix: string = '';
   @Output() valueChange: EventEmitter<string | number> = new EventEmitter<
     string | number
   >();
 
   onValueChange(newValue: string | number) {
-    this.valueChange.emit(newValue);
+    this.valueChange.emit(String(newValue));
   }
 }

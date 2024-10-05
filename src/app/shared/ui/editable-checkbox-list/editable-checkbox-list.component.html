@@ -1,17 +1,46 @@
-<div *ngFor="let item of checkboxItems; let last = last" class="checkbox-item">
-  <label>
-    <input
-      *ngIf="editMode"
-      type="checkbox"
-      [(ngModel)]="item.checked"
-      (change)="onItemChange()" />
-    {{ item.key }}
-  </label>
-  <app-editable-input
-    [editMode]="editMode"
-    [value]="item.value"
-    [type]="getInputType(item.value)"
-    (valueChange)="onValueChange(item.key, $event)">
-  </app-editable-input>
-  <span *ngIf="!editMode"> {{ last ? '' : ', ' }} </span>
-</div>
+<ng-container *ngFor="let item of allItems">
+  <ng-container *ngIf="editMode">
+    <div class="checkbox-item">
+      <label>
+        <input
+          type="checkbox"
+          [(ngModel)]="item.checked"
+          (change)="onItemChange(item)" />
+        {{ item.key }}
+      </label>
+      <ng-container [ngSwitch]="item.type">
+        <app-editable-input
+          *ngSwitchCase="'text'"
+          [editMode]="true"
+          [value]="getStringValue(item)"
+          type="text"
+          (valueChange)="onValueChange(item.key, $event)"></app-editable-input>
+        <app-editable-input
+          *ngSwitchCase="'number'"
+          [editMode]="true"
+          [value]="getNumberValue(item)"
+          type="number"
+          (valueChange)="onValueChange(item.key, $event)"></app-editable-input>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!editMode && shouldDisplayItem(item)">
+    <span>{{ getItemKeytoString(item) }} </span>
+    <ng-container [ngSwitch]="item.type">
+      <app-editable-input
+        *ngSwitchCase="'text'"
+        [editMode]="false"
+        [value]="getStringValue(item)"
+        type="text"></app-editable-input>
+      <app-editable-input
+        *ngSwitchCase="'number'"
+        [editMode]="false"
+        [value]="getNumberValue(item)"
+        type="number"></app-editable-input>
+    </ng-container>
+    <ng-container *ngIf="!isLastDisplayedItem(item)">
+      <span>, </span>
+    </ng-container>
+  </ng-container>
+</ng-container>

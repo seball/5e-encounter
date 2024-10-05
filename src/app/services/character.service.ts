@@ -50,6 +50,7 @@ export class CharacterService {
     characterType: 'ally' | 'enemy'
   ): Character {
     const imageName = statblock.index || 'default';
+    statblock.id = uuid();
     return {
       avatarSrc: `assets/${imageName}.jpg`,
       currentHp: statblock.hit_points,

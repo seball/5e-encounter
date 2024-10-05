@@ -12,37 +12,37 @@
       </div>
 
       <div class="hp-section">
+        <span>HP: </span>
         <app-editable-input
           [editMode]="editMode"
           [type]="'number'"
-          [(value)]="character.currentHp"
-          prefix="HP:"></app-editable-input>
+          [(value)]="character.currentHp"></app-editable-input>
+        <span> / </span>
         <app-editable-input
           [editMode]="editMode"
           [type]="'number'"
-          [(value)]="character.maxHp"
-          prefix=" / "></app-editable-input>
-
+          [(value)]="character.maxHp"></app-editable-input>
+        <span> | AC:</span>
         <app-editable-input
           [editMode]="editMode"
           [type]="'number'"
-          [(value)]="character.armorClass"
-          prefix="| AC:"></app-editable-input>
+          [(value)]="character.armorClass"></app-editable-input>
       </div>
 
       <div class="initiative-section">
         Init: {{ character.initiative + character.initiativeModifier }}
+        <span> | Mod:</span>
         <app-editable-input
           [editMode]="editMode"
           [type]="'number'"
           [(value)]="character.initiativeModifier"
-          [useNumberSign]="true"
-          prefix="| Mod:"></app-editable-input>
+          [useNumberSign]="true"></app-editable-input>
+        <span> | Roll:</span>
+
         <app-editable-input
           [editMode]="editMode"
           [type]="'number'"
-          [(value)]="character.initiative"
-          prefix="| Roll:"></app-editable-input>
+          [(value)]="character.initiative"></app-editable-input>
       </div>
     </div>
 

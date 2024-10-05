@@ -8,12 +8,15 @@
       [(type)]="statblock.type"
       [(alignment)]="statblock.alignment">
     </app-creature-heading>
+    <!-- id for refreshing editable checkbox list on statblock change -->
     <app-top-stats
+      [id]="statblock.id"
+      [editMode]="editMode"
       [armorClass]="statblock.armor_class[0].value"
       [armorType]="statblock.armor_class[0].type"
       [hitPoints]="statblock.hit_points"
       [hitDice]="statblock.hit_dice"
-      [speed]="statblock.speed">
+      [(speed)]="statblock.speed">
     </app-top-stats>
 
     <app-abilities

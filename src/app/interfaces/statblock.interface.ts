@@ -1,4 +1,5 @@
 export interface Statblock {
+  id: string;
   index: string;
   name: string;
   size: string;

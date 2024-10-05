@@ -1,0 +1,10 @@
+<ng-container *ngIf="!editMode">
+  <span *ngIf="isChecked">{{ label }}</span>
+</ng-container>
+<ng-container *ngIf="editMode">
+  <input
+    type="checkbox"
+    [(ngModel)]="isChecked"
+    (ngModelChange)="onCheckboxChange($event)" />
+  <label>{{ label }}</label>
+</ng-container>
