@@ -6,7 +6,7 @@
           type="checkbox"
           [(ngModel)]="item.checked"
           (change)="onItemChange(item)" />
-        {{ item.key }}
+        {{ getDisplayValue(item.key) }}
       </label>
       <ng-container [ngSwitch]="item.type">
         <app-editable-input
@@ -26,14 +26,16 @@
   </ng-container>
 
   <ng-container *ngIf="!editMode && shouldDisplayItem(item)">
-    <span>{{ getItemKeytoString(item) }} </span>
+    <span>{{ getDisplayValue(item.key) }} </span>
     <ng-container [ngSwitch]="item.type">
       <app-editable-input
+        [valuePipe]="displayValuePipe"
         *ngSwitchCase="'text'"
         [editMode]="false"
         [value]="getStringValue(item)"
         type="text"></app-editable-input>
       <app-editable-input
+        [valuePipe]="displayValuePipe"
         *ngSwitchCase="'number'"
         [editMode]="false"
         [value]="getNumberValue(item)"

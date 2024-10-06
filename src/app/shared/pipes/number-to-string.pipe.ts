@@ -9,12 +9,10 @@ export class NumberToStringPipe implements PipeTransform {
     if (typeof value === 'string') {
       return value;
     }
-    if (value > 0) {
+    if (value >= 0) {
       return `+${value}`;
-    } else if (value < 0) {
-      return `${value}`;
     } else {
-      return '0';
+      return `${value}`;
     }
   }
 }

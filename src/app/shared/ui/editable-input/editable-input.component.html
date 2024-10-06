@@ -1,9 +1,4 @@
-<span *ngIf="!editMode">
-  <ng-container *ngIf="useNumberSign; else textValue">
-    {{ prefix }} {{ value | numberToString }}
-  </ng-container>
-  <ng-template #textValue>{{ prefix }}{{ value }}{{ suffix }}</ng-template>
-</span>
+<span *ngIf="!editMode">{{ prefix }}{{ displayValue }}{{ suffix }}</span>
 <span *ngIf="editMode">
   <input
     [type]="type"

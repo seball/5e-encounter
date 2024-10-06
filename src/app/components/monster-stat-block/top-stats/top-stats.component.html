@@ -1,49 +1,52 @@
-<div class="top-stats">
+<div [ngClass]="{ 'edit-mode': editMode, 'view-mode': !editMode }">
   <div class="property-line first">
     <h4>Armor Class</h4>
-    <span>&nbsp;</span>
-    <app-editable-input
-      [editMode]="editMode"
-      [type]="'number'"
-      [(value)]="armorClass"
-      (valueChange)="onArmorClassChange($event)"></app-editable-input>
-    <span>&nbsp;</span>
-    <app-editable-input
-      prefix="("
-      suffix=")"
-      [editMode]="editMode"
-      [type]="'text'"
-      [(value)]="armorType"
-      (valueChange)="onArmorTypeChange($event)"></app-editable-input>
+    <p>
+      <app-editable-input
+        [editMode]="editMode"
+        [type]="'number'"
+        [(value)]="armorClass"
+        (valueChange)="onArmorClassChange($event)"></app-editable-input>
+      <span>&nbsp;</span>
+      <app-editable-input
+        prefix="("
+        suffix=")"
+        [editMode]="editMode"
+        [type]="'text'"
+        [(value)]="armorType"
+        (valueChange)="onArmorTypeChange($event)"></app-editable-input>
+    </p>
   </div>
   <div class="property-line">
     <h4>Hit Points</h4>
-    <span>&nbsp;</span>
-    <app-editable-input
-      [editMode]="editMode"
-      [type]="'number'"
-      [(value)]="hitPoints"
-      (valueChange)="onHitPointsChange($event)"></app-editable-input>
-    <span>&nbsp;</span>
-    <app-editable-input
-      prefix="("
-      suffix=")"
-      [editMode]="editMode"
-      [type]="'text'"
-      [(value)]="hitDice"
-      (valueChange)="onHitDiceChange($event)"></app-editable-input>
+    <p>
+      <app-editable-input
+        [editMode]="editMode"
+        [type]="'number'"
+        [(value)]="hitPoints"
+        (valueChange)="onHitPointsChange($event)"></app-editable-input>
+      <span>&nbsp;</span>
+      <app-editable-input
+        prefix="("
+        suffix=")"
+        [editMode]="editMode"
+        [type]="'text'"
+        [(value)]="hitDice"
+        (valueChange)="onHitDiceChange($event)"></app-editable-input>
+    </p>
   </div>
   <div class="property-line last">
     <h4>Speed</h4>
-    <p [ngClass]="{ 'edit-speeds': editMode, 'view-speeds': !editMode }">
+    <div class="speed-container">
       <app-editable-checkbox-list
         [sessionId]="id"
         [editMode]="editMode"
-        [availableOptions]="options"
+        [availableOptions]="speedOptions"
         [items]="speedItems"
         (itemsChange)="speedChange.emit($event)">
       </app-editable-checkbox-list>
-    </p>
+    </div>
   </div>
 </div>
+
 <app-tapered-rule></app-tapered-rule>

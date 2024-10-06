@@ -1,6 +1,7 @@
-app-top-stats {
+app-properties {
   .edit-mode {
-    div.speed-container {
+    div.skills-container,
+    div.saving-throw-container {
       width: 100%;
       display: table;
     }
@@ -14,7 +15,8 @@ app-top-stats {
     }
   }
   .view-mode {
-    div.speed-container {
+    div.skills-container,
+    div.saving-throw-container {
       display: inline;
       margin-inline: 1em;
     }

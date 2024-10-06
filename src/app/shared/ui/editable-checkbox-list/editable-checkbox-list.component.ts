@@ -6,6 +6,7 @@ import {
   OnChanges,
   OnInit,
   Output,
+  PipeTransform,
   SimpleChanges,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -42,6 +43,8 @@ export class EditableCheckboxListComponent implements OnInit, OnChanges {
   @Input() editMode = false;
   @Input() availableOptions: OptionConfig = {};
   @Input() sessionId = '';
+  @Input() displayKeyPipe: PipeTransform | null = null;
+  @Input() displayValuePipe: PipeTransform | null = null;
   @Output() itemsChange = new EventEmitter<
     Record<string, string | number | boolean>
   >();
@@ -160,5 +163,12 @@ export class EditableCheckboxListComponent implements OnInit, OnChanges {
         checked: false,
         type,
       }));
+  }
+
+  getDisplayValue(key: string): string {
+    if (this.displayKeyPipe) {
+      return this.displayKeyPipe.transform(`${key}`);
+    }
+    return key;
   }
 }

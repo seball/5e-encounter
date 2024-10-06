@@ -39,6 +39,7 @@ export class CharacterComponent {
   @ViewChild('characterCard', { static: true }) characterCard!: ElementRef;
   @Output() delete = new EventEmitter<string>();
 
+  numberToString = new NumberToStringPipe();
   editMode: boolean = false;
   hpAdjustment: number = 0;
   constructor(private readonly characterService: CharacterService) {}
@@ -52,6 +53,20 @@ export class CharacterComponent {
       this.character.statblock.name = value;
     } else {
       this.character.name = value;
+    }
+  }
+
+  get armorClass(): number {
+    return (
+      this.character.statblock?.armor_class[0].value ||
+      this.character.armorClass
+    );
+  }
+  set armorClass(value: number) {
+    if (this.character.statblock) {
+      this.character.statblock.armor_class[0].value = value;
+    } else {
+      this.character.armorClass = value;
     }
   }
 

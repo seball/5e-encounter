@@ -26,18 +26,18 @@
         <app-editable-input
           [editMode]="editMode"
           [type]="'number'"
-          [(value)]="character.armorClass"></app-editable-input>
+          [(value)]="armorClass"></app-editable-input>
       </div>
 
       <div class="initiative-section">
         Init: {{ character.initiative + character.initiativeModifier }}
-        <span> | Mod:</span>
+        <span> | Mod: </span>
         <app-editable-input
+          [valuePipe]="numberToString"
           [editMode]="editMode"
           [type]="'number'"
-          [(value)]="character.initiativeModifier"
-          [useNumberSign]="true"></app-editable-input>
-        <span> | Roll:</span>
+          [(value)]="character.initiativeModifier"></app-editable-input>
+        <span> | Roll: </span>
 
         <app-editable-input
           [editMode]="editMode"

@@ -6,16 +6,15 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { TaperedRuleComponent } from '../../../shared/ui/tapered-rule/tapered-rule.component';
-import {
-  EditableCheckboxListComponent,
-  OptionConfig,
-} from '../../../shared/ui/editable-checkbox-list/editable-checkbox-list.component';
+import { EditableCheckboxListComponent } from '../../../shared/ui/editable-checkbox-list/editable-checkbox-list.component';
 import { EditableCheckboxComponent } from '../../../shared/ui/editable-checkbox/editable-checkbox.component';
 import { Speed } from '../../../interfaces/statblock.interface';
 import { CommonModule } from '@angular/common';
 import { EditableInputComponent } from '../../../shared/ui/editable-input/editable-input.component';
 import { createStringEmitter } from '../../../utils/string-emitter.util';
 import { createNumberEmitter } from '../../../utils/number-emitter.util';
+import { SPEED_OPTIONS } from '../../../config/option-configs';
+
 @Component({
   selector: 'app-top-stats',
   standalone: true,
@@ -31,6 +30,8 @@ import { createNumberEmitter } from '../../../utils/number-emitter.util';
   styleUrl: './top-stats.component.scss',
 })
 export class TopStatsComponent {
+  readonly speedOptions = SPEED_OPTIONS;
+
   @Input() editMode: boolean = false;
   @Input() armorClass: number = 0;
   @Input() armorType: string = '';
@@ -52,15 +53,6 @@ export class TopStatsComponent {
   onArmorTypeChange = createStringEmitter(this.armorTypeChange);
   onHitPointsChange = createNumberEmitter(this.hitPointsChange);
   onHitDiceChange = createStringEmitter(this.hitDiceChange);
-
-  options: OptionConfig = {
-    cover: 'checkbox',
-    fly: 'text',
-    swim: 'text',
-    burrow: 'text',
-    climb: 'text',
-    walk: 'text',
-  };
 
   get speedItems() {
     return this.speed as { [key: string]: string | number | boolean };

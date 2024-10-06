@@ -12,24 +12,27 @@
     <app-top-stats
       [id]="statblock.id"
       [editMode]="editMode"
-      [armorClass]="statblock.armor_class[0].value"
-      [armorType]="statblock.armor_class[0].type"
-      [hitPoints]="statblock.hit_points"
-      [hitDice]="statblock.hit_dice"
+      [(armorClass)]="statblock.armor_class[0].value"
+      [(armorType)]="statblock.armor_class[0].type"
+      [(hitPoints)]="statblock.hit_points"
+      [(hitDice)]="statblock.hit_dice"
       [(speed)]="statblock.speed">
     </app-top-stats>
 
     <app-abilities
-      [strength]="statblock.strength"
-      [dexterity]="statblock.dexterity"
-      [constitution]="statblock.constitution"
-      [intelligence]="statblock.intelligence"
-      [wisdom]="statblock.wisdom"
-      [charisma]="statblock.charisma">
+      [editMode]="editMode"
+      [(strength)]="statblock.strength"
+      [(dexterity)]="statblock.dexterity"
+      [(constitution)]="statblock.constitution"
+      [(intelligence)]="statblock.intelligence"
+      [(wisdom)]="statblock.wisdom"
+      [(charisma)]="statblock.charisma">
     </app-abilities>
 
     <app-properties
-      [proficiencies]="statblock.proficiencies"
+      [id]="statblock.id"
+      [editMode]="editMode"
+      [(proficiencies)]="statblock.proficiencies"
       [damageImmunities]="statblock.damage_immunities"
       [conditionImmunities]="statblock.condition_immunities"
       [senses]="statblock.senses"
