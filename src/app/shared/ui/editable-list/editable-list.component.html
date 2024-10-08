@@ -1,0 +1,36 @@
+<div class="editable-list-container" [ngClass]="{ 'input-hidden': !editMode }">
+  <input
+    #tagInput
+    type="text"
+    class="form-control"
+    [attr.data-ub-tag-separator]="separator"
+    [attr.data-ub-tag-duplicate]="allowDuplicates ? '' : null"
+    [attr.data-ub-tag-transform]="transform"
+    [attr.data-ub-tag-variant]="variant"
+    [attr.data-ub-tag-x-position]="xPosition"
+    [attr.data-ub-tag-max]="maxTags" />
+  <div class="tag-options-wrapper">
+    <div class="tag-options">
+      <button
+        *ngFor="let tag of tagOptions"
+        (click)="addTag(tag.name)"
+        [style.background-color]="tag.color"
+        class="tag-button"
+        [class.hidden]="isTagSelected(tag.name)">
+        {{ tag.name }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="!editMode">
+  <p>{{ items.join(', ') }}</p>
+</ng-container>
+<div *ngIf="!editMode" class="selected-tags">
+  <span *ngFor="let item of items" class="selected-tag">
+    <button
+      *ngIf="editMode"
+      (click)="removeTag(item)"
+      class="remove-tag"></button>
+  </span>
+</div>

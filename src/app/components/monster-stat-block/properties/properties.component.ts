@@ -20,14 +20,24 @@ import {
   Senses,
 } from '../../../interfaces/statblock.interface';
 import {
+  CONDITIONS_OPTIONS,
+  DAMAGE_SOURCES_TAGS,
   SAVING_THROWS_OPTIONS,
   SKILLS_OPTIONS,
 } from '../../../config/option-configs';
+import { EditableSelectComponent } from '../../../shared/ui/editable-select/editable-select.component';
+import { EditableListComponent } from '../../../shared/ui/editable-list/editable-list.component';
 
 @Component({
   selector: 'app-properties',
   standalone: true,
-  imports: [CommonModule, TaperedRuleComponent, EditableCheckboxListComponent],
+  imports: [
+    CommonModule,
+    TaperedRuleComponent,
+    EditableCheckboxListComponent,
+    EditableSelectComponent,
+    EditableListComponent,
+  ],
   templateUrl: './properties.component.html',
   styleUrls: ['./properties.component.scss'],
   encapsulation: ViewEncapsulation.None,
@@ -35,11 +45,15 @@ import {
 export class PropertiesComponent {
   readonly savingThrowsOptions = SAVING_THROWS_OPTIONS;
   readonly skillsOptions = SKILLS_OPTIONS;
+  readonly damageSourcesTags = DAMAGE_SOURCES_TAGS;
+  readonly conditionsOptions = CONDITIONS_OPTIONS;
 
   @Input() editMode = false;
   @Input() id = '';
   @Input() proficiencies: MonsterProficiency[] = [];
   @Input() damageImmunities: string[] = [];
+  @Input() damageVulnerabilities: string[] = [];
+  @Input() damageResistances: string[] = [];
   @Input() conditionImmunities: ConditionImmunities[] = [];
   @Input() senses: Senses = { passive_perception: 0 };
   @Input() languages = '';
@@ -47,10 +61,28 @@ export class PropertiesComponent {
   @Input() xp = 0;
 
   @Output() proficienciesChange = new EventEmitter<MonsterProficiency[]>();
+  @Output() conditionImmunitiesChange = new EventEmitter<
+    ConditionImmunities[]
+  >();
+  @Output() damageImmunitiesChange = new EventEmitter<string[]>();
+  @Output() damageVulnerabilitiesChange = new EventEmitter<string[]>();
+  @Output() damageResistancesChange = new EventEmitter<string[]>();
 
   readonly savingThrowFormatPipe = new SavingThrowFormatPipe();
   readonly numberToStringPipe = new NumberToStringPipe();
   readonly skillFormatPipe = new SkillFormatPipe();
+
+  onDamageImmunitiesChange($event: string[]): void {
+    this.damageImmunitiesChange.emit($event);
+  }
+
+  onDamageVulnerabilitiesChange($event: string[]): void {
+    this.damageVulnerabilitiesChange.emit($event);
+  }
+
+  onDamageResistancesChange($event: string[]): void {
+    this.damageResistancesChange.emit($event);
+  }
 
   get savingThrows(): Record<string, number> {
     return this.getProficienciesByType('saving-throw-');
@@ -77,16 +109,33 @@ export class PropertiesComponent {
     return this.languages || '--';
   }
 
+  get conditionImmunitiesRecord(): Record<string, boolean> {
+    return this.conditionImmunities.reduce(
+      (acc, condition) => {
+        acc[condition.index] = true;
+        return acc;
+      },
+      {} as Record<string, boolean>
+    );
+  }
+
+  onConditionImmunitiesChange(
+    record: Record<string, string | number | boolean>
+  ): void {
+    const newConditionImmunities = Object.keys(record)
+      .filter(key => record[key] === true)
+      .map(index => ({
+        index: index,
+        name: index.charAt(0).toUpperCase() + index.slice(1),
+        url: `/api/conditions/${index}`,
+      }));
+
+    this.conditionImmunities = newConditionImmunities;
+    this.conditionImmunitiesChange.emit(this.conditionImmunities);
+  }
+
   isRecordEmpty(record: Record<string, string | number | boolean>): boolean {
     return Object.keys(record).length === 0 && !this.editMode;
-  }
-
-  getDamageImmunitiesString(): string {
-    return this.damageImmunities.join(', ');
-  }
-
-  getConditionImmunitiesString(): string {
-    return this.conditionImmunities.map(c => c.name).join(', ');
   }
 
   getSensesString(): string {
@@ -113,15 +162,14 @@ export class PropertiesComponent {
   onSavingThrowsChange(
     values: Record<string, string | number | boolean>
   ): void {
-    this.savingThrows = this.convertToNumberRecord(values);
+    this.savingThrows = this.assertToNumberRecord(values);
   }
 
   onSkillsChange(values: Record<string, string | number | boolean>): void {
-    this.skills = this.convertToNumberRecord(values);
+    this.skills = this.assertToNumberRecord(values);
   }
 
-  // this will be always a number in this case, don't worry
-  private convertToNumberRecord(
+  private assertToNumberRecord(
     record: Record<string, string | number | boolean>
   ): Record<string, number> {
     return record as Record<string, number>;

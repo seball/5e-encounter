@@ -164,6 +164,9 @@ export class EditableCheckboxListComponent implements OnInit, OnChanges {
         type,
       }));
   }
+  isNumberOrText(item: CheckboxItem): boolean {
+    return item.type === 'number' || item.type === 'text';
+  }
 
   getDisplayValue(key: string): string {
     if (this.displayKeyPipe) {

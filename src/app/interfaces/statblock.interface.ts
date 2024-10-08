@@ -33,7 +33,6 @@ export interface Senses {
   truesight?: string;
 }
 
-// Proficiency interfaces
 export type Proficiency = APIReference;
 export type ConditionImmunities = APIReference;
 

@@ -27,6 +27,7 @@
     "lucide-angular": "^0.446.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "use-bootstrap-tag": "^2.2.2",
     "uuid": "^10.0.0",
     "zone.js": "~0.14.10"
   },

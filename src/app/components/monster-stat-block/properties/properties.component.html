@@ -27,13 +27,68 @@
         (itemsChange)="onSkillsChange($event)"></app-editable-checkbox-list>
     </div>
   </div>
-  <div *ngIf="damageImmunities.length" class="property-line">
+
+  <div
+    class="property-line damage-sources"
+    *ngIf="damageImmunities.length || editMode">
     <h4>Damage Immunities</h4>
-    <p>{{ getDamageImmunitiesString() }}</p>
+    <app-editable-list
+      [tagOptions]="damageSourcesTags"
+      [editMode]="editMode"
+      [separator]="';'"
+      [items]="damageImmunities"
+      (onValueChange)="onDamageImmunitiesChange($event)"
+      [allowDuplicates]="false"
+      variant="primary"
+      xPosition="left"
+      [maxTags]="20"></app-editable-list>
   </div>
-  <div *ngIf="conditionImmunities.length" class="property-line">
+
+  <div
+    class="property-line damage-sources"
+    *ngIf="damageResistances.length || editMode">
+    <h4>Damage Resistances</h4>
+    <app-editable-list
+      [tagOptions]="damageSourcesTags"
+      [editMode]="editMode"
+      [separator]="';'"
+      [items]="damageResistances"
+      (onValueChange)="onDamageResistancesChange($event)"
+      [allowDuplicates]="false"
+      variant="primary"
+      xPosition="left"
+      [maxTags]="20"></app-editable-list>
+  </div>
+
+  <div
+    class="property-line damage-sources"
+    *ngIf="damageVulnerabilities.length || editMode">
+    <h4>Damage Vulnerabilities</h4>
+    <app-editable-list
+      [tagOptions]="damageSourcesTags"
+      [editMode]="editMode"
+      [separator]="';'"
+      [items]="damageVulnerabilities"
+      (onValueChange)="onDamageVulnerabilitiesChange($event)"
+      [allowDuplicates]="false"
+      variant="primary"
+      xPosition="left"
+      [maxTags]="20"></app-editable-list>
+  </div>
+
+  <div class="property-line" *ngIf="conditionImmunities.length || editMode">
     <h4>Condition Immunities</h4>
-    <!-- <p>{{ getConditionImmunitesString() }}</p> -->
+    <div class="condition-immunities-container">
+      <app-editable-checkbox-list
+        [editMode]="editMode"
+        [sessionId]="id"
+        [editMode]="editMode"
+        [items]="conditionImmunitiesRecord"
+        [availableOptions]="conditionsOptions"
+        (itemsChange)="
+          onConditionImmunitiesChange($event)
+        "></app-editable-checkbox-list>
+    </div>
   </div>
   <div class="property-line">
     <h4>Senses</h4>

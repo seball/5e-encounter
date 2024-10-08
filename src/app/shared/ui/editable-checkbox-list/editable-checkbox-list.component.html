@@ -26,7 +26,8 @@
   </ng-container>
 
   <ng-container *ngIf="!editMode && shouldDisplayItem(item)">
-    <span>{{ getDisplayValue(item.key) }} </span>
+    <span>{{ getDisplayValue(item.key) }}</span>
+    <span *ngIf="isNumberOrText(item)">&nbsp;</span>
     <ng-container [ngSwitch]="item.type">
       <app-editable-input
         [valuePipe]="displayValuePipe"

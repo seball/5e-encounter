@@ -1,5 +1,9 @@
 app-properties {
   .edit-mode {
+    .damage-sources {
+      margin: 1em 0;
+    }
+    div.condition-immunities-container,
     div.skills-container,
     div.saving-throw-container {
       width: 100%;
@@ -12,9 +16,13 @@ app-properties {
         float: right;
         margin-right: 10px;
       }
+      label {
+        vertical-align: sub;
+      }
     }
   }
   .view-mode {
+    div.condition-immunities-container,
     div.skills-container,
     div.saving-throw-container {
       display: inline;

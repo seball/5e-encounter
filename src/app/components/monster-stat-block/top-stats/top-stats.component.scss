@@ -11,6 +11,9 @@ app-top-stats {
         float: right;
         margin-right: 10px;
       }
+      label {
+        vertical-align: sub;
+      }
     }
   }
   .view-mode {

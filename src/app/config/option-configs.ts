@@ -38,3 +38,35 @@ export const SPEED_OPTIONS: OptionConfig = {
   climb: 'text',
   walk: 'text',
 };
+
+export const CONDITIONS_OPTIONS: OptionConfig = {
+  poisoned: 'checkbox',
+  exhaustion: 'checkbox',
+  grappled: 'checkbox',
+  paralyzed: 'checkbox',
+  petrified: 'checkbox',
+  prone: 'checkbox',
+  restrained: 'checkbox',
+  unconscious: 'checkbox',
+  charmed: 'checkbox',
+  frightened: 'checkbox',
+  blinded: 'checkbox',
+  deafened: 'checkbox',
+  stunned: 'checkbox',
+};
+
+export const DAMAGE_SOURCES_TAGS = [
+  { name: 'acid', color: '#7FBC8C' },
+  { name: 'bludgeoning', color: '#8C8C8C' },
+  { name: 'cold', color: '#7FB3BC' },
+  { name: 'fire', color: '#BC7F7F' },
+  { name: 'force', color: '#B57FBC' },
+  { name: 'lightning', color: '#BCB77F' },
+  { name: 'necrotic', color: '#6B5B95' },
+  { name: 'piercing', color: '#BC9F7F' },
+  { name: 'poison', color: '#7FBC9F' },
+  { name: 'psychic', color: '#BC7FB3' },
+  { name: 'radiant', color: '#BCBC7F' },
+  { name: 'slashing', color: '#9F7FBC' },
+  { name: 'thunder', color: '#7F95BC' },
+];
