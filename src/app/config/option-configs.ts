@@ -55,6 +55,14 @@ export const CONDITIONS_OPTIONS: OptionConfig = {
   stunned: 'checkbox',
 };
 
+export const SENSES_OPTIONS: OptionConfig = {
+  passive_perception: 'number',
+  truesight: 'text',
+  blindsight: 'text',
+  darkvision: 'text',
+  tremorsense: 'text',
+};
+
 export const DAMAGE_SOURCES_TAGS = [
   { name: 'acid', color: '#7FBC8C' },
   { name: 'bludgeoning', color: '#8C8C8C' },

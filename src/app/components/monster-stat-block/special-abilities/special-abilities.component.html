@@ -1,4 +1,6 @@
-<div class="property-block" *ngFor="let ability of abilities">
-  <h4>{{ ability.name }}.</h4>
-  <p>{{ ability.desc }}</p>
+<div class="special-abilities">
+  <app-editable-name-description-array
+    (itemsChange)="onAbilitiesChange($event)"
+    [items]="abilities"
+    [editMode]="editMode"></app-editable-name-description-array>
 </div>

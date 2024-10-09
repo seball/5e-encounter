@@ -1,0 +1,55 @@
+h4 {
+  font-size: 1.5em;
+}
+
+.name-input {
+  width: 90%;
+  max-width: none;
+  font-size: 1.5em;
+  text-align: start;
+  border-radius: 0;
+}
+.remove-button {
+  color: rgb(188, 127, 127);
+  width: 10%;
+  background-color: transparent;
+  border: none;
+}
+.usage-container {
+  display: inline;
+}
+
+.remove-button:hover,
+.remove-button:active {
+  background-color: transparent;
+  border: none;
+}
+
+.rest-container {
+  display: inline;
+  label {
+    margin-left: 1em;
+  }
+}
+.recharge-container,
+.per-day-input {
+  display: inline;
+  margin-inline: 1em;
+}
+
+.desc-input {
+  margin-top: 1em;
+  width: 100%;
+  height: 4em;
+  color: var(--color-text);
+  background-color: rgba(236, 236, 236, 0.1);
+}
+
+.add-button {
+  white-space: pre;
+  border: dashed 1px;
+  font-size: 1.3em;
+  margin-top: 1em;
+  background-color: transparent;
+  margin-bottom: 1em;
+}

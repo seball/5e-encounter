@@ -37,13 +37,15 @@
       [(damageResistances)]="statblock.damage_resistances"
       [(damageVulnerabilities)]="statblock.damage_vulnerabilities"
       [(conditionImmunities)]="statblock.condition_immunities"
-      [senses]="statblock.senses"
-      [languages]="statblock.languages"
-      [challengeRating]="statblock.challenge_rating"
-      [xp]="statblock.xp">
+      [(senses)]="statblock.senses"
+      [(languages)]="statblock.languages"
+      [(challengeRating)]="statblock.challenge_rating"
+      [(xp)]="statblock.xp">
     </app-properties>
 
-    <app-special-abilities [abilities]="statblock.special_abilities">
+    <app-special-abilities
+      [editMode]="editMode"
+      [(abilities)]="statblock.special_abilities">
     </app-special-abilities>
   </div>
   <div>

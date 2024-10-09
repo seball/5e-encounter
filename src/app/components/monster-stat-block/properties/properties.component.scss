@@ -3,6 +3,16 @@ app-properties {
     .damage-sources {
       margin: 1em 0;
     }
+    div.languages-container {
+      input {
+        width: 50%;
+        max-width: none;
+        text-align: start;
+        margin-bottom: 1em;
+      }
+    }
+
+    div.senses-container,
     div.condition-immunities-container,
     div.skills-container,
     div.saving-throw-container {
@@ -22,6 +32,9 @@ app-properties {
     }
   }
   .view-mode {
+    div.challenge-container,
+    div.languages-container,
+    div.senses-container,
     div.condition-immunities-container,
     div.skills-container,
     div.saving-throw-container {

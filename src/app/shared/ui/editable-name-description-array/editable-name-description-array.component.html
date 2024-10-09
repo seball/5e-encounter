@@ -1,0 +1,92 @@
+<div *ngFor="let item of items; let i = index" class="item-container">
+  <div *ngIf="!editMode">
+    <h4>
+      {{ item.name }}
+      <ng-container [ngSwitch]="getUsageType(item)">
+        <ng-container *ngSwitchCase="'per day'"
+          >({{ item.usage?.times }}/Day)</ng-container
+        >
+        <ng-container *ngSwitchCase="'recharge on roll'"
+          >(Recharge
+          {{ getRechargeString(item.usage?.min_value) }})</ng-container
+        >
+        <ng-container *ngSwitchCase="'recharge after rest'"
+          >(Recharge after a
+          {{ getRestTypeString(item.usage?.rest_types) }} rest)</ng-container
+        >
+      </ng-container>
+    </h4>
+    <p>{{ item.desc }}</p>
+  </div>
+  <div *ngIf="editMode">
+    <div class="name-container">
+      <input
+        class="name-input"
+        [(ngModel)]="item.name"
+        (ngModelChange)="onItemChange()"
+        placeholder="Name" />
+      <button class="remove-button" (click)="removeItem(i)">
+        <lucide-angular
+          [img]="deleteIcon"
+          [size]="20"
+          class="context-menu-icon"></lucide-angular>
+      </button>
+      <div class="usage-container">
+        <ng-container *ngFor="let type of usageTypes">
+          <label>
+            <input
+              type="radio"
+              [value]="type"
+              [checked]="getUsageType(item) === type"
+              (change)="updateUsage(item, type)" />
+            {{ type }}
+          </label>
+        </ng-container>
+      </div>
+      <ng-container [ngSwitch]="getUsageType(item)">
+        <input
+          class="per-day-input"
+          *ngSwitchCase="'per day'"
+          type="number"
+          [ngModel]="item.usage?.times"
+          (ngModelChange)="updateUsageTimes(item, $event)"
+          placeholder="Uses per day" />
+        <div *ngSwitchCase="'recharge on roll'" class="recharge-container">
+          <input
+            class="recharge-input"
+            min="2"
+            max="6"
+            [ngModel]="item.usage?.min_value"
+            (ngModelChange)="updateUsageMinValue(item, $event)"
+            type="number" />
+          <span class="recharge-text"> - 6</span>
+        </div>
+        <div *ngSwitchCase="'recharge after rest'" class="rest-container">
+          <ng-container
+            class="rest-types-container"
+            *ngFor="let restType of restTypes">
+            <label>
+              <input
+                type="checkbox"
+                [checked]="item.usage?.rest_types?.includes(restType)"
+                (change)="toggleRestType(item, restType)" />
+              {{ restType }}
+            </label>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
+    <textarea
+      class="desc-input"
+      [(ngModel)]="item.desc"
+      (ngModelChange)="onItemChange()"
+      placeholder="Description"></textarea>
+  </div>
+</div>
+<button *ngIf="editMode" (click)="addItem()" class="add-button">
+  <lucide-angular
+    [img]="addIcon"
+    [size]="20"
+    class="context-menu-icon"></lucide-angular>
+  <span class="add-text"> ADD NEW ABILITY </span>
+</button>

@@ -92,15 +92,44 @@
   </div>
   <div class="property-line">
     <h4>Senses</h4>
-    <p>{{ getSensesString() }}</p>
+    <div class="senses-container">
+      <app-editable-checkbox-list
+        [displayKeyPipe]="sensesFormatPipe"
+        [sessionId]="id"
+        [editMode]="editMode"
+        [availableOptions]="sensesOptions"
+        [items]="sensesItems"
+        (itemsChange)="sensesChange.emit($event)">
+      </app-editable-checkbox-list>
+    </div>
   </div>
   <div class="property-line">
     <h4>Languages</h4>
-    <p>{{ languagesString }}</p>
+    <div class="languages-container">
+      <span *ngIf="!languages && !editMode">--</span>
+      <app-editable-input
+        [editMode]="editMode"
+        [(value)]="languages"></app-editable-input>
+    </div>
   </div>
   <div class="property-line">
     <h4>Challenge</h4>
-    <p>{{ challengeRating }} ({{ xp }} XP)</p>
+    <div class="challenge-container">
+      <app-editable-input
+        [type]="'number'"
+        [value]="challengeRating"
+        (valueChange)="onChallengeRatingChange($event)"
+        [editMode]="editMode"></app-editable-input>
+      <span>&nbsp;</span>
+      <app-editable-input
+        [type]="'number'"
+        [editMode]="editMode"
+        [value]="xp"
+        (valueChange)="onXpChange($event)"
+        prefix="("
+        suffix=")"></app-editable-input>
+      <span> XP</span>
+    </div>
   </div>
+  <app-tapered-rule></app-tapered-rule>
 </div>
-<app-tapered-rule></app-tapered-rule>

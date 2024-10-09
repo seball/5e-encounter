@@ -23,10 +23,14 @@ import {
   CONDITIONS_OPTIONS,
   DAMAGE_SOURCES_TAGS,
   SAVING_THROWS_OPTIONS,
+  SENSES_OPTIONS,
   SKILLS_OPTIONS,
 } from '../../../config/option-configs';
 import { EditableSelectComponent } from '../../../shared/ui/editable-select/editable-select.component';
 import { EditableListComponent } from '../../../shared/ui/editable-list/editable-list.component';
+import { SensesFormatPipe } from '../../../shared/pipes/senses-format.pipe';
+import { EditableInputComponent } from '../../../shared/ui/editable-input/editable-input.component';
+import { createNumberEmitter } from '../../../utils/number-emitter.util';
 
 @Component({
   selector: 'app-properties',
@@ -37,6 +41,7 @@ import { EditableListComponent } from '../../../shared/ui/editable-list/editable
     EditableCheckboxListComponent,
     EditableSelectComponent,
     EditableListComponent,
+    EditableInputComponent,
   ],
   templateUrl: './properties.component.html',
   styleUrls: ['./properties.component.scss'],
@@ -47,6 +52,7 @@ export class PropertiesComponent {
   readonly skillsOptions = SKILLS_OPTIONS;
   readonly damageSourcesTags = DAMAGE_SOURCES_TAGS;
   readonly conditionsOptions = CONDITIONS_OPTIONS;
+  readonly sensesOptions = SENSES_OPTIONS;
 
   @Input() editMode = false;
   @Input() id = '';
@@ -67,10 +73,23 @@ export class PropertiesComponent {
   @Output() damageImmunitiesChange = new EventEmitter<string[]>();
   @Output() damageVulnerabilitiesChange = new EventEmitter<string[]>();
   @Output() damageResistancesChange = new EventEmitter<string[]>();
+  @Output() sensesChange = new EventEmitter<{
+    [key: string]: string | number | boolean;
+  }>();
+  @Output() languagesChange = new EventEmitter<string>();
+  @Output() challengeRatingChange = new EventEmitter<number>();
+  @Output() xpChange = new EventEmitter<number>();
 
   readonly savingThrowFormatPipe = new SavingThrowFormatPipe();
   readonly numberToStringPipe = new NumberToStringPipe();
   readonly skillFormatPipe = new SkillFormatPipe();
+  readonly sensesFormatPipe = new SensesFormatPipe();
+
+  onChallengeRatingChange = createNumberEmitter(this.challengeRatingChange);
+  onXpChange = createNumberEmitter(this.xpChange);
+  get sensesItems() {
+    return this.senses as Record<string, string | number>;
+  }
 
   onDamageImmunitiesChange($event: string[]): void {
     this.damageImmunitiesChange.emit($event);

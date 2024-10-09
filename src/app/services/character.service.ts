@@ -98,6 +98,16 @@ export class CharacterService {
     this.updateCharacters(updatedCharacters);
   }
 
+  public updateCharacterByStatblockId(statblockId: string): void {
+    const updatedCharacter = this.charactersSignal().find(
+      c => c.statblock?.id === statblockId
+    );
+    if (!updatedCharacter) {
+      return;
+    }
+    this.updateCharacter(updatedCharacter);
+  }
+
   public activateCharacter(id: string): void {
     if (this.charactersSignal().some(c => c.id === id)) {
       this.activeCharacterIdSignal.set(id);

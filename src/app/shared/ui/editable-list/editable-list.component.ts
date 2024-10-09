@@ -8,7 +8,6 @@ import {
   ElementRef,
   AfterViewInit,
   ViewEncapsulation,
-  OnInit,
 } from '@angular/core';
 import UseBootstrapTag from 'use-bootstrap-tag';
 
@@ -32,14 +31,13 @@ interface UseBootstrapTagReturnType {
   styleUrls: ['./editable-list.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class EditableListComponent implements OnInit, AfterViewInit {
+export class EditableListComponent implements AfterViewInit {
   @ViewChild('tagInput') private tagInputElement!: ElementRef<HTMLInputElement>;
 
   private _items: string[] = [];
   @Input() set items(value: string[]) {
     if (this.areArraysDifferent(this._items, value)) {
       this._items = value;
-      this.updateTagInputValues();
     }
   }
   get items(): string[] {
@@ -61,12 +59,6 @@ export class EditableListComponent implements OnInit, AfterViewInit {
   @Output() onValueChange = new EventEmitter<string[]>();
 
   private tagInput: UseBootstrapTagReturnType | null = null;
-
-  ngOnInit(): void {
-    if (this._items.length === 0) {
-      this._items = this.getValues();
-    }
-  }
 
   ngAfterViewInit(): void {
     this.initializeTagInput();

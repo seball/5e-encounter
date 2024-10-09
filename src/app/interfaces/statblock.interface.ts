@@ -9,7 +9,7 @@ interface APIReference {
   url: URL;
 }
 
-interface NameDescription {
+export interface NameDescription {
   name: string;
   desc: string;
 }
@@ -26,7 +26,7 @@ export interface Speed {
 
 // Senses interface
 export interface Senses {
-  passive_perception: number;
+  passive_perception?: number;
   blindsight?: string;
   darkvision?: string;
   tremorsense?: string;
@@ -53,18 +53,20 @@ interface Damage {
   damage_dice: DiceRoll;
 }
 
+export interface Usage {
+  type?: 'per day' | 'recharge on roll' | 'recharge after rest';
+  dice?: DiceRoll;
+  min_value?: number;
+  times?: number;
+  rest_types?: string[];
+}
+
 // Action interfaces
-interface BaseAction extends NameDescription {
+export interface Action extends NameDescription {
   attack_bonus?: number;
   damage?: Damage[];
+  usage?: Usage;
 }
-
-interface MultiAttackAction extends BaseAction {
-  multiattack_type: string;
-  actions: BaseAction[];
-}
-
-type Action = BaseAction | MultiAttackAction;
 
 export interface Statblock {
   id: string;

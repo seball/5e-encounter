@@ -69,6 +69,7 @@ export class MonsterStatBlockComponent implements OnInit {
   }
   save(): void {
     this.editMode = false;
+    this.characterService.updateCharacterByStatblockId(this.statblock()!.id);
   }
 
   constructor(private readonly characterService: CharacterService) {}
