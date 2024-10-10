@@ -7,8 +7,8 @@
     </div>
     <div class="col-3">
       <h2>Allies</h2>
-      <div [@listAnimation]="animationTrigger()">
-        <div *ngFor="let character of allies(); trackBy: trackByFn">
+      <div>
+        <div *ngFor="let character of allies()">
           <app-character
             [character]="character"
             (delete)="onCharacterDelete($event)">
@@ -22,8 +22,8 @@
     </div>
     <div class="col-3">
       <h2>Enemies</h2>
-      <div [@listAnimation]="animationTrigger()">
-        <div *ngFor="let character of enemies(); trackBy: trackByFn">
+      <div>
+        <div *ngFor="let character of enemies()">
           <app-character
             [character]="character"
             (delete)="onCharacterDelete($event)">
