@@ -1,55 +1,99 @@
+$font-size-large: 1.5em;
+$font-size-medium: 1.3em;
+$spacing-small: 1em;
+$spacing-medium: 2em;
+$remove-button-width: 40px;
+$remove-button-overalp: 1px;
+
+@mixin flex-container {
+  display: inline-block;
+  margin-top: $spacing-small;
+}
+
+@mixin input-base {
+  max-width: none;
+  border-radius: 0;
+  color: var(--color-text);
+  background-color: rgba(236, 236, 236, 0.1);
+}
+
 h4 {
-  font-size: 1.5em;
+  font-size: $font-size-large;
+}
+
+.item-container.edit-mode {
+  border: 1px solid var(--color-text);
+  margin-bottom: $spacing-medium;
+}
+
+.name-container {
+  display: flex;
+  align-items: stretch;
+}
+
+.name-input,
+.remove-button {
+  font-size: $font-size-large;
+  @include input-base;
 }
 
 .name-input {
-  width: 90%;
-  max-width: none;
-  font-size: 1.5em;
-  text-align: start;
-  border-radius: 0;
+  flex-grow: 1;
+  min-width: 0;
 }
+
 .remove-button {
+  position: relative;
+  left: $remove-button-overalp;
+  bottom: $remove-button-overalp;
+  flex: 0 0 $remove-button-width;
+  border: solid 2px;
+  padding: 3px;
+  text-align: center;
   color: rgb(188, 127, 127);
-  width: 10%;
   background-color: transparent;
-  border: none;
-}
-.usage-container {
-  display: inline;
-}
+  cursor: pointer;
 
-.remove-button:hover,
-.remove-button:active {
-  background-color: transparent;
-  border: none;
-}
-
-.rest-container {
-  display: inline;
-  label {
-    margin-left: 1em;
+  &:active,
+  &:hover {
+    border: solid 2px var(--color-text);
+    background-color: rgb(188, 127, 127);
+    color: var(--color-text);
   }
-}
-.recharge-container,
-.per-day-input {
-  display: inline;
-  margin-inline: 1em;
 }
 
 .desc-input {
-  margin-top: 1em;
+  @include input-base;
+  margin-top: $spacing-small;
+  position: relative;
+  top: 6px;
   width: 100%;
   height: 4em;
-  color: var(--color-text);
-  background-color: rgba(236, 236, 236, 0.1);
+}
+
+.usage-container {
+  margin-left: $spacing-small;
+}
+
+.usage-container,
+.rest-container,
+.recharge-container,
+.per-day-input {
+  @include flex-container;
+
+  label {
+    margin-right: $spacing-medium;
+  }
+}
+
+.rest-container label {
+  margin-left: $spacing-small;
 }
 
 .add-button {
   white-space: pre;
   border: dashed 1px;
-  font-size: 1.3em;
-  margin-top: 1em;
+  font-size: $font-size-medium;
+  margin: $spacing-small 0;
   background-color: transparent;
-  margin-bottom: 1em;
 }

@@ -1,5 +1,6 @@
 <div class="special-abilities">
   <app-editable-name-description-array
+    [buttonText]="'ADD NEW ABILITY'"
     (itemsChange)="onAbilitiesChange($event)"
     [items]="abilities"
     [editMode]="editMode"></app-editable-name-description-array>

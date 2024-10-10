@@ -1,0 +1,9 @@
+<div *ngIf="legendaryActions.length || editMode">
+  <h2>Legendary Actions</h2>
+  <hr class="border-top" />
+  <app-editable-name-description-array
+    [buttonText]="'ADD NEW LEGENDARY ACTION'"
+    (itemsChange)="onLegendaryActionsChange($event)"
+    [items]="legendaryActions"
+    [editMode]="editMode"></app-editable-name-description-array>
+</div>

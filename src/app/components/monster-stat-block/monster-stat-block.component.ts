@@ -20,6 +20,7 @@ import {
   MenuItem,
 } from '../../shared/ui/context-menu/context-menu.component';
 import { ContextMenuIconType } from '../../shared/ui/context-menu/context-menu-item/context-menu-item.component';
+import { LegendaryActionsComponent } from './legendary-actions/legendary-actions.component';
 
 @Component({
   selector: 'app-monster-stat-block',
@@ -33,6 +34,7 @@ import { ContextMenuIconType } from '../../shared/ui/context-menu/context-menu-i
     SpecialAbilitiesComponent,
     ActionsComponent,
     ContextMenuComponent,
+    LegendaryActionsComponent,
   ],
   templateUrl: './monster-stat-block.component.html',
   styleUrl: './monster-stat-block.component.scss',

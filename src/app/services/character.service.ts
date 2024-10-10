@@ -76,7 +76,7 @@ export class CharacterService {
       currentHp: 100,
       initiativeModifier: 0,
       initiative: 0,
-      avatarSrc: `assets/${type === 'ally' ? 'elf' : 'barbarian'}.jpg`,
+      avatarSrc: '',
       armorClass: 15,
     };
     this.updateCharacters([...this.charactersSignal(), newCharacter]);

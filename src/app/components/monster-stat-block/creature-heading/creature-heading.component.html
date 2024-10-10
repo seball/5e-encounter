@@ -1,5 +1,6 @@
 <div class="creature-heading">
   <h1>
+    <span *ngIf="name === '' && !editMode">No Name...</span>
     <app-editable-input
       [editMode]="editMode"
       [type]="'text'"

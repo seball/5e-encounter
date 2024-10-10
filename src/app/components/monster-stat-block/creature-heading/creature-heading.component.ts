@@ -9,6 +9,7 @@ import { TaperedRuleComponent } from '../../../shared/ui/tapered-rule/tapered-ru
 import { EditableInputComponent } from '../../../shared/ui/editable-input/editable-input.component';
 import { EditableSelectComponent } from '../../../shared/ui/editable-select/editable-select.component';
 import { createStringEmitter } from '../../../utils/string-emitter.util';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-creature-heading',
@@ -17,6 +18,7 @@ import { createStringEmitter } from '../../../utils/string-emitter.util';
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   imports: [
+    CommonModule,
     TaperedRuleComponent,
     EditableInputComponent,
     EditableSelectComponent,

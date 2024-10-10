@@ -31,6 +31,7 @@ import { EditableListComponent } from '../../../shared/ui/editable-list/editable
 import { SensesFormatPipe } from '../../../shared/pipes/senses-format.pipe';
 import { EditableInputComponent } from '../../../shared/ui/editable-input/editable-input.component';
 import { createNumberEmitter } from '../../../utils/number-emitter.util';
+import { createStringEmitter } from '../../../utils/string-emitter.util';
 
 @Component({
   selector: 'app-properties',
@@ -86,6 +87,7 @@ export class PropertiesComponent {
   readonly sensesFormatPipe = new SensesFormatPipe();
 
   onChallengeRatingChange = createNumberEmitter(this.challengeRatingChange);
+  onLanguagesChange = createStringEmitter(this.languagesChange);
   onXpChange = createNumberEmitter(this.xpChange);
   get sensesItems() {
     return this.senses as Record<string, string | number>;

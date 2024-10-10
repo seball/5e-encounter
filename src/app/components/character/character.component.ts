@@ -12,6 +12,7 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnInit,
   Output,
   ViewChild,
   ViewEncapsulation,
@@ -33,7 +34,7 @@ import { EditableInputComponent } from '../../shared/ui/editable-input/editable-
   styleUrls: ['./character.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class CharacterComponent {
+export class CharacterComponent implements OnInit {
   @Input() character!: Character;
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
   @ViewChild('characterCard', { static: true }) characterCard!: ElementRef;
@@ -42,10 +43,14 @@ export class CharacterComponent {
   numberToString = new NumberToStringPipe();
   editMode: boolean = false;
   hpAdjustment: number = 0;
+  avatarSrc: string = '';
   constructor(private readonly characterService: CharacterService) {}
 
   get name(): string {
-    return this.character.statblock?.name || this.character.name;
+    if (this.character.statblock !== undefined) {
+      return this.character.statblock.name;
+    }
+    return this.character.name;
   }
 
   set name(value: string) {
@@ -57,10 +62,10 @@ export class CharacterComponent {
   }
 
   get armorClass(): number {
-    return (
-      this.character.statblock?.armor_class[0].value ||
-      this.character.armorClass
-    );
+    if (this.character.statblock !== undefined) {
+      return this.character.statblock.armor_class[0].value;
+    }
+    return this.character.armorClass;
   }
   set armorClass(value: number) {
     if (this.character.statblock) {
@@ -74,8 +79,11 @@ export class CharacterComponent {
     if (!this.character) {
       console.error('Character input is required for CharacterComponent');
     }
+    this.avatarSrc = this.character.avatarSrc;
   }
-
+  onImageError() {
+    this.avatarSrc = `https://api.dicebear.com/9.x/lorelei/svg?seed=${this.character.id}`;
+  }
   heal(): void {
     this.character.currentHp = Math.min(
       this.character.currentHp + this.hpAdjustment,

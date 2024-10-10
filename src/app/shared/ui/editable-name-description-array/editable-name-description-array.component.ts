@@ -35,6 +35,7 @@ export class EditableNameDescriptionArrayComponent implements OnChanges {
   @Input() editMode = false;
   @Input() items: Action[] = [];
   @Output() itemsChange = new EventEmitter<Action[]>();
+  @Input() buttonText = 'Add New';
 
   readonly deleteIcon = XIcon;
   readonly addIcon = PlusIcon;

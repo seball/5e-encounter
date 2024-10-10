@@ -1,13 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Action } from '../../../interfaces/statblock.interface';
+import { EditableNameDescriptionArrayComponent } from '../../../shared/ui/editable-name-description-array/editable-name-description-array.component';
 
 @Component({
   selector: 'app-actions',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, EditableNameDescriptionArrayComponent],
   templateUrl: './actions.component.html',
-  styleUrl: './actions.component.css',
+  styleUrl: './actions.component.scss',
 })
 export class ActionsComponent {
-  @Input() actions: Array<{ name: string; desc: string }> = [];
+  @Input() actions: Action[] = [];
+  @Input() editMode = false;
+  @Output() actionsChange = new EventEmitter<Action[]>();
+
+  onActionsChange(newActions: Action[]) {
+    this.actionsChange.emit(newActions);
+  }
 }

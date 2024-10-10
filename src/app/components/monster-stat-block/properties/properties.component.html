@@ -109,7 +109,8 @@
       <span *ngIf="!languages && !editMode">--</span>
       <app-editable-input
         [editMode]="editMode"
-        [(value)]="languages"></app-editable-input>
+        [value]="languages"
+        (valueChange)="onLanguagesChange($event)"></app-editable-input>
     </div>
   </div>
   <div class="property-line">
@@ -127,8 +128,8 @@
         [value]="xp"
         (valueChange)="onXpChange($event)"
         prefix="("
-        suffix=")"></app-editable-input>
-      <span> XP</span>
+        suffix=" XP)"></app-editable-input>
+      <span *ngIf="editMode"> XP</span>
     </div>
   </div>
   <app-tapered-rule></app-tapered-rule>

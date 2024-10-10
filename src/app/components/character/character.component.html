@@ -5,6 +5,7 @@
   <div class="row">
     <div class="col-9">
       <div class="name-section">
+        <span *ngIf="name === '' && !editMode">No Name...</span>
         <app-editable-input
           [editMode]="editMode"
           [type]="'text'"
@@ -49,7 +50,8 @@
     <div class="col-3">
       <div class="avatar">
         <img
-          src="{{ character.avatarSrc }}"
+          (error)="onImageError()"
+          [src]="avatarSrc"
           alt="Description of image"
           class="img-fluid" />
       </div>

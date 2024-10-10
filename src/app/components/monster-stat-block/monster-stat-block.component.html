@@ -49,13 +49,14 @@
     </app-special-abilities>
   </div>
   <div>
-    <app-actions [actions]="statblock.actions"> </app-actions>
-    <app-actions
-      *ngIf="statblock.legendary_actions?.length"
-      [actions]="statblock.legendary_actions">
+    <app-actions [editMode]="editMode" [(actions)]="statblock.actions">
     </app-actions>
+    <app-legendary-actions
+      [editMode]="editMode"
+      [(legendaryActions)]="statblock.legendary_actions">
+    </app-legendary-actions>
   </div>
-  <hr class="border-bottom" />
+  <hr />
   <app-context-menu
     [targetElement]="statblockDiv"
     [menuItems]="contextMenuItems"></app-context-menu>
