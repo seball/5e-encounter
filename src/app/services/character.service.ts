@@ -24,6 +24,21 @@ export class CharacterService {
     return this.activeCharacterIdSignal.asReadonly();
   }
 
+  public getAllies(): Character[] {
+    return this.charactersSignal().filter(c => c.type === 'ally');
+  }
+
+  public getEnemies(): Character[] {
+    return this.charactersSignal().filter(c => c.type === 'enemy');
+  }
+
+  public sortCharactersByInitiative(): void {
+    const sortedCharacters = [...this.charactersSignal()].sort(
+      (a, b) => b.initiative - a.initiative
+    );
+    this.updateCharacters(sortedCharacters);
+  }
+
   public addPredefinedCharacter(
     characterType: 'ally' | 'enemy',
     monsterIndex: string
