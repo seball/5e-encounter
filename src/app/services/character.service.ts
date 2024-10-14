@@ -36,13 +36,6 @@ export class CharacterService {
     return this.charactersSignal().filter(c => c.type === 'enemy');
   }
 
-  public sortCharactersByInitiative(): void {
-    const sortedCharacters = [...this.charactersSignal()].sort(
-      (a, b) => b.initiative - a.initiative
-    );
-    this.updateCharacters(sortedCharacters);
-  }
-
   public addPredefinedCharacter(
     characterType: 'ally' | 'enemy',
     monsterIndex: string

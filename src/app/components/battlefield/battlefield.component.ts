@@ -25,16 +25,12 @@ import { MainViewComponent } from '../main-view/main-view.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BattlefieldComponent {
-  allies = computed(() => this.characterService.getEnemies());
+  allies = computed(() => this.characterService.getAllies());
   enemies = computed(() => this.characterService.getEnemies());
 
   constructor(public characterService: CharacterService) {}
 
   onCharacterDelete(id: string) {
     this.characterService.deleteCharacter(id);
-  }
-
-  sortCharacters() {
-    this.characterService.sortCharactersByInitiative();
   }
 }
