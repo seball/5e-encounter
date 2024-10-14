@@ -13,7 +13,7 @@ import { FooterComponent } from './components/footer/footer.component';
     CharacterComponent,
     CreateCharacterComponent,
     BattleFieldComponent,
-    FooterComponent,
+    FooterComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

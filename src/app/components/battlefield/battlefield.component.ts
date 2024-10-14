@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
-import { CreateCharacterComponent } from '../create-character/create-character.component';
-import { Character } from '../../interfaces/character.interface';
-import { CharacterService } from '../../services/character.service';
+import { Component, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CharacterService } from '../../services/character.service';
 import { CharacterComponent } from '../character/character.component';
+import { CreateCharacterComponent } from '../create-character/create-character.component';
 import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-block.component';
 import { D20Component } from '../character/d20/d20.component';
 import { SortableListComponent } from '../../shared/ui/sortable-list/sortable-list.component';
@@ -13,35 +12,29 @@ import { MainViewComponent } from '../main-view/main-view.component';
   selector: 'app-battlefield',
   standalone: true,
   imports: [
-    CreateCharacterComponent,
     CommonModule,
     CharacterComponent,
+    CreateCharacterComponent,
     MonsterStatBlockComponent,
     D20Component,
     SortableListComponent,
     MainViewComponent,
   ],
   templateUrl: './battlefield.component.html',
-  styleUrl: './battlefield.component.scss',
+  styleUrls: ['./battlefield.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BattleFieldComponent {
-  public get allies(): Character[] {
-    return this.characterService
-      .characters()
-      .filter(char => char.type === 'ally');
+export class BattlefieldComponent {
+  allies = computed(() => this.characterService.getEnemies());
+  enemies = computed(() => this.characterService.getEnemies());
+
+  constructor(public characterService: CharacterService) {}
+
+  onCharacterDelete(id: string) {
+    this.characterService.deleteCharacter(id);
   }
 
-  public get enemies(): Character[] {
-    return this.characterService
-      .characters()
-      .filter(char => char.type === 'enemy');
-  }
-
-  constructor(private characterService: CharacterService) {}
-
-  public onCharacterDelete(name: string) {
-    if (confirm('Are you sure to delete ' + name)) {
-      this.characterService.deleteCharacter(name);
-    }
+  sortCharacters() {
+    this.characterService.sortCharactersByInitiative();
   }
 }

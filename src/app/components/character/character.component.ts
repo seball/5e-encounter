@@ -44,7 +44,7 @@ export class CharacterComponent implements OnInit {
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
   @ViewChild('characterCard', { static: true }) characterCard!: ElementRef;
   @Output() delete = new EventEmitter<string>();
-
+  @Output() initiativeChange = new EventEmitter<Character>();
   numberToString = new NumberToStringPipe();
   editMode: boolean = false;
   hpAdjustment: number = 0;

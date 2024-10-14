@@ -1,11 +1,19 @@
 <div class="container-fluid">
   <div class="row justify-content-center">
+    <div class="col-12 text-center mb-3">
+      <button class="btn btn-primary" (click)="sortCharacters()">
+        Sort by Initiative
+      </button>
+    </div>
     <div class="col-3">
       <h2>Allies</h2>
-      <div *ngFor="let character of allies">
-        <app-character
-          [character]="character"
-          (delete)="onCharacterDelete($event)"></app-character>
+      <div>
+        <div *ngFor="let character of allies()">
+          <app-character
+            [character]="character"
+            (delete)="onCharacterDelete($event)">
+          </app-character>
+        </div>
       </div>
       <app-create-character [characterType]="'ally'"></app-create-character>
     </div>
@@ -14,10 +22,13 @@
     </div>
     <div class="col-3">
       <h2>Enemies</h2>
-      <div *ngFor="let character of enemies">
-        <app-character
-          [character]="character"
-          (delete)="onCharacterDelete($event)"></app-character>
+      <div>
+        <div *ngFor="let character of enemies()">
+          <app-character
+            [character]="character"
+            (delete)="onCharacterDelete($event)">
+          </app-character>
+        </div>
       </div>
       <app-create-character [characterType]="'enemy'"></app-create-character>
     </div>
