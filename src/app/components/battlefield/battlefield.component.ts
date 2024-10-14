@@ -5,6 +5,9 @@ import { CharacterService } from '../../services/character.service';
 import { CommonModule } from '@angular/common';
 import { CharacterComponent } from '../character/character.component';
 import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-block.component';
+import { D20Component } from '../character/d20/d20.component';
+import { SortableListComponent } from '../../shared/ui/sortable-list/sortable-list.component';
+import { MainViewComponent } from '../main-view/main-view.component';
 
 @Component({
   selector: 'app-battlefield',
@@ -14,6 +17,9 @@ import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-bl
     CommonModule,
     CharacterComponent,
     MonsterStatBlockComponent,
+    D20Component,
+    SortableListComponent,
+    MainViewComponent,
   ],
   templateUrl: './battlefield.component.html',
   styleUrl: './battlefield.component.scss',

@@ -1,0 +1,9 @@
+<div class="row justify-content-center">
+  <div class="col-4">
+    <ul cdkDropList (cdkDropListDropped)="drop($event)">
+      <li cdkDragHandle *ngFor="let item of characters" cdkDrag>
+        {{ item.name }}: {{ item.initiativeRoll }}
+      </li>
+    </ul>
+  </div>
+</div>

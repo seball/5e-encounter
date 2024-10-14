@@ -3,6 +3,7 @@ import { Character } from '../interfaces/character.interface';
 import { v4 as uuid } from 'uuid';
 import { Dnd5eApiService } from './dnd5eapi.service';
 import { Statblock } from '../interfaces/statblock.interface';
+import { MainViewService, ViewType } from './main-view.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,10 @@ export class CharacterService {
   private charactersSignal = signal<Character[]>([]);
   private activeCharacterIdSignal = signal<string | null>(null);
 
-  constructor(private readonly dnd5eApiService: Dnd5eApiService) {
+  constructor(
+    private readonly dnd5eApiService: Dnd5eApiService,
+    private readonly mainViewService: MainViewService
+  ) {
     this.loadCharacters();
     this.loadActiveCharacterId();
   }
@@ -57,7 +61,7 @@ export class CharacterService {
       maxHp: statblock.hit_points,
       id: uuid(),
       type: characterType,
-      initiative: 0,
+      initiativeRoll: 1,
       initiativeModifier: this.getInitiativeMod(statblock.dexterity) || 0,
       name: statblock.name,
       armorClass: statblock.armor_class[0].value,
@@ -75,7 +79,7 @@ export class CharacterService {
       maxHp: 100,
       currentHp: 100,
       initiativeModifier: 0,
-      initiative: 0,
+      initiativeRoll: 0,
       avatarSrc: '',
       armorClass: 15,
     };
@@ -110,6 +114,7 @@ export class CharacterService {
 
   public activateCharacter(id: string): void {
     if (this.charactersSignal().some(c => c.id === id)) {
+      this.mainViewService.setCurrentView(ViewType.StatBlock);
       this.activeCharacterIdSignal.set(id);
       this.saveActiveCharacterId();
     }

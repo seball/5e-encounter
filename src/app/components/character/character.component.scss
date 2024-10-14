@@ -1,5 +1,6 @@
 app-character {
   $card-min-width: 200px;
+  $card-min-height: 140px;
   $card-margin: 1rem;
   $card-padding: 10px;
   $name-font-size: 1rem;
@@ -7,6 +8,7 @@ app-character {
 
   .character-card {
     min-width: $card-min-width;
+    min-height: $card-min-height;
     border: 1px solid var(--color-text);
     padding: $card-padding;
     margin: $card-margin auto;

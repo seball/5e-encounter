@@ -23,30 +23,16 @@
           [editMode]="editMode"
           [type]="'number'"
           [(value)]="character.maxHp"></app-editable-input>
-        <span> | AC:</span>
+      </div>
+
+      <div class="initiative-section">
+        <span>AC: </span>
         <app-editable-input
           [editMode]="editMode"
           [type]="'number'"
           [(value)]="armorClass"></app-editable-input>
       </div>
-
-      <div class="initiative-section">
-        Init: {{ character.initiative + character.initiativeModifier }}
-        <span> | Mod: </span>
-        <app-editable-input
-          [valuePipe]="numberToString"
-          [editMode]="editMode"
-          [type]="'number'"
-          [(value)]="character.initiativeModifier"></app-editable-input>
-        <span> | Roll: </span>
-
-        <app-editable-input
-          [editMode]="editMode"
-          [type]="'number'"
-          [(value)]="character.initiative"></app-editable-input>
-      </div>
     </div>
-
     <div class="col-3">
       <div class="avatar">
         <img
@@ -65,7 +51,15 @@
       <button (click)="damage()">Damage</button>
     </div>
   </div>
+
   <app-context-menu
     [targetElement]="characterCard"
     [menuItems]="contextMenuItems"></app-context-menu>
 </div>
+
+<app-d20
+  *ngIf="isInitiativeRollView()"
+  [initiativeMod]="character.initiativeModifier"
+  [characterType]="character.type"
+  [initiativeRoll]="character.initiativeRoll"
+  (initiativeRollChange)="onInitiativeRollChange($event)"></app-d20>

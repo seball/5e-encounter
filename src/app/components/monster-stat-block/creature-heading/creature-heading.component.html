@@ -13,7 +13,7 @@
         placeholder="Size"
         [(value)]="size"
         [editMode]="editMode"
-        [items]="sizeTypes"
+        [items]="sizes"
         (valueChange)="onSizeChange($event)">
       </app-editable-select>
       <span>&nbsp;</span>
@@ -29,7 +29,7 @@
         placeholder="Alignment"
         [(value)]="alignment"
         [editMode]="editMode"
-        [items]="alignmentTypes"
+        [items]="aligments"
         (valueChange)="onAlignmentChange($event)">
       </app-editable-select>
     </div>

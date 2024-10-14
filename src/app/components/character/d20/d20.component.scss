@@ -1,0 +1,75 @@
+.d20-container {
+  border: dashed 1px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  height: 140px;
+  transform: translateY(calc(-100% - 1rem));
+  padding: 1rem;
+
+  &.ally {
+    left: 25vw;
+  }
+  &.enemy {
+    right: 25vw;
+  }
+}
+
+.button-d20 {
+  background-color: transparent;
+  width: 6em;
+  height: 6em;
+  border-color: transparent;
+  transition: transform 0.1s ease-in-out;
+}
+
+.button-d20 svg * {
+  stroke: var(--dice-color);
+  fill: none;
+  stroke-width: 4;
+  stroke-miterlimit: 10;
+  transition: stroke 0.1s ease;
+}
+
+.button-d20:hover svg * {
+  stroke: var(--dice-color);
+}
+
+.button-d20:active {
+  transform: scale(0.95);
+}
+
+.button-d20[disabled],
+.button-d20[disabled]:hover,
+.button-d20:hover,
+.button-d20:active {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spinning {
+  animation-name: spin;
+  animation-timing-function: cubic-bezier(0.7, 0.1, 0.1, 1);
+}
+
+.value-container {
+  margin-top: 1em;
+}
+
+.value-container input {
+  width: 3em;
+  text-align: center;
+  font-size: 1.2em;
+  padding: 0.3em;
+  border: 2px solid var(--dice-color);
+  border-radius: 4px;
+}

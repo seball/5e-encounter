@@ -8,7 +8,8 @@ export interface Character {
   maxHp: number;
   currentHp: number;
   initiativeModifier: number;
-  initiative: number;
+  initiativeRoll: number;
+  initiativeScore?: number;
   avatarSrc: string;
   statblock?: Statblock;
 }

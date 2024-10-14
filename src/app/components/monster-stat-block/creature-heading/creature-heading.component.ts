@@ -10,6 +10,11 @@ import { EditableInputComponent } from '../../../shared/ui/editable-input/editab
 import { EditableSelectComponent } from '../../../shared/ui/editable-select/editable-select.component';
 import { createStringEmitter } from '../../../utils/string-emitter.util';
 import { CommonModule } from '@angular/common';
+import {
+  ALIGNMENTS,
+  MONSTER_TYPES,
+  SIZES,
+} from '../../../config/option-configs';
 
 @Component({
   selector: 'app-creature-heading',
@@ -25,6 +30,10 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class CreatureHeadingComponent {
+  sizes = SIZES;
+  monsterTypes = MONSTER_TYPES;
+  aligments = ALIGNMENTS;
+
   @Input() editMode: boolean = false;
   @Input() name: string = '';
   @Input() size: string = '';
@@ -40,41 +49,4 @@ export class CreatureHeadingComponent {
   onSizeChange = createStringEmitter(this.sizeChange);
   onTypeChange = createStringEmitter(this.typeChange);
   onAlignmentChange = createStringEmitter(this.alignmentChange);
-
-  sizeTypes = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
-  monsterTypes = [
-    'beast',
-    'monstrosity',
-    'dragon',
-    'humanoid',
-    'undead',
-    'fiend',
-    'celestial',
-    'construct',
-    'giant',
-    'elemental',
-    'fey',
-    'aberration',
-    'ooze',
-    'swarm',
-    'plant',
-  ];
-  alignmentTypes = [
-    'lawful evil',
-    'any alignment',
-    'chaotic evil',
-    'chaotic good',
-    'lawful good',
-    'neutral',
-    'lawful neutral',
-    'unaligned',
-    'any non-good alignment',
-    'any non-lawful alignment',
-    'neutral evil',
-    'any chaotic alignment',
-    'neutral good',
-    'chaotic neutral',
-    'neutral good (50%) or neutral evil (50%)',
-    'any evil alignment',
-  ];
 }
