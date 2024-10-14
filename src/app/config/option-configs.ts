@@ -78,3 +78,40 @@ export const DAMAGE_SOURCES_TAGS = [
   { name: 'slashing', color: '#9F7FBC' },
   { name: 'thunder', color: '#7F95BC' },
 ];
+
+export const SIZES = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
+export const MONSTER_TYPES = [
+  'beast',
+  'monstrosity',
+  'dragon',
+  'humanoid',
+  'undead',
+  'fiend',
+  'celestial',
+  'construct',
+  'giant',
+  'elemental',
+  'fey',
+  'aberration',
+  'ooze',
+  'swarm',
+  'plant',
+];
+export const ALIGNMENTS = [
+  'lawful evil',
+  'any alignment',
+  'chaotic evil',
+  'chaotic good',
+  'lawful good',
+  'neutral',
+  'lawful neutral',
+  'unaligned',
+  'any non-good alignment',
+  'any non-lawful alignment',
+  'neutral evil',
+  'any chaotic alignment',
+  'neutral good',
+  'chaotic neutral',
+  'neutral good (50%) or neutral evil (50%)',
+  'any evil alignment',
+];

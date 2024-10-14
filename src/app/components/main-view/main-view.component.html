@@ -1,0 +1,6 @@
+<ng-container [ngSwitch]="currentView()">
+  <app-roll-order *ngSwitchCase="view.InitiativeRoll"></app-roll-order>
+  <app-manual *ngSwitchCase="view.Manual"></app-manual>
+  <app-monster-stat-block
+    *ngSwitchCase="view.StatBlock"></app-monster-stat-block>
+</ng-container>

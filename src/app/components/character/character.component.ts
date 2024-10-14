@@ -9,16 +9,20 @@ import {
 import { ContextMenuIconType } from '../../shared/ui/context-menu/context-menu-item/context-menu-item.component';
 import {
   Component,
+  computed,
   ElementRef,
   EventEmitter,
   Input,
   OnInit,
   Output,
+  Signal,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { CharacterService } from '../../services/character.service';
 import { EditableInputComponent } from '../../shared/ui/editable-input/editable-input.component';
+import { D20Component } from './d20/d20.component';
+import { MainViewService, ViewType } from '../../services/main-view.service';
 
 @Component({
   selector: 'app-character',
@@ -29,6 +33,7 @@ import { EditableInputComponent } from '../../shared/ui/editable-input/editable-
     NumberToStringPipe,
     ContextMenuComponent,
     EditableInputComponent,
+    D20Component,
   ],
   templateUrl: './character.component.html',
   styleUrls: ['./character.component.scss'],
@@ -44,7 +49,21 @@ export class CharacterComponent implements OnInit {
   editMode: boolean = false;
   hpAdjustment: number = 0;
   avatarSrc: string = '';
-  constructor(private readonly characterService: CharacterService) {}
+  isInitiativeRollView: Signal<boolean>;
+  currentView: Signal<ViewType>;
+  constructor(
+    private readonly characterService: CharacterService,
+    private readonly mainViewService: MainViewService
+  ) {
+    this.currentView = this.mainViewService.getCurrentView();
+    this.isInitiativeRollView = computed(
+      () => this.currentView() === ViewType.InitiativeRoll
+    );
+  }
+
+  onInitiativeRollChange(initiative: number) {
+    this.character.initiativeRoll = initiative;
+  }
 
   get name(): string {
     if (this.character.statblock !== undefined) {
