@@ -8,8 +8,9 @@ export interface Character {
   maxHp: number;
   currentHp: number;
   initiativeModifier: number;
-  initiativeRoll: number;
-  initiativeScore?: number;
+  initiativeRoll: number | null;
+  initiativeScore: number | null;
   avatarSrc: string;
   statblock?: Statblock;
+  hasRolledInitiative: boolean;
 }

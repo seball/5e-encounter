@@ -44,7 +44,7 @@ export class CharacterComponent implements OnInit {
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
   @ViewChild('characterCard', { static: true }) characterCard!: ElementRef;
   @Output() delete = new EventEmitter<string>();
-  @Output() initiativeChange = new EventEmitter<Character>();
+
   numberToString = new NumberToStringPipe();
   editMode: boolean = false;
   hpAdjustment: number = 0;
@@ -61,8 +61,24 @@ export class CharacterComponent implements OnInit {
     );
   }
 
+  onHasRolledInitiativeChange(hasRolled: boolean) {
+    this.character.hasRolledInitiative = hasRolled;
+  }
+
   onInitiativeRollChange(initiative: number) {
     this.character.initiativeRoll = initiative;
+  }
+
+  onInitiativeModChange(initiativeMod: number) {
+    this.character.initiativeModifier = initiativeMod;
+  }
+
+  onInitiativeScoreChange(initiativeScore: number) {
+    this.character.initiativeScore = initiativeScore;
+  }
+
+  get initiativeScore(): number | null {
+    return this.character.initiativeScore;
   }
 
   get name(): string {

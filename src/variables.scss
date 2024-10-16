@@ -1,0 +1,72 @@
+$color-bg: #1d262b;
+$color-spec1: #db59d0;
+$color-spec2: #4488d6;
+
+$mix-color: $color-bg;
+$mix-percentage: 40%;
+
+$damage-colors: (
+  'acid': #00ff00,
+  'bludgeoning': #8b4513,
+  'cold': #00ffff,
+  'fire': #ff0000,
+  'force': #800080,
+  'lightning': #eeee00,
+  'necrotic': #800000,
+  'piercing': #c0c0c0,
+  'poison': #008000,
+  'psychic': #ff00ff,
+  'radiant': #ffff00,
+  'slashing': #ff8c00,
+  'thunder': #4682b4,
+);
+
+$adjusted-colors: ();
+@each $name, $color in $damage-colors {
+  $adjusted-color: mix($mix-color, $color, $mix-percentage);
+  $adjusted-colors: map-merge(
+    $adjusted-colors,
+    (
+      $name: $adjusted-color,
+    )
+  );
+}
+
+$color-footer: darken($color-bg, 3%);
+$color-text: lighten(invert($color-bg), 8%);
+
+$font-stack: 'Courier New', Courier, 'Lucida Sans Typewriter',
+  'Lucida Typewriter', monospace;
+
+@mixin theme-input {
+  font-family: $font-stack;
+  font-size: 1em;
+  color: $color-bg;
+  border-radius: 3px;
+  border: 1px solid $color-text;
+  transition: all 0.2s ease;
+  padding: 3px;
+  &[type='number'],
+  &[type='text'] {
+    border-radius: 0px;
+  }
+
+  &:disabled {
+    color: $color-bg;
+    border: 1px solid $color-text;
+    cursor: not-allowed;
+    opacity: 0.3;
+  }
+}
+
+:root {
+  --color-footer: #{$color-footer};
+  --color-bg: #{$color-bg};
+  --color-text: #{$color-text};
+  --color-spec1: #{$color-spec1};
+  --color-spec2: #{$color-spec2};
+  --font: #{$font-stack};
+  @each $name, $color in $adjusted-colors {
+    --color-#{$name}: #{$color};
+  }
+}

@@ -11,11 +11,6 @@ import {
 } from '@angular/core';
 import UseBootstrapTag from 'use-bootstrap-tag';
 
-export interface TagButton {
-  name: string;
-  color: string;
-}
-
 interface UseBootstrapTagReturnType {
   getValue: () => string;
   getValues: () => string[];
@@ -52,7 +47,7 @@ export class EditableListComponent implements AfterViewInit {
   @Input() xPosition: 'left' | 'right' = 'right';
   @Input() maxTags?: number;
   @Input() noInputOnBlur = false;
-  @Input() tagOptions: TagButton[] = [];
+  @Input() tagOptions: string[] = [];
   @Input() tagLabelKey = 'name';
   @Input() tagColorKey = 'color';
 

@@ -3,8 +3,8 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #171e22;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.7);
+  background-color: var(--color-footer);
+  border-top: 1px solid var(--color-spec2);
   z-index: 1000;
 }
 

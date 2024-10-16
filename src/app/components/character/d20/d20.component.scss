@@ -24,15 +24,14 @@
 }
 
 .button-d20 svg * {
-  stroke: var(--dice-color);
   fill: none;
-  stroke-width: 4;
+  stroke-width: 5;
   stroke-miterlimit: 10;
   transition: stroke 0.1s ease;
 }
 
-.button-d20:hover svg * {
-  stroke: var(--dice-color);
+.button-d20 svg polygon {
+  fill: var(--color-text);
 }
 
 .button-d20:active {
@@ -72,4 +71,19 @@
   padding: 0.3em;
   border: 2px solid var(--dice-color);
   border-radius: 4px;
+}
+
+.modifier-container {
+  .input-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  label {
+    flex: 1;
+    text-align: left;
+    margin-right: 10px;
+  }
 }

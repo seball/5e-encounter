@@ -2,7 +2,8 @@ app-editable-list {
   $text-color: var(--color-text);
   $background-transparent: transparent;
   $border-style: 1px solid $text-color;
-  $tag-button-text-color: #1a1a1a;
+  $tag-button-text-color-bright: var(--color-text);
+  $tag-button-text-color-dark: var(--color-bg);
   $placeholder-color: #999;
 
   @mixin flex-center {
@@ -54,6 +55,14 @@ app-editable-list {
       flex-grow: 1000;
       height: 0;
     }
+    $damage-types: acid, bludgeoning, cold, fire, force, lightning, necrotic,
+      piercing, poison, psychic, radiant, slashing, thunder;
+
+    @each $type in $damage-types {
+      .#{$type} {
+        background: var(--color-#{$type});
+      }
+    }
   }
 
   .input-wrapper > span::before {
@@ -70,11 +79,13 @@ app-editable-list {
   }
 
   .tag-button {
+    color: $tag-button-text-color-bright;
+
     flex-grow: 1;
     padding: 5px;
     margin: 0;
     border: none;
-    color: $tag-button-text-color;
+
     cursor: pointer;
     font-size: 1em;
     font-weight: 500;
@@ -90,7 +101,7 @@ app-editable-list {
       opacity: 0.9;
       transform: scale(1.05);
       z-index: 1;
-      color: $tag-button-text-color;
+      color: $tag-button-text-color-bright;
     }
 
     &:active {

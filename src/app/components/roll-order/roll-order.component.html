@@ -1,1 +1,19 @@
-<app-sortable-list> </app-sortable-list>
+<div class="sort-container">
+  <div class="row justify-content-center">
+    <div class="col-4">
+      <!-- <h2>---------------</h2> -->
+      <p>Adjust Order by Drag and Dropp if needed</p>
+      <ul cdkDropList (cdkDropListDropped)="drop($event)">
+        <li cdkDragHandle *ngFor="let character of characters()" cdkDrag>
+          <ng-container *ngIf="!character.hasRolledInitiative">
+            {{ getCharacterName(character) }}: --
+          </ng-container>
+
+          <ng-container *ngIf="character.hasRolledInitiative">
+            {{ getCharacterName(character) }}: {{ character.initiativeScore }}
+          </ng-container>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

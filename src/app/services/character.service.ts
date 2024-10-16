@@ -11,6 +11,7 @@ import { MainViewService, ViewType } from './main-view.service';
 export class CharacterService {
   private charactersSignal = signal<Character[]>([]);
   private activeCharacterIdSignal = signal<string | null>(null);
+  private initiativeChangedSignal = signal<boolean>(false);
 
   constructor(
     private readonly dnd5eApiService: Dnd5eApiService,
@@ -18,6 +19,14 @@ export class CharacterService {
   ) {
     this.loadCharacters();
     this.loadActiveCharacterId();
+  }
+
+  get initiativeChanged() {
+    return this.initiativeChangedSignal.asReadonly();
+  }
+
+  notifyInitiativeChanged(): void {
+    this.initiativeChangedSignal.set(!this.initiativeChangedSignal());
   }
 
   get characters() {
@@ -29,11 +38,15 @@ export class CharacterService {
   }
 
   public getAllies(): Character[] {
-    return this.charactersSignal().filter(c => c.type === 'ally');
+    return this.charactersSignal()
+      .filter(c => c.type === 'ally')
+      .sort((a, b) => (a.id > b.id ? 1 : -1));
   }
 
   public getEnemies(): Character[] {
-    return this.charactersSignal().filter(c => c.type === 'enemy');
+    return this.charactersSignal()
+      .filter(c => c.type === 'enemy')
+      .sort((a, b) => (a.id > b.id ? 1 : -1));
   }
 
   public addPredefinedCharacter(
@@ -67,19 +80,21 @@ export class CharacterService {
       avatarSrc: `assets/${imageName}.jpg`,
       currentHp: statblock.hit_points,
       maxHp: statblock.hit_points,
-      id: uuid(),
+      id: Date.now() + uuid(),
       type: characterType,
-      initiativeRoll: 1,
+      initiativeRoll: null,
       initiativeModifier: this.getInitiativeMod(statblock.dexterity) || 0,
       name: statblock.name,
       armorClass: statblock.armor_class[0].value,
       statblock: statblock,
+      initiativeScore: null,
+      hasRolledInitiative: false,
     };
   }
 
   public addDefaultCharacter(type: 'ally' | 'enemy'): void {
     const newCharacter: Character = {
-      id: uuid(),
+      id: Date.now() + uuid(),
       name: `${type === 'ally' ? 'Ally' : 'Enemy'} ${
         this.charactersSignal().length + 1
       }`,
@@ -87,9 +102,11 @@ export class CharacterService {
       maxHp: 100,
       currentHp: 100,
       initiativeModifier: 0,
-      initiativeRoll: 0,
+      initiativeRoll: null,
       avatarSrc: '',
       armorClass: 15,
+      initiativeScore: null,
+      hasRolledInitiative: false,
     };
     this.updateCharacters([...this.charactersSignal(), newCharacter]);
   }

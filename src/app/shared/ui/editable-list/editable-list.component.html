@@ -13,11 +13,11 @@
     <div class="tag-options">
       <button
         *ngFor="let tag of tagOptions"
-        (click)="addTag(tag.name)"
-        [style.background-color]="tag.color"
+        [ngClass]="tag"
+        (click)="addTag(tag)"
         class="tag-button"
-        [class.hidden]="isTagSelected(tag.name)">
-        {{ tag.name }}
+        [class.hidden]="isTagSelected(tag)">
+        {{ tag }}
       </button>
     </div>
   </div>

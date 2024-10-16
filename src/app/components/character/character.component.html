@@ -62,4 +62,9 @@
   [initiativeMod]="character.initiativeModifier"
   [characterType]="character.type"
   [initiativeRoll]="character.initiativeRoll"
-  (initiativeRollChange)="onInitiativeRollChange($event)"></app-d20>
+  [initiativeScore]="initiativeScore"
+  [hasRolledInitiative]="character.hasRolledInitiative"
+  (hasRolledInitiativeChange)="onHasRolledInitiativeChange($event)"
+  (initiativeRollChange)="onInitiativeRollChange($event)"
+  (initiativeModChange)="onInitiativeModChange($event)"
+  (initiativeScoreChange)="onInitiativeScoreChange($event)"></app-d20>

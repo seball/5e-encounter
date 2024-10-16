@@ -1,5 +1,4 @@
 import { Component, Signal } from '@angular/core';
-import { SortableListComponent } from '../../shared/ui/sortable-list/sortable-list.component';
 import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-block.component';
 import { ManualComponent } from '../manual/manual.component';
 import { MainViewService, ViewType } from '../../services/main-view.service';
@@ -10,7 +9,6 @@ import { RollOrderComponent } from '../roll-order/roll-order.component';
   selector: 'app-main-view',
   standalone: true,
   imports: [
-    SortableListComponent,
     MonsterStatBlockComponent,
     ManualComponent,
     CommonModule,
