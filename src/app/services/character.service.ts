@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { Character } from '../interfaces/character.interface';
 import { v4 as uuid } from 'uuid';
 import { Dnd5eApiService } from './dnd5eapi.service';
@@ -37,17 +37,17 @@ export class CharacterService {
     return this.activeCharacterIdSignal.asReadonly();
   }
 
-  public getAllies(): Character[] {
-    return this.charactersSignal()
+  public getAllies = computed(() =>
+    this.characters()
       .filter(c => c.type === 'ally')
-      .sort((a, b) => (a.id > b.id ? 1 : -1));
-  }
+      .sort((a, b) => (a.id > b.id ? 1 : -1))
+  );
 
-  public getEnemies(): Character[] {
-    return this.charactersSignal()
+  public getEnemies = computed(() =>
+    this.characters()
       .filter(c => c.type === 'enemy')
-      .sort((a, b) => (a.id > b.id ? 1 : -1));
-  }
+      .sort((a, b) => (a.id > b.id ? 1 : -1))
+  );
 
   public addPredefinedCharacter(
     characterType: 'ally' | 'enemy',
@@ -77,7 +77,7 @@ export class CharacterService {
     const imageName = statblock.index || 'default';
     statblock.id = uuid();
     return {
-      avatarSrc: `assets/${imageName}.jpg`,
+      avatarSrc: `assets/${imageName}.webp`,
       currentHp: statblock.hit_points,
       maxHp: statblock.hit_points,
       id: Date.now() + uuid(),

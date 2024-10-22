@@ -1,70 +1,84 @@
 <div
   class="character-card"
-  [ngClass]="{ 'edit-mode': editMode, 'view-mode': !editMode }"
+  [ngClass]="{
+    'edit-mode': state.editMode,
+    'view-mode': !state.editMode,
+    exhausted: battleState.isExhausted(),
+    active: battleState.isActive(),
+    previous: battleState.isPrevious(),
+  }"
   #characterCard>
   <div class="row">
-    <div class="col-9">
+    <div [class]="viewState.columnSizes().left">
       <div class="name-section">
-        <span *ngIf="name === '' && !editMode">No Name...</span>
+        <span *ngIf="name === '' && !state.editMode">No Name...</span>
         <app-editable-input
-          [editMode]="editMode"
+          [editMode]="state.editMode"
           [type]="'text'"
-          [(value)]="name"></app-editable-input>
+          [(value)]="name">
+        </app-editable-input>
       </div>
 
       <div class="hp-section">
         <span>HP: </span>
         <app-editable-input
-          [editMode]="editMode"
+          [editMode]="state.editMode"
           [type]="'number'"
-          [(value)]="character.currentHp"></app-editable-input>
+          [(value)]="character.currentHp">
+        </app-editable-input>
         <span> / </span>
         <app-editable-input
-          [editMode]="editMode"
+          [editMode]="state.editMode"
           [type]="'number'"
-          [(value)]="character.maxHp"></app-editable-input>
+          [(value)]="maxHp">
+        </app-editable-input>
       </div>
 
       <div class="initiative-section">
         <span>AC: </span>
         <app-editable-input
-          [editMode]="editMode"
+          [editMode]="state.editMode"
           [type]="'number'"
-          [(value)]="armorClass"></app-editable-input>
+          [(value)]="armorClass">
+        </app-editable-input>
+      </div>
+
+      <div class="damage-section">
+        <button (click)="heal()">Heal</button>
+        <input type="number" [(ngModel)]="state.hpAdjustment" />
+        <button (click)="damage()">Damage</button>
       </div>
     </div>
-    <div class="col-3">
+
+    <ng-container *ngIf="viewState.isInitiativeRollView()">
+      <div class="col-6">
+        <app-d20
+          [initiativeMod]="character.initiativeModifier"
+          [characterType]="character.type"
+          [initiativeRoll]="character.initiativeRoll"
+          [initiativeScore]="initiativeScore"
+          [hasRolledInitiative]="character.hasRolledInitiative"
+          (hasRolledInitiativeChange)="onInitiativeChange.hasRolled($event)"
+          (initiativeRollChange)="onInitiativeChange.roll($event)"
+          (initiativeModChange)="onInitiativeChange.mod($event)"
+          (initiativeScoreChange)="onInitiativeChange.score($event)">
+        </app-d20>
+      </div>
+    </ng-container>
+
+    <div [class]="viewState.columnSizes().right">
       <div class="avatar">
         <img
+          [src]="state.avatarSrc"
           (error)="onImageError()"
-          [src]="avatarSrc"
-          alt="Description of image"
+          alt="Character Avatar"
           class="img-fluid" />
       </div>
     </div>
   </div>
 
-  <div class="row justify-content-between">
-    <div class="hp-adjustment col-6">
-      <button (click)="heal()">Heal</button>
-      <input type="number" [(ngModel)]="hpAdjustment" />
-      <button (click)="damage()">Damage</button>
-    </div>
-  </div>
-
   <app-context-menu
     [targetElement]="characterCard"
-    [menuItems]="contextMenuItems"></app-context-menu>
+    [menuItems]="contextMenuItems">
+  </app-context-menu>
 </div>
-
-<app-d20
-  *ngIf="isInitiativeRollView()"
-  [initiativeMod]="character.initiativeModifier"
-  [characterType]="character.type"
-  [initiativeRoll]="character.initiativeRoll"
-  [initiativeScore]="initiativeScore"
-  [hasRolledInitiative]="character.hasRolledInitiative"
-  (hasRolledInitiativeChange)="onHasRolledInitiativeChange($event)"
-  (initiativeRollChange)="onInitiativeRollChange($event)"
-  (initiativeModChange)="onInitiativeModChange($event)"
-  (initiativeScoreChange)="onInitiativeScoreChange($event)"></app-d20>

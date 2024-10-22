@@ -4,6 +4,7 @@ export enum ViewType {
   InitiativeRoll = 'initiativeRoll',
   Manual = 'manual',
   StatBlock = 'statBlock',
+  Battle = 'battle',
 }
 
 @Injectable({

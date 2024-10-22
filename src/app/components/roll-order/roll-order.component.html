@@ -1,19 +1,45 @@
 <div class="sort-container">
   <div class="row justify-content-center">
-    <div class="col-4">
-      <!-- <h2>---------------</h2> -->
-      <p>Adjust Order by Drag and Dropp if needed</p>
-      <ul cdkDropList (cdkDropListDropped)="drop($event)">
-        <li cdkDragHandle *ngFor="let character of characters()" cdkDrag>
-          <ng-container *ngIf="!character.hasRolledInitiative">
-            {{ getCharacterName(character) }}: --
-          </ng-container>
+    <div class="roll-order-content">
+      <header class="roll-order-header">
+        <h2>{{ uiState.title }}</h2>
+        <p class="roll-order-subtitle">{{ uiState.subtitle }}</p>
+      </header>
 
-          <ng-container *ngIf="character.hasRolledInitiative">
-            {{ getCharacterName(character) }}: {{ character.initiativeScore }}
-          </ng-container>
+      <ul
+        class="character-list"
+        cdkDropList
+        (cdkDropListDropped)="onDrop($event)"
+        aria-label="Draggable character initiative order list">
+        <li
+          *ngFor="let character of characters()"
+          class="character-item"
+          cdkDrag
+          [attr.aria-label]="'Character: ' + getCharacterName(character)">
+          <span class="character-name">
+            {{ getCharacterName(character) }}
+          </span>
+
+          <span class="initiative-score">
+            {{ getInitiativeDisplay(character) }}
+          </span>
+
+          <div class="drag-handle" cdkDragHandle aria-label="Drag handle">
+            <lucide-angular
+              [name]="uiState.gripIcon"
+              [size]="15"
+              aria-hidden="true">
+            </lucide-angular>
+          </div>
         </li>
       </ul>
+
+      <button
+        class="confirm-button"
+        (click)="onSaveOrder()"
+        aria-label="Confirm initiative order">
+        {{ uiState.confirmButtonText }}
+      </button>
     </div>
   </div>
 </div>

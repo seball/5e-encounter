@@ -1,21 +1,5 @@
-.d20-container {
-  border: dashed 1px;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  height: 140px;
-  transform: translateY(calc(-100% - 1rem));
-  padding: 1rem;
-
-  &.ally {
-    left: 25vw;
-  }
-  &.enemy {
-    right: 25vw;
-  }
-}
-
 .button-d20 {
+  position: sticky;
   background-color: transparent;
   width: 6em;
   height: 6em;

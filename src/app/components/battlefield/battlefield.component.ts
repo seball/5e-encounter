@@ -6,6 +6,7 @@ import { CreateCharacterComponent } from '../create-character/create-character.c
 import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-block.component';
 import { D20Component } from '../character/d20/d20.component';
 import { MainViewComponent } from '../main-view/main-view.component';
+import { MainViewService, ViewType } from '../../services/main-view.service';
 
 @Component({
   selector: 'app-battlefield',
@@ -23,12 +24,27 @@ import { MainViewComponent } from '../main-view/main-view.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BattlefieldComponent {
-  allies = computed(() => this.characterService.getAllies());
-  enemies = computed(() => this.characterService.getEnemies());
+  protected readonly characters = {
+    allies: computed(() => this.characterService.getAllies()),
+    enemies: computed(() => this.characterService.getEnemies()),
+  };
 
-  constructor(public characterService: CharacterService) {}
+  protected readonly currentView = computed(() =>
+    this.mainViewService.getCurrentView()
+  );
 
-  onCharacterDelete(id: string) {
+  protected readonly columnSizes = computed(() => ({
+    side: this.currentView()() === ViewType.InitiativeRoll ? 'col-5' : 'col-3',
+    center:
+      this.currentView()() === ViewType.InitiativeRoll ? 'col-2' : 'col-6',
+  }));
+
+  constructor(
+    private readonly characterService: CharacterService,
+    private readonly mainViewService: MainViewService
+  ) {}
+
+  protected onCharacterDelete(id: string): void {
     this.characterService.deleteCharacter(id);
   }
 }

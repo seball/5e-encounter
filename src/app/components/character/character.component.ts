@@ -1,28 +1,30 @@
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { NumberToStringPipe } from '../../shared/pipes/number-to-string.pipe';
 import { Character } from '../../interfaces/character.interface';
+import { CharacterService } from '../../services/character.service';
+import { MainViewService, ViewType } from '../../services/main-view.service';
+import { BattleService } from '../../services/battle.service';
+import { NumberToStringPipe } from '../../shared/pipes/number-to-string.pipe';
 import {
   ContextMenuComponent,
   MenuItem,
 } from '../../shared/ui/context-menu/context-menu.component';
 import { ContextMenuIconType } from '../../shared/ui/context-menu/context-menu-item/context-menu-item.component';
-import {
-  Component,
-  computed,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  Signal,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
-import { CharacterService } from '../../services/character.service';
 import { EditableInputComponent } from '../../shared/ui/editable-input/editable-input.component';
 import { D20Component } from './d20/d20.component';
-import { MainViewService, ViewType } from '../../services/main-view.service';
 
 @Component({
   selector: 'app-character',
@@ -41,118 +43,36 @@ import { MainViewService, ViewType } from '../../services/main-view.service';
 })
 export class CharacterComponent implements OnInit {
   @Input() character!: Character;
+  @Output() delete = new EventEmitter<string>();
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
   @ViewChild('characterCard', { static: true }) characterCard!: ElementRef;
-  @Output() delete = new EventEmitter<string>();
+  @HostBinding('style.order') characterOrder: number | null = null;
 
-  numberToString = new NumberToStringPipe();
-  editMode: boolean = false;
-  hpAdjustment: number = 0;
-  avatarSrc: string = '';
-  isInitiativeRollView: Signal<boolean>;
-  currentView: Signal<ViewType>;
-  constructor(
-    private readonly characterService: CharacterService,
-    private readonly mainViewService: MainViewService
-  ) {
-    this.currentView = this.mainViewService.getCurrentView();
-    this.isInitiativeRollView = computed(
-      () => this.currentView() === ViewType.InitiativeRoll
-    );
-  }
+  protected readonly state = {
+    editMode: false,
+    hpAdjustment: 0,
+    avatarSrc: '',
+  };
 
-  onHasRolledInitiativeChange(hasRolled: boolean) {
-    this.character.hasRolledInitiative = hasRolled;
-  }
+  protected readonly viewState: {
+    currentView: ReturnType<MainViewService['getCurrentView']>;
+    isInitiativeRollView: ReturnType<typeof computed<boolean>>;
+    columnSizes: ReturnType<
+      typeof computed<{
+        left: string;
+        right: string;
+      }>
+    >;
+  };
 
-  onInitiativeRollChange(initiative: number) {
-    this.character.initiativeRoll = initiative;
-  }
+  protected readonly battleState: {
+    isActive: ReturnType<typeof computed<boolean>>;
+    isPrevious: ReturnType<typeof computed<boolean>>;
+    isNext: ReturnType<typeof computed<boolean>>;
+    isExhausted: ReturnType<typeof computed<boolean>>;
+  };
 
-  onInitiativeModChange(initiativeMod: number) {
-    this.character.initiativeModifier = initiativeMod;
-  }
-
-  onInitiativeScoreChange(initiativeScore: number) {
-    this.character.initiativeScore = initiativeScore;
-  }
-
-  get initiativeScore(): number | null {
-    return this.character.initiativeScore;
-  }
-
-  get name(): string {
-    if (this.character.statblock !== undefined) {
-      return this.character.statblock.name;
-    }
-    return this.character.name;
-  }
-
-  set name(value: string) {
-    if (this.character.statblock) {
-      this.character.statblock.name = value;
-    } else {
-      this.character.name = value;
-    }
-  }
-
-  get armorClass(): number {
-    if (this.character.statblock !== undefined) {
-      return this.character.statblock.armor_class[0].value;
-    }
-    return this.character.armorClass;
-  }
-  set armorClass(value: number) {
-    if (this.character.statblock) {
-      this.character.statblock.armor_class[0].value = value;
-    } else {
-      this.character.armorClass = value;
-    }
-  }
-
-  ngOnInit() {
-    if (!this.character) {
-      console.error('Character input is required for CharacterComponent');
-    }
-    this.avatarSrc = this.character.avatarSrc;
-  }
-  onImageError() {
-    this.avatarSrc = `https://api.dicebear.com/9.x/lorelei/svg?seed=${this.character.id}`;
-  }
-  heal(): void {
-    this.character.currentHp = Math.min(
-      this.character.currentHp + this.hpAdjustment,
-      this.character.maxHp
-    );
-    this.hpAdjustment = 0;
-  }
-
-  damage(): void {
-    this.character.currentHp = Math.max(
-      this.character.currentHp - this.hpAdjustment,
-      0
-    );
-    this.hpAdjustment = 0;
-  }
-
-  save(): void {
-    this.editMode = false;
-    this.characterService.updateCharacter(this.character);
-  }
-
-  edit(): void {
-    this.editMode = true;
-  }
-
-  deleteCharacter(): void {
-    this.delete.emit(this.character.id);
-  }
-
-  viewCharacter(): void {
-    this.characterService.activateCharacter(this.character.id);
-  }
-
-  contextMenuItems: MenuItem[] = [
+  protected readonly contextMenuItems: MenuItem[] = [
     {
       action: () => this.viewCharacter(),
       icon: ContextMenuIconType.View,
@@ -174,4 +94,173 @@ export class CharacterComponent implements OnInit {
       title: 'Delete',
     },
   ];
+
+  constructor(
+    private readonly characterService: CharacterService,
+    private readonly mainViewService: MainViewService,
+    private readonly battleService: BattleService
+  ) {
+    this.viewState = {
+      currentView: this.mainViewService.getCurrentView(),
+      isInitiativeRollView: computed(
+        () =>
+          this.mainViewService.getCurrentView()() === ViewType.InitiativeRoll
+      ),
+      columnSizes: computed(() => ({
+        left:
+          this.mainViewService.getCurrentView()() === ViewType.InitiativeRoll
+            ? 'col-4'
+            : 'col-8',
+        right:
+          this.mainViewService.getCurrentView()() === ViewType.InitiativeRoll
+            ? 'col-2'
+            : 'col-4',
+      })),
+    };
+
+    this.battleState = {
+      isActive: computed(() =>
+        this.battleService.isCharacterActive(this.character.id)
+      ),
+      isPrevious: computed(() =>
+        this.battleService.isCharacterPrevious(this.character.id)
+      ),
+      isNext: computed(() =>
+        this.battleService.isCharacterNext(this.character.id)
+      ),
+      isExhausted: computed(() =>
+        this.battleService.isCharacterExhausted(this.character.id)
+      ),
+    };
+
+    effect(() => this.updateCharacterOrder());
+  }
+
+  ngOnInit(): void {
+    if (!this.character) {
+      console.error('Character input is required for CharacterComponent');
+      return;
+    }
+    this.state.avatarSrc = this.character.avatarSrc;
+  }
+
+  get name(): string {
+    return this.character.statblock?.name ?? this.character.name;
+  }
+  set name(value: string) {
+    if (this.character.statblock) {
+      this.character.statblock.name = value;
+    } else {
+      this.character.name = value;
+    }
+  }
+
+  get armorClass(): number {
+    return (
+      this.character.statblock?.armor_class[0].value ??
+      this.character.armorClass
+    );
+  }
+  set armorClass(value: number) {
+    if (this.character.statblock) {
+      this.character.statblock.armor_class[0].value = value;
+    } else {
+      this.character.armorClass = value;
+    }
+  }
+
+  get maxHp(): number {
+    return this.character.statblock?.hit_points ?? this.character.maxHp;
+  }
+  set maxHp(value: number) {
+    if (this.character.statblock) {
+      this.character.statblock.hit_points = value;
+    } else {
+      this.character.maxHp = value;
+    }
+  }
+
+  get initiativeScore(): number | null {
+    return this.character.initiativeScore;
+  }
+
+  protected onInitiativeChange = {
+    hasRolled: (hasRolled: boolean) => {
+      this.character.hasRolledInitiative = hasRolled;
+    },
+    roll: (initiative: number) => {
+      this.character.initiativeRoll = initiative;
+    },
+    mod: (initiativeMod: number) => {
+      this.character.initiativeModifier = initiativeMod;
+    },
+    score: (initiativeScore: number) => {
+      this.character.initiativeScore = initiativeScore;
+    },
+  };
+
+  protected heal(): void {
+    this.character.currentHp = Math.min(
+      this.character.currentHp + this.state.hpAdjustment,
+      this.maxHp
+    );
+    this.state.hpAdjustment = 0;
+  }
+
+  protected damage(): void {
+    this.character.currentHp = Math.max(
+      this.character.currentHp - this.state.hpAdjustment,
+      0
+    );
+    this.state.hpAdjustment = 0;
+  }
+
+  protected save(): void {
+    this.state.editMode = false;
+    this.characterService.updateCharacter(this.character);
+  }
+
+  protected edit(): void {
+    this.state.editMode = true;
+  }
+
+  protected deleteCharacter(): void {
+    this.delete.emit(this.character.id);
+  }
+
+  protected viewCharacter(): void {
+    this.characterService.activateCharacter(this.character.id);
+  }
+
+  protected onImageError(): void {
+    this.state.avatarSrc = `https://api.dicebear.com/9.x/lorelei/svg?seed=${this.character.id}`;
+  }
+
+  private updateCharacterOrder(): void {
+    const orderList = this.battleService.characterOrderList();
+    const currentCharacter = orderList.find(
+      char => char.id === this.character.id
+    );
+
+    if (!currentCharacter) return;
+
+    if (this.battleService.isFirstTurn()) {
+      this.setCharacterOrder(currentCharacter.order);
+    } else {
+      this.delayedOrderUpdate(currentCharacter.order);
+    }
+  }
+
+  private setCharacterOrder(order: number): void {
+    this.characterOrder = order;
+  }
+
+  private delayedOrderUpdate(order: number): void {
+    setTimeout(() => {
+      this.setCharacterOrder(order);
+      if (this.characterCard) {
+        this.characterCard.nativeElement.click();
+      }
+    }, 1000);
+  }
 }

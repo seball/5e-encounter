@@ -1,31 +1,31 @@
 <div class="container-fluid">
   <div class="row justify-content-center">
-    <div class="col-3">
+    <div [class]="columnSizes().side">
       <h2>Allies</h2>
-      <div>
-        <div *ngFor="let character of allies()">
-          <app-character
-            [character]="character"
-            (delete)="onCharacterDelete($event)">
-          </app-character>
-        </div>
+      <div class="character-container">
+        <app-character
+          *ngFor="let character of characters.allies()"
+          [character]="character"
+          (delete)="onCharacterDelete($event)">
+        </app-character>
       </div>
-      <app-create-character [characterType]="'ally'"></app-create-character>
+      <app-create-character characterType="ally"></app-create-character>
     </div>
-    <div class="col-6">
-      <app-main-view> </app-main-view>
+
+    <div [class]="columnSizes().center">
+      <app-main-view></app-main-view>
     </div>
-    <div class="col-3">
+
+    <div [class]="columnSizes().side">
       <h2>Enemies</h2>
-      <div>
-        <div *ngFor="let character of enemies()">
-          <app-character
-            [character]="character"
-            (delete)="onCharacterDelete($event)">
-          </app-character>
-        </div>
+      <div class="character-container">
+        <app-character
+          *ngFor="let character of characters.enemies()"
+          [character]="character"
+          (delete)="onCharacterDelete($event)">
+        </app-character>
       </div>
-      <app-create-character [characterType]="'enemy'"></app-create-character>
+      <app-create-character characterType="enemy"></app-create-character>
     </div>
   </div>
 </div>

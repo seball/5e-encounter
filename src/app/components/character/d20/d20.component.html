@@ -1,76 +1,74 @@
 <div class="d20-container" [ngClass]="characterType">
-  <div class="row justify-content-center">
-    <div class="col-auto">
+  <div class="row justify-content-left">
+    <div class="col-7">
+      <div class="modifier-container">
+        <div class="input-row">
+          <label for="initiative-mod">Modifier:</label>
+          <input
+            id="initiative-mod"
+            type="number"
+            [ngModel]="initiativeMod"
+            (ngModelChange)="onModChange($event)"
+            aria-label="Initiative modifier" />
+        </div>
+        <div class="input-row">
+          <label for="initiative-roll">Roll:</label>
+          <input
+            id="initiative-roll"
+            type="number"
+            [ngModel]="initiativeRoll"
+            (ngModelChange)="onRollChange($event)"
+            [placeholder]="getDisplayValue(initiativeRoll)"
+            aria-label="Initiative roll value" />
+        </div>
+        <div class="input-row">
+          <label for="initiative-score">Score:</label>
+          <input
+            id="initiative-score"
+            type="number"
+            [ngModel]="initiativeScore"
+            (ngModelChange)="onScoreChange($event)"
+            [placeholder]="getDisplayValue(initiativeScore)"
+            aria-label="Initiative total score" />
+        </div>
+      </div>
+    </div>
+    <div class="col-5">
       <button
         #diceButton
         class="button-d20"
         (click)="onClick()"
-        [disabled]="isSpinning">
+        [disabled]="isSpinning"
+        aria-label="Roll D20 dice">
         <svg
           #diceSvg
           version="1.1"
-          id="Layer_1"
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
-          x="0px"
-          y="0px"
           viewBox="0 0 130 130"
-          style="enable-background: new 0 0 130 130"
-          xml:space="preserve">
-          <g id="XMLID_26_">
+          aria-hidden="true"
+          role="img">
+          <title>D20 Dice</title>
+          <g>
             <polygon
-              id="XMLID_19_"
-              class="st0"
+              class="st0 d20-face"
               points="65,15 22,43 25,93 65,115 108,92 108,42" />
             <path
-              id="XMLID_27_"
-              class="st1"
+              class="st1 d20-line"
               d="M66,38L42,80c-0.1,0.2,0,0.6,0.3,0.6h52c0.3,0,0.5-0.3,0.3-0.6L66,38z" />
             <path
-              id="XMLID_29_"
-              class="st1"
+              class="st1 d20-line"
               d="M66.5,38l39.5,3c1.3,0.1,2.2,1.5,1.7,2.7l-14,38" />
             <path
-              id="XMLID_28_"
-              class="st1"
+              class="st1 d20-line"
               d="M66,15v23l-43,5c-0.3,0.1-0.4,0.4-0.2,0.6l19,37L25.5,93" />
             <path
-              id="XMLID_47_"
-              class="st1"
+              class="st1 d20-line"
               d="M108,92l-14.7-10L65,115c-0.3,0.5-1,0.5-1.4,0L41.7,80" />
-            <path id="XMLID_46_" class="st1" d="M41.7,80" />
-            <path id="XMLID_30_" class="st1" d="M93.2,81" />
           </g>
         </svg>
-        <div>ROLL!</div>
+        <span class="roll-text">ROLL!</span>
       </button>
-    </div>
-    <div class="col-auto">
-      <div class="modifier-container">
-        <div class="input-row">
-          <label for="modifier">Modifier:</label>
-          <input
-            type="number"
-            [ngModel]="initiativeMod"
-            (ngModelChange)="onModChange($event)" />
-        </div>
-        <div class="input-row">
-          <label for="roll">Roll:</label>
-          <input
-            type="number"
-            [ngModel]="initiativeRoll"
-            (ngModelChange)="onRollChange($event)"
-            [placeholder]="getDisplayValue(initiativeRoll)" />
-        </div>
-        <div class="input-row">
-          <label for="score">Score:</label>
-          <input
-            type="number"
-            [ngModel]="initiativeScore"
-            (ngModelChange)="onScoreChange($event)"
-            [placeholder]="getDisplayValue(initiativeScore)" />
-        </div>
-      </div>
     </div>
   </div>
 </div>
