@@ -1,9 +1,12 @@
 import { Component, Signal } from '@angular/core';
 import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-block.component';
 import { ManualComponent } from '../manual/manual.component';
-import { MainViewService, ViewType } from '../../services/main-view.service';
 import { CommonModule } from '@angular/common';
 import { RollOrderComponent } from '../roll-order/roll-order.component';
+import {
+  ViewManagerService,
+  ViewType,
+} from '../../services/viewManager.service';
 
 @Component({
   selector: 'app-main-view',
@@ -21,7 +24,7 @@ export class MainViewComponent {
   currentView: Signal<ViewType>;
   view = ViewType;
 
-  constructor(private mainViewService: MainViewService) {
-    this.currentView = this.mainViewService.getCurrentView();
+  constructor(private readonly viewManagerService: ViewManagerService) {
+    this.currentView = this.viewManagerService.getCurrentView();
   }
 }

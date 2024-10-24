@@ -61,3 +61,6 @@
     [targetElement]="statblockDiv"
     [menuItems]="contextMenuItems"></app-context-menu>
 </div>
+<div *ngIf="!statblock() && activeCharacterId()" class="text-center">
+  <button (click)="addStatblock()">Add Statblock</button>
+</div>

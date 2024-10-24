@@ -14,7 +14,6 @@ export interface NameDescription {
   desc: string;
 }
 
-// Speed interface
 export interface Speed {
   walk?: string;
   burrow?: string;
@@ -61,7 +60,6 @@ export interface Usage {
   rest_types?: string[];
 }
 
-// Action interfaces
 export interface Action extends NameDescription {
   attack_bonus?: number;
   damage?: Damage[];

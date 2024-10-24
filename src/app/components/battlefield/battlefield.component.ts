@@ -6,7 +6,10 @@ import { CreateCharacterComponent } from '../create-character/create-character.c
 import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-block.component';
 import { D20Component } from '../character/d20/d20.component';
 import { MainViewComponent } from '../main-view/main-view.component';
-import { MainViewService, ViewType } from '../../services/main-view.service';
+import {
+  ViewManagerService,
+  ViewType,
+} from '../../services/viewManager.service';
 
 @Component({
   selector: 'app-battlefield',
@@ -30,7 +33,7 @@ export class BattlefieldComponent {
   };
 
   protected readonly currentView = computed(() =>
-    this.mainViewService.getCurrentView()
+    this.viewManagerService.getCurrentView()
   );
 
   protected readonly columnSizes = computed(() => ({
@@ -41,7 +44,7 @@ export class BattlefieldComponent {
 
   constructor(
     private readonly characterService: CharacterService,
-    private readonly mainViewService: MainViewService
+    private readonly viewManagerService: ViewManagerService
   ) {}
 
   protected onCharacterDelete(id: string): void {

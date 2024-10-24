@@ -1,8 +1,33 @@
 <footer class="floating-footer">
   <div class="footer-content">
-    <button (click)="switchView(rollView)">Start</button>
-    <button (click)="switchView(manualView)">Manual</button>
-    <button (click)="switchView(statBlockView)">Stat Block</button>
-    <button (click)="next()">next</button>
+    <div class="row">
+      <div class="col-1">Currently: --</div>
+      <div class="col-10">
+        <ng-container *ngIf="isBattleMode()">
+          <button class="icon-button next" (click)="previous()">
+            <lucide-angular [img]="leftIcon" [size]="30"></lucide-angular>
+            Prev
+          </button>
+          <button class="icon-button next" (click)="next()">
+            Next
+            <lucide-angular [img]="rightIcon" [size]="30"></lucide-angular>
+          </button>
+          <button class="icon-button exit" (click)="exit()">
+            Exit Battle
+            <lucide-angular [img]="exitIcon" [size]="30"></lucide-angular>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="!isBattleMode()">
+          <button (click)="switchView(rollView)">Set Initiative</button>
+        </ng-container>
+      </div>
+
+      <div class="col-1">
+        <button class="icon-button help" (click)="switchView(manualView)">
+          <lucide-angular [img]="helpIcon" [size]="30"></lucide-angular>
+          Help
+        </button>
+      </div>
+    </div>
   </div>
 </footer>

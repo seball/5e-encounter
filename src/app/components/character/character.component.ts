@@ -15,7 +15,6 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Character } from '../../interfaces/character.interface';
 import { CharacterService } from '../../services/character.service';
-import { MainViewService, ViewType } from '../../services/main-view.service';
 import { BattleService } from '../../services/battle.service';
 import { NumberToStringPipe } from '../../shared/pipes/number-to-string.pipe';
 import {
@@ -25,6 +24,10 @@ import {
 import { ContextMenuIconType } from '../../shared/ui/context-menu/context-menu-item/context-menu-item.component';
 import { EditableInputComponent } from '../../shared/ui/editable-input/editable-input.component';
 import { D20Component } from './d20/d20.component';
+import {
+  ViewManagerService,
+  ViewType,
+} from '../../services/viewManager.service';
 
 @Component({
   selector: 'app-character',
@@ -55,7 +58,7 @@ export class CharacterComponent implements OnInit {
   };
 
   protected readonly viewState: {
-    currentView: ReturnType<MainViewService['getCurrentView']>;
+    currentView: ReturnType<ViewManagerService['getCurrentView']>;
     isInitiativeRollView: ReturnType<typeof computed<boolean>>;
     columnSizes: ReturnType<
       typeof computed<{
@@ -97,22 +100,22 @@ export class CharacterComponent implements OnInit {
 
   constructor(
     private readonly characterService: CharacterService,
-    private readonly mainViewService: MainViewService,
+    private readonly viewManagerService: ViewManagerService,
     private readonly battleService: BattleService
   ) {
     this.viewState = {
-      currentView: this.mainViewService.getCurrentView(),
+      currentView: this.viewManagerService.getCurrentView(),
       isInitiativeRollView: computed(
         () =>
-          this.mainViewService.getCurrentView()() === ViewType.InitiativeRoll
+          this.viewManagerService.getCurrentView()() === ViewType.InitiativeRoll
       ),
       columnSizes: computed(() => ({
         left:
-          this.mainViewService.getCurrentView()() === ViewType.InitiativeRoll
+          this.viewManagerService.getCurrentView()() === ViewType.InitiativeRoll
             ? 'col-4'
             : 'col-8',
         right:
-          this.mainViewService.getCurrentView()() === ViewType.InitiativeRoll
+          this.viewManagerService.getCurrentView()() === ViewType.InitiativeRoll
             ? 'col-2'
             : 'col-4',
       })),

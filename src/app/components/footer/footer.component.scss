@@ -12,3 +12,16 @@
   padding: 15px;
   text-align: center;
 }
+
+.icon-button {
+  border: none;
+  background-color: transparent;
+  &:hover {
+    background-color: transparent;
+  }
+  &:active {
+    transform: scale(0.95);
+    background-color: transparent;
+    border: none;
+  }
+}

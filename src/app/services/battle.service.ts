@@ -1,5 +1,6 @@
 import { Injectable, signal, computed, type Signal } from '@angular/core';
 import { CharacterService } from './character.service';
+import { ViewManagerService } from './viewManager.service';
 
 interface CharacterOrder {
   id: string;
@@ -60,13 +61,16 @@ export class BattleService {
     }));
   });
 
-  constructor(private readonly characterService: CharacterService) {}
+  constructor(
+    private readonly characterService: CharacterService,
+    private readonly viewManagerService: ViewManagerService
+  ) {}
 
   initializeCharacters(ids: string[]): void {
     if (!ids.length) {
       throw new Error('Cannot initialize battle with empty character list');
     }
-
+    this.viewManagerService.enterBattleMode();
     this.resetState(ids);
     this.activateInitialCharacter(ids[0]);
   }
@@ -82,6 +86,27 @@ export class BattleService {
     this.handleRoundTransition(newIndex);
 
     this.updateBattleState(newIndex, ids[newIndex]);
+  }
+
+  activatePrevious(): void {
+    const ids = this.characterIds();
+    if (!ids.length || this.isFirstTurn()) return;
+
+    const newIndex = this.calculatePreviousIndex(
+      this.currentIndex(),
+      ids.length
+    );
+    const previousCharacterId = ids[newIndex];
+    if (newIndex === ids.length - 1) {
+      this.handleRoundTransitionReverse(ids);
+    }
+    this.unexhaustCharacter(previousCharacterId);
+    this.updateBattleState(newIndex, previousCharacterId);
+  }
+
+  exitBattle(): void {
+    this.viewManagerService.exitBattleMode();
+    this.resetState([]);
   }
 
   isCharacterActive(id: string): boolean {
@@ -143,11 +168,28 @@ export class BattleService {
     });
   }
 
+  private unexhaustCharacter(id: string): void {
+    this.exhaustedIds.update(set => {
+      const newSet = new Set(set);
+      newSet.delete(id);
+      return newSet;
+    });
+  }
+
   private handleRoundTransition(newIndex: number): void {
     if (newIndex === 0) {
       this.exhaustedIds.set(new Set());
       this.roundCounter.update(round => round + 1);
     }
+  }
+
+  private handleRoundTransitionReverse(ids: string[]): void {
+    this.exhaustedIds.update(() => {
+      const newSet = new Set<string>();
+      ids.slice(0, -1).forEach(id => newSet.add(id));
+      return newSet;
+    });
+    this.roundCounter.update(round => Math.max(1, round - 1));
   }
 
   private updateBattleState(newIndex: number, nextCharacterId: string): void {

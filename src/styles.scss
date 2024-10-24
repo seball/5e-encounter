@@ -53,6 +53,14 @@ body.theme {
     }
   }
 
+  .ng-select.ng-select-opened {
+    .ng-value-label {
+      color: #999;
+    }
+    input {
+      color: var(--color-bg);
+    }
+  }
   .ng-select {
     color: var(--color-text);
     font-family: var(--font);
@@ -76,7 +84,8 @@ body.theme {
     .ng-value,
     input {
       color: var(--color-text);
-      vertical-align: bottom;
+      max-width: none;
+      text-align: left;
     }
 
     .ng-input {

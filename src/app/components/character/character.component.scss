@@ -1,3 +1,5 @@
+$animation-duration: 2500ms;
+
 @keyframes disappear {
   0% {
     opacity: 1;
@@ -10,7 +12,19 @@
   }
 }
 
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 90deg;
+  inherits: true;
+}
+
+@keyframes borderRotate {
+  100% {
+    --angle: 450deg;
+  }
+}
 app-character {
+  --d: #{$animation-duration};
   $card-max-height: 140px;
   $card-margin: 1rem;
   $card-padding: 10px;
@@ -25,7 +39,16 @@ app-character {
     margin-top: $card-margin;
 
     &.active {
-      border-color: var(--color-spec1);
+      border: 2px solid;
+      border-image: conic-gradient(
+          from var(--angle),
+          var(--color-footer),
+          var(--color-spec1) 0.25turn,
+          var(--color-spec1) 0.5turn,
+          var(--color-footer) 0.75turn
+        )
+        30;
+      animation: borderRotate var(--d) linear infinite forwards;
     }
 
     &.previous {

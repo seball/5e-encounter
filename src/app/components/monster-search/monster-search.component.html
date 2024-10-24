@@ -1,7 +1,8 @@
 <ng-select
+  #select
   class="custom"
   [items]="monsterEntries"
   bindLabel="name"
   placeholder="Find Monster..."
-  (change)="onSelect($event)">
+  (change)="onSelect($event); select.clearModel()">
 </ng-select>

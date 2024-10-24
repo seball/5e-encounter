@@ -47,6 +47,7 @@ export class MonsterStatBlockComponent implements OnInit {
   statblock = computed(() =>
     this.characterService.getActiveCharacterStatblock()
   );
+  activeCharacterId = computed(() => this.characterService.activeCharacterId());
   editMode: boolean = false;
 
   contextMenuItems: MenuItem[] = [
@@ -72,6 +73,10 @@ export class MonsterStatBlockComponent implements OnInit {
   save(): void {
     this.editMode = false;
     this.characterService.updateCharacterByStatblockId(this.statblock()!.id);
+  }
+
+  addStatblock() {
+    this.characterService.createDefaultStatblock();
   }
 
   constructor(private readonly characterService: CharacterService) {}

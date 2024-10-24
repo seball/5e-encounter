@@ -46,7 +46,7 @@ export class RollOrderComponent {
   ) {
     effect(() => {
       this.characterService.initiativeChanged();
-      this.updateOrderedCharacters();
+      this.characters().sort(this.compareCharacterInitiatives);
     });
   }
 

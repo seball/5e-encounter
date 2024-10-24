@@ -3,7 +3,8 @@ import { Character } from '../interfaces/character.interface';
 import { v4 as uuid } from 'uuid';
 import { Dnd5eApiService } from './dnd5eapi.service';
 import { Statblock } from '../interfaces/statblock.interface';
-import { MainViewService, ViewType } from './main-view.service';
+import { ViewManagerService, ViewType } from './viewManager.service';
+import { STATBLOCK_TEMPLATE } from '../config/statblock-template';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class CharacterService {
 
   constructor(
     private readonly dnd5eApiService: Dnd5eApiService,
-    private readonly mainViewService: MainViewService
+    private readonly viewManagerService: ViewManagerService
   ) {
     this.loadCharacters();
     this.loadActiveCharacterId();
@@ -139,7 +140,7 @@ export class CharacterService {
 
   public activateCharacter(id: string): void {
     if (this.charactersSignal().some(c => c.id === id)) {
-      this.mainViewService.setCurrentView(ViewType.StatBlock);
+      this.viewManagerService.setCurrentView(ViewType.StatBlock);
       this.activeCharacterIdSignal.set(id);
       this.saveActiveCharacterId();
     }
@@ -158,6 +159,24 @@ export class CharacterService {
       c => c.id === activeId
     );
     return activeCharacter?.statblock;
+  }
+
+  public createDefaultStatblock(): void {
+    const activeId = this.activeCharacterIdSignal();
+    if (!activeId) return undefined;
+    const activeCharacter = this.charactersSignal().find(
+      c => c.id === activeId
+    );
+
+    if (activeCharacter) {
+      activeCharacter.statblock = {
+        id: uuid(),
+        index: 'custom',
+        name: activeCharacter.name,
+        ...STATBLOCK_TEMPLATE,
+      };
+      this.updateCharacter(activeCharacter);
+    }
   }
 
   private updateCharacters(characters: Character[]): void {
