@@ -1,5 +1,4 @@
 import { Component, computed } from '@angular/core';
-import { BattleService } from '../../services/battle.service';
 import {
   LucideAngularModule,
   HelpCircleIcon,
@@ -11,6 +10,7 @@ import {
   ViewManagerService,
   ViewType,
 } from '../../services/viewManager.service';
+import { BattleFacade } from '../../facades/battle.facade';
 
 @Component({
   selector: 'app-footer',
@@ -35,19 +35,20 @@ export class FooterComponent {
   );
   constructor(
     private readonly viewManagerService: ViewManagerService,
-    private readonly battleService: BattleService
+    private readonly battleFacade: BattleFacade
   ) {}
+
   switchView(view: ViewType): void {
     this.viewManagerService.setCurrentView(view);
   }
   next() {
-    this.battleService.activateNext();
+    this.battleFacade.nextTurn();
   }
 
   previous() {
-    this.battleService.activatePrevious();
+    this.battleFacade.previousTurn();
   }
   exit() {
-    this.battleService.exitBattle();
+    this.battleFacade.exitBattle();
   }
 }

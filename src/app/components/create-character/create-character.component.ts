@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CharacterService } from '../../services/character.service';
 import { CharacterComponent } from '../character/character.component';
 import { MonsterSearchComponent } from '../monster-search/monster-search.component';
 import { ApiResult } from '../../services/dnd5eapi.service';
+import { CharacterFacade } from '../../facades/character.facade';
 
 @Component({
   selector: 'app-create-character',
@@ -15,14 +15,14 @@ import { ApiResult } from '../../services/dnd5eapi.service';
 export class CreateCharacterComponent {
   @Input() characterType: 'ally' | 'enemy' = 'ally';
 
-  constructor(private readonly characterService: CharacterService) {}
+  constructor(private readonly characterFacade: CharacterFacade) {}
 
   public addDefaultCharacter(): void {
-    this.characterService.addDefaultCharacter(this.characterType);
+    this.characterFacade.addDefaultCharacter(this.characterType);
   }
 
   public addPredefinedCharacter(monsterIndex: string): void {
-    this.characterService.addPredefinedCharacter(
+    this.characterFacade.addPredefinedCharacter(
       this.characterType,
       monsterIndex
     );

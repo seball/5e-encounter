@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CharacterService } from '../../services/character.service';
 import { CharacterComponent } from '../character/character.component';
 import { CreateCharacterComponent } from '../create-character/create-character.component';
 import { MonsterStatBlockComponent } from '../monster-stat-block/monster-stat-block.component';
@@ -10,6 +9,7 @@ import {
   ViewManagerService,
   ViewType,
 } from '../../services/viewManager.service';
+import { CharacterFacade } from '../../facades/character.facade';
 
 @Component({
   selector: 'app-battlefield',
@@ -28,8 +28,8 @@ import {
 })
 export class BattlefieldComponent {
   protected readonly characters = {
-    allies: computed(() => this.characterService.getAllies()),
-    enemies: computed(() => this.characterService.getEnemies()),
+    allies: computed(() => this.characterFacade.allies()),
+    enemies: computed(() => this.characterFacade.enemies()),
   };
 
   protected readonly currentView = computed(() =>
@@ -43,11 +43,11 @@ export class BattlefieldComponent {
   }));
 
   constructor(
-    private readonly characterService: CharacterService,
+    private readonly characterFacade: CharacterFacade,
     private readonly viewManagerService: ViewManagerService
   ) {}
 
   protected onCharacterDelete(id: string): void {
-    this.characterService.deleteCharacter(id);
+    this.characterFacade.deleteCharacter(id);
   }
 }

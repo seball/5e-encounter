@@ -44,6 +44,7 @@ export class ViewManagerService {
 
   enterBattleMode(): void {
     this.setMode(ViewMode.Battle);
+    this.setCurrentView(ViewType.StatBlock);
   }
 
   exitBattleMode(): void {

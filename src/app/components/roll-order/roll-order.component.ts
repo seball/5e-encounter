@@ -7,10 +7,9 @@ import {
 } from '@angular/cdk/drag-drop';
 import { LucideAngularModule } from 'lucide-angular';
 import { GripVerticalIcon } from 'lucide-angular/src/icons';
-
-import { CharacterService } from '../../services/character.service';
-import { BattleService } from '../../services/battle.service';
 import { Character } from '../../interfaces/character.interface';
+import { BattleFacade } from '../../facades/battle.facade';
+import { CharacterFacade } from '../../facades/character.facade';
 
 interface OrderedCharacter {
   id: string;
@@ -35,17 +34,17 @@ export class RollOrderComponent {
   };
 
   protected readonly characters = computed(() =>
-    this.characterService.characters().sort(this.compareCharacterInitiatives)
+    this.characterFacade.characters().sort(this.compareCharacterInitiatives)
   );
 
   protected readonly orderedCharacters = signal<OrderedCharacter[]>([]);
 
   constructor(
-    private readonly characterService: CharacterService,
-    private readonly battleService: BattleService
+    private readonly characterFacade: CharacterFacade,
+    private readonly battleFacade: BattleFacade
   ) {
     effect(() => {
-      this.characterService.initiativeChanged();
+      this.characterFacade.initiativeChanged();
       this.characters().sort(this.compareCharacterInitiatives);
     });
   }
@@ -58,7 +57,7 @@ export class RollOrderComponent {
 
   protected onSaveOrder(): void {
     const orderedCharacterIds = this.characters().map(char => char.id);
-    this.battleService.initializeCharacters(orderedCharacterIds);
+    this.battleFacade.initializeBattle(orderedCharacterIds);
   }
 
   protected getInitiativeDisplay(character: Character): string {

@@ -10,8 +10,8 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NumberToStringPipe } from '../../../shared/pipes/number-to-string.pipe';
-import { CharacterService } from '../../../services/character.service';
 import { DAMAGE_SOURCES_TAGS } from '../../../config/option-configs';
+import { CharacterFacade } from '../../../facades/character.facade';
 
 @Component({
   selector: 'app-d20',
@@ -38,7 +38,7 @@ export class D20Component implements OnInit {
   isSpinning = false;
   private readonly spinDuration = 3;
   private hasUserInteracted: boolean = false;
-  constructor(private readonly characterService: CharacterService) {}
+  constructor(private readonly characterFacade: CharacterFacade) {}
   private colorTags = DAMAGE_SOURCES_TAGS;
 
   ngOnInit() {
@@ -103,7 +103,7 @@ export class D20Component implements OnInit {
     if (this.initiativeRoll !== null) {
       this.initiativeScore = this.initiativeRoll + this.initiativeMod;
       this.initiativeScoreChange.emit(this.initiativeScore);
-      this.characterService.notifyInitiativeChanged();
+      this.characterFacade.notifyInitiativeChanged();
     }
   }
 
@@ -129,7 +129,7 @@ export class D20Component implements OnInit {
     this.initiativeScore = value;
     if (value !== null) {
       this.initiativeScoreChange.emit(value);
-      this.characterService.notifyInitiativeChanged();
+      this.characterFacade.notifyInitiativeChanged();
     }
     this.hasUserInteracted = true;
     this.emitRolledInitiative();

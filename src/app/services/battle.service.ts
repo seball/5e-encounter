@@ -1,12 +1,9 @@
 import { Injectable, signal, computed, type Signal } from '@angular/core';
-import { CharacterService } from './character.service';
-import { ViewManagerService } from './viewManager.service';
 
-interface CharacterOrder {
+export interface CharacterOrder {
   id: string;
   order: number;
 }
-
 @Injectable({
   providedIn: 'root',
 })
@@ -61,18 +58,11 @@ export class BattleService {
     }));
   });
 
-  constructor(
-    private readonly characterService: CharacterService,
-    private readonly viewManagerService: ViewManagerService
-  ) {}
-
   initializeCharacters(ids: string[]): void {
     if (!ids.length) {
       throw new Error('Cannot initialize battle with empty character list');
     }
-    this.viewManagerService.enterBattleMode();
     this.resetState(ids);
-    this.activateInitialCharacter(ids[0]);
   }
 
   activateNext(): void {
@@ -85,7 +75,7 @@ export class BattleService {
     const newIndex = this.calculateNextIndex(this.currentIndex(), ids.length);
     this.handleRoundTransition(newIndex);
 
-    this.updateBattleState(newIndex, ids[newIndex]);
+    this.updateBattleState(newIndex);
   }
 
   activatePrevious(): void {
@@ -101,11 +91,10 @@ export class BattleService {
       this.handleRoundTransitionReverse(ids);
     }
     this.unexhaustCharacter(previousCharacterId);
-    this.updateBattleState(newIndex, previousCharacterId);
+    this.updateBattleState(newIndex);
   }
 
-  exitBattle(): void {
-    this.viewManagerService.exitBattleMode();
+  reset(): void {
     this.resetState([]);
   }
 
@@ -156,10 +145,6 @@ export class BattleService {
     this.isFirstTurn.set(true);
   }
 
-  private activateInitialCharacter(id: string): void {
-    this.characterService.activateCharacter(id);
-  }
-
   private exhaustCurrentCharacter(id: string): void {
     this.exhaustedIds.update(set => {
       const newSet = new Set(set);
@@ -192,9 +177,8 @@ export class BattleService {
     this.roundCounter.update(round => Math.max(1, round - 1));
   }
 
-  private updateBattleState(newIndex: number, nextCharacterId: string): void {
+  private updateBattleState(newIndex: number): void {
     this.currentIndex.set(newIndex);
-    this.characterService.activateCharacter(nextCharacterId);
     this.isFirstTurn.set(false);
   }
 }

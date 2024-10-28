@@ -2,7 +2,6 @@ import {
   Component,
   computed,
   ElementRef,
-  OnInit,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
@@ -14,13 +13,13 @@ import { AbilitiesComponent } from './abilities/abilities.component';
 import { PropertiesComponent } from './properties/properties.component';
 import { SpecialAbilitiesComponent } from './special-abilities/special-abilities.component';
 import { ActionsComponent } from './actions/actions.component';
-import { CharacterService } from '../../services/character.service';
 import {
   ContextMenuComponent,
   MenuItem,
 } from '../../shared/ui/context-menu/context-menu.component';
 import { ContextMenuIconType } from '../../shared/ui/context-menu/context-menu-item/context-menu-item.component';
 import { LegendaryActionsComponent } from './legendary-actions/legendary-actions.component';
+import { CharacterFacade } from '../../facades/character.facade';
 
 @Component({
   selector: 'app-monster-stat-block',
@@ -40,14 +39,14 @@ import { LegendaryActionsComponent } from './legendary-actions/legendary-actions
   styleUrl: './monster-stat-block.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class MonsterStatBlockComponent implements OnInit {
+export class MonsterStatBlockComponent {
   @ViewChild('statblockDiv', { static: true }) statblockDiv!: ElementRef;
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
 
   statblock = computed(() =>
-    this.characterService.getActiveCharacterStatblock()
+    this.characterFacade.getActiveCharacterStatblock()
   );
-  activeCharacterId = computed(() => this.characterService.activeCharacterId());
+  activeCharacterId = computed(() => this.characterFacade.activeCharacterId());
   editMode: boolean = false;
 
   contextMenuItems: MenuItem[] = [
@@ -72,13 +71,12 @@ export class MonsterStatBlockComponent implements OnInit {
   }
   save(): void {
     this.editMode = false;
-    this.characterService.updateCharacterByStatblockId(this.statblock()!.id);
+    this.characterFacade.updateCharacterByStatblockId(this.statblock()!.id);
   }
 
   addStatblock() {
-    this.characterService.createDefaultStatblock();
+    this.characterFacade.createDefaultStatblock();
   }
 
-  constructor(private readonly characterService: CharacterService) {}
-  ngOnInit() {}
+  constructor(private readonly characterFacade: CharacterFacade) {}
 }

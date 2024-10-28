@@ -14,8 +14,6 @@ import {
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Character } from '../../interfaces/character.interface';
-import { CharacterService } from '../../services/character.service';
-import { BattleService } from '../../services/battle.service';
 import { NumberToStringPipe } from '../../shared/pipes/number-to-string.pipe';
 import {
   ContextMenuComponent,
@@ -28,6 +26,8 @@ import {
   ViewManagerService,
   ViewType,
 } from '../../services/viewManager.service';
+import { BattleFacade } from '../../facades/battle.facade';
+import { CharacterFacade } from '../../facades/character.facade';
 
 @Component({
   selector: 'app-character',
@@ -99,9 +99,9 @@ export class CharacterComponent implements OnInit {
   ];
 
   constructor(
-    private readonly characterService: CharacterService,
+    private readonly characterFacade: CharacterFacade,
     private readonly viewManagerService: ViewManagerService,
-    private readonly battleService: BattleService
+    private readonly battleFacade: BattleFacade
   ) {
     this.viewState = {
       currentView: this.viewManagerService.getCurrentView(),
@@ -123,16 +123,16 @@ export class CharacterComponent implements OnInit {
 
     this.battleState = {
       isActive: computed(() =>
-        this.battleService.isCharacterActive(this.character.id)
+        this.battleFacade.isCharacterActive(this.character.id)
       ),
       isPrevious: computed(() =>
-        this.battleService.isCharacterPrevious(this.character.id)
+        this.battleFacade.isCharacterPrevious(this.character.id)
       ),
       isNext: computed(() =>
-        this.battleService.isCharacterNext(this.character.id)
+        this.battleFacade.isCharacterNext(this.character.id)
       ),
       isExhausted: computed(() =>
-        this.battleService.isCharacterExhausted(this.character.id)
+        this.battleFacade.isCharacterExhausted(this.character.id)
       ),
     };
 
@@ -220,7 +220,7 @@ export class CharacterComponent implements OnInit {
 
   protected save(): void {
     this.state.editMode = false;
-    this.characterService.updateCharacter(this.character);
+    this.characterFacade.updateCharacter(this.character);
   }
 
   protected edit(): void {
@@ -232,7 +232,7 @@ export class CharacterComponent implements OnInit {
   }
 
   protected viewCharacter(): void {
-    this.characterService.activateCharacter(this.character.id);
+    this.characterFacade.activateCharacter(this.character.id);
   }
 
   protected onImageError(): void {
@@ -240,14 +240,14 @@ export class CharacterComponent implements OnInit {
   }
 
   private updateCharacterOrder(): void {
-    const orderList = this.battleService.characterOrderList();
+    const orderList = this.battleFacade.characterOrderList();
     const currentCharacter = orderList.find(
       char => char.id === this.character.id
     );
 
     if (!currentCharacter) return;
 
-    if (this.battleService.isFirstTurn()) {
+    if (this.battleFacade.isFirstTurn()) {
       this.setCharacterOrder(currentCharacter.order);
     } else {
       this.delayedOrderUpdate(currentCharacter.order);
