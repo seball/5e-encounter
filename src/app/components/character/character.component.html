@@ -6,6 +6,7 @@
     exhausted: battleState.isExhausted(),
     active: battleState.isActive(),
     previous: battleState.isPrevious(),
+    defeated: character.currentHp === 0,
   }"
   #characterCard>
   <div class="row">
@@ -45,7 +46,13 @@
 
       <div class="damage-section">
         <button (click)="heal()">Heal</button>
-        <input type="number" [(ngModel)]="state.hpAdjustment" />
+
+        <app-editable-input
+          [editMode]="true"
+          [type]="'number'"
+          [(value)]="state.hpAdjustment">
+        </app-editable-input>
+
         <button (click)="damage()">Damage</button>
       </div>
     </div>
@@ -76,9 +83,19 @@
       </div>
     </div>
   </div>
-
-  <app-context-menu
+  <app-confirm-action
+    [isOpen]="state.showDeleteConfirmation"
+    title="Delete Character"
+    [message]="'Are you sure you want to delete ' + name + '?'"
+    (confirm)="onDeleteConfirm()"
+    (cancel)="onDeleteCancel()"></app-confirm-action>]
     [targetElement]="characterCard"
     [menuItems]="contextMenuItems">
   </app-context-menu>
 </div>
+
+<app-avatar-gallery
+  [isOpen]="showGallery"
+  (confirm)="onAvatarSelected($event)"
+  (cancel)="showGallery = false">
+</app-avatar-gallery>

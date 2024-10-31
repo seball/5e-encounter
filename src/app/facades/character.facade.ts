@@ -55,6 +55,7 @@ export class CharacterFacade {
   }
 
   updateCharacter(character: Character): void {
+    console.log(character);
     this.characterService.updateCharacter(character);
   }
 
@@ -81,5 +82,9 @@ export class CharacterFacade {
 
   createDefaultStatblock(): void {
     this.characterService.createDefaultStatblock();
+  }
+
+  updateCharacterImage(updatedCharacter: Character, avatarSrc: string): void {
+    this.characterService.updateCharacterImage(updatedCharacter, avatarSrc);
   }
 }

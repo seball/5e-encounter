@@ -2,6 +2,7 @@
   "name": "5e-encounter",
   "version": "0.0.0",
   "scripts": {
+    "generate-avatar-list": "node scripts/generate-avatar-list.js",
     "ng": "ng",
     "start": "ng serve",
     "deploy-pages": "ng build --base-href https://seball.github.io/5e-encounter/ & ngh --dir=dist/5e-encounter/browser",

@@ -43,21 +43,22 @@ export class RollOrderComponent {
     private readonly characterFacade: CharacterFacade,
     private readonly battleFacade: BattleFacade
   ) {
-    effect(() => {
-      this.characterFacade.initiativeChanged();
-      this.characters().sort(this.compareCharacterInitiatives);
-    });
+    effect(
+      () => {
+        this.characterFacade.initiativeChanged();
+        this.updateOrder();
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   protected onDrop(event: CdkDragDrop<string[]>): void {
     const characters = this.characters();
     moveItemInArray(characters, event.previousIndex, event.currentIndex);
+    this.battleFacade.updateOrderedCharacterIds(
+      characters.map(char => char.id)
+    );
     this.updateOrderedCharacters();
-  }
-
-  protected onSaveOrder(): void {
-    const orderedCharacterIds = this.characters().map(char => char.id);
-    this.battleFacade.initializeBattle(orderedCharacterIds);
   }
 
   protected getInitiativeDisplay(character: Character): string {
@@ -78,6 +79,15 @@ export class RollOrderComponent {
         initiativeScore: char.initiativeScore,
         hasRolledInitiative: char.hasRolledInitiative,
       }))
+    );
+  }
+
+  private updateOrder(): void {
+    const sortedCharacters = this.characters().sort(
+      this.compareCharacterInitiatives
+    );
+    this.battleFacade.updateOrderedCharacterIds(
+      sortedCharacters.map(char => char.id)
     );
   }
 

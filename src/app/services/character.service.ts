@@ -76,6 +76,14 @@ export class CharacterService {
     this.updateCharacters(updatedCharacters);
   }
 
+  public updateCharacterImage(
+    updatedCharacter: Character,
+    avatarSrc: string
+  ): void {
+    updatedCharacter.avatarSrc = avatarSrc;
+    this.updateCharacter(updatedCharacter);
+  }
+
   public deleteCharacter(id: string): void {
     const updatedCharacters = this.charactersSignal().filter(c => c.id !== id);
     this.updateCharacters(updatedCharacters);

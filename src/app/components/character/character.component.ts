@@ -28,6 +28,8 @@ import {
 } from '../../services/viewManager.service';
 import { BattleFacade } from '../../facades/battle.facade';
 import { CharacterFacade } from '../../facades/character.facade';
+import { ConfirmActionComponent } from '../../shared/ui/confirm-action/confirm-action.component';
+import { AvatarGalleryComponent } from '../../shared/ui/avatar-gallery/avatar-gallery.component';
 
 @Component({
   selector: 'app-character',
@@ -39,6 +41,8 @@ import { CharacterFacade } from '../../facades/character.facade';
     ContextMenuComponent,
     EditableInputComponent,
     D20Component,
+    ConfirmActionComponent,
+    AvatarGalleryComponent,
   ],
   templateUrl: './character.component.html',
   styleUrls: ['./character.component.scss'],
@@ -51,9 +55,17 @@ export class CharacterComponent implements OnInit {
   @ViewChild('characterCard', { static: true }) characterCard!: ElementRef;
   @HostBinding('style.order') characterOrder: number | null = null;
 
+  protected showGallery = false;
+
+  onAvatarSelected(avatarPath: string) {
+    this.showGallery = false;
+    this.state.avatarSrc = avatarPath;
+    this.characterFacade.updateCharacterImage(this.character, avatarPath);
+  }
   protected readonly state = {
     editMode: false,
     hpAdjustment: 0,
+    showDeleteConfirmation: false,
     avatarSrc: '',
   };
 
@@ -91,8 +103,14 @@ export class CharacterComponent implements OnInit {
       icon: ContextMenuIconType.Save,
       title: 'Save',
     },
+
     {
-      action: () => this.deleteCharacter(),
+      action: () => this.openGallery(),
+      icon: ContextMenuIconType.Image,
+      title: 'Change Image',
+    },
+    {
+      action: () => this.confirmDelete(),
       icon: ContextMenuIconType.Delete,
       title: 'Delete',
     },
@@ -225,6 +243,7 @@ export class CharacterComponent implements OnInit {
 
   protected edit(): void {
     this.state.editMode = true;
+    this.characterFacade.activateCharacter(this.character.id);
   }
 
   protected deleteCharacter(): void {
@@ -245,7 +264,10 @@ export class CharacterComponent implements OnInit {
       char => char.id === this.character.id
     );
 
-    if (!currentCharacter) return;
+    if (!currentCharacter) {
+      this.characterOrder = null;
+      return;
+    }
 
     if (this.battleFacade.isFirstTurn()) {
       this.setCharacterOrder(currentCharacter.order);
@@ -254,16 +276,31 @@ export class CharacterComponent implements OnInit {
     }
   }
 
-  private setCharacterOrder(order: number): void {
+  private setCharacterOrder(order: number | null): void {
     this.characterOrder = order;
   }
 
-  private delayedOrderUpdate(order: number): void {
+  private delayedOrderUpdate(order: number | null): void {
     setTimeout(() => {
       this.setCharacterOrder(order);
       if (this.characterCard) {
         this.characterCard.nativeElement.click();
       }
     }, 1000);
+  }
+
+  protected openGallery(): void {
+    this.showGallery = true;
+  }
+  protected confirmDelete(): void {
+    this.state.showDeleteConfirmation = true;
+  }
+
+  protected onDeleteConfirm(): void {
+    this.delete.emit(this.character.id);
+  }
+
+  protected onDeleteCancel(): void {
+    this.state.showDeleteConfirmation = false;
   }
 }

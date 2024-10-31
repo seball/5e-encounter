@@ -43,11 +43,15 @@ export class BattleFacade {
     return this.battleService.isCharacterExhausted(id);
   }
 
-  initializeBattle(ids: string[]): void {
+  updateOrderedCharacterIds(ids: string[]) {
+    this.battleService.updateOrderedCharacterIds(ids);
+  }
+
+  initializeBattle(): void {
     try {
       this.viewManagerService.enterBattleMode();
-      this.battleService.initializeCharacters(ids);
-      const firstCharacter = ids[0];
+      this.battleService.initializeCharacters();
+      const firstCharacter = this.battleService.activeCharacter();
       if (firstCharacter) {
         this.characterService.activateCharacter(firstCharacter);
       }

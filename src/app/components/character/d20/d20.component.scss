@@ -5,6 +5,7 @@
   height: 6em;
   border-color: transparent;
   transition: transform 0.1s ease-in-out;
+  box-shadow: none;
 }
 
 .button-d20 svg * {
@@ -19,6 +20,7 @@
 }
 
 .button-d20:active {
+  box-shadow: none;
   transform: scale(0.95);
 }
 
@@ -26,6 +28,7 @@
 .button-d20[disabled]:hover,
 .button-d20:hover,
 .button-d20:active {
+  box-shadow: none;
   background-color: transparent;
   border-color: transparent;
 }

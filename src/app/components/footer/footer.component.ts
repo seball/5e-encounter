@@ -38,11 +38,18 @@ export class FooterComponent {
     private readonly battleFacade: BattleFacade
   ) {}
 
+  protected isRollView(): boolean {
+    return this.currentView() === this.rollView;
+  }
   switchView(view: ViewType): void {
     this.viewManagerService.setCurrentView(view);
   }
   next() {
     this.battleFacade.nextTurn();
+  }
+
+  startBattle() {
+    this.battleFacade.initializeBattle();
   }
 
   previous() {

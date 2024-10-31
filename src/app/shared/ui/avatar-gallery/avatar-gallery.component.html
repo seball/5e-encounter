@@ -1,0 +1,35 @@
+<div class="dialog-overlay" *ngIf="isOpen">
+  <div class="dialog-container">
+    <h2 class="dialog-title">Choose Your Avatar</h2>
+
+    <div *ngIf="loading" class="loading-text">Loading avatars...</div>
+
+    <div class="avatar-grid" *ngIf="!loading">
+      <div
+        *ngFor="let avatar of avatars"
+        class="avatar-item"
+        [class.selected]="avatar.selected"
+        (click)="selectAvatar(avatar)">
+        <div class="pixel-frame">
+          <img
+            [src]="avatar.path"
+            [alt]="'Avatar - ' + avatar.filename"
+            class="avatar-image"
+            (error)="handleImageError($event)" />
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button
+        class="dialog-button confirm-button"
+        [disabled]="!selectedAvatar"
+        (click)="onConfirm()">
+        Confirm
+      </button>
+      <button class="dialog-button cancel-button" (click)="onCancel()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

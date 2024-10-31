@@ -3,7 +3,6 @@ $font-size-medium: 1.3em;
 $spacing-small: 1em;
 $spacing-medium: 2em;
 $remove-button-width: 40px;
-$remove-button-overalp: 1px;
 
 @mixin flex-container {
   display: inline-block;
@@ -44,10 +43,10 @@ h4 {
 
 .remove-button {
   position: relative;
-  left: $remove-button-overalp;
-  bottom: $remove-button-overalp;
   flex: 0 0 $remove-button-width;
-  border: solid 2px;
+  border-bottom: 1px solid var(--color-text);
+  border-left: 1px solid var(--color-text);
+  box-shadow: none;
   padding: 3px;
   text-align: center;
   color: rgb(188, 127, 127);
@@ -56,7 +55,9 @@ h4 {
 
   &:active,
   &:hover {
-    border: solid 2px var(--color-text);
+    box-shadow: none;
+    border-bottom: 1px solid var(--color-text);
+    border-left: 1px solid var(--color-text);
     background-color: rgb(188, 127, 127);
     color: var(--color-text);
   }

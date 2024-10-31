@@ -17,8 +17,11 @@
             <lucide-angular [img]="exitIcon" [size]="30"></lucide-angular>
           </button>
         </ng-container>
-        <ng-container *ngIf="!isBattleMode()">
+        <ng-container *ngIf="!isBattleMode() && !isRollView()">
           <button (click)="switchView(rollView)">Set Initiative</button>
+        </ng-container>
+        <ng-container *ngIf="!isBattleMode() && isRollView()">
+          <button (click)="startBattle()">Start Battle</button>
         </ng-container>
       </div>
 
