@@ -11,7 +11,11 @@ import { EditableNameDescriptionArrayComponent } from '../../../shared/ui/editab
   styleUrl: './reactions.component.scss',
 })
 export class ReactionsComponent {
-  @Input() reactions: Action[] = [];
+  @Input({
+    required: false,
+    transform: (value: Action[] | undefined | null) => value ?? [],
+  })
+  reactions: Action[] = [];
   @Input() editMode = false;
   @Output() reactionsChange = new EventEmitter<Action[]>();
 

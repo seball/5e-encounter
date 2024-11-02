@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  effect,
   ElementRef,
   ViewChild,
   ViewEncapsulation,
@@ -13,11 +14,7 @@ import { AbilitiesComponent } from './abilities/abilities.component';
 import { PropertiesComponent } from './properties/properties.component';
 import { SpecialAbilitiesComponent } from './special-abilities/special-abilities.component';
 import { ActionsComponent } from './actions/actions.component';
-import {
-  ContextMenuComponent,
-  MenuItem,
-} from '../../shared/ui/context-menu/context-menu.component';
-import { ContextMenuIconType } from '../../shared/ui/context-menu/context-menu-item/context-menu-item.component';
+import { ContextMenuComponent } from '../../shared/ui/context-menu/context-menu.component';
 import { LegendaryActionsComponent } from './legendary-actions/legendary-actions.component';
 import { CharacterFacade } from '../../facades/character.facade';
 import { ReactionsComponent } from './reactions/reactions.component';
@@ -45,28 +42,17 @@ export class MonsterStatBlockComponent {
   @ViewChild('statblockDiv', { static: true }) statblockDiv!: ElementRef;
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
 
+  constructor(private readonly characterFacade: CharacterFacade) {
+    effect(() => {
+      const editingId = this.characterFacade.editingCharacterId();
+      this.editMode = !!editingId;
+    });
+  }
   statblock = computed(() =>
     this.characterFacade.getActiveCharacterStatblock()
   );
   activeCharacterId = computed(() => this.characterFacade.activeCharacterId());
   editMode: boolean = false;
-
-  contextMenuItems: MenuItem[] = [
-    {
-      action: () => {
-        this.edit();
-      },
-      icon: ContextMenuIconType.Edit,
-      title: 'Edit',
-    },
-    {
-      action: () => {
-        this.save();
-      },
-      icon: ContextMenuIconType.Save,
-      title: 'Save',
-    },
-  ];
 
   edit(): void {
     this.editMode = true;
@@ -79,6 +65,4 @@ export class MonsterStatBlockComponent {
   addStatblock() {
     this.characterFacade.createDefaultStatblock();
   }
-
-  constructor(private readonly characterFacade: CharacterFacade) {}
 }

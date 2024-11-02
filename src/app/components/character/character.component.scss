@@ -1,6 +1,25 @@
-$animation-duration: 2500ms;
+// Variables
+$character: (
+  card: (
+    height: 140px,
+    padding: 10px,
+    margin: 1rem,
+  ),
+  name: (
+    font-size: 1rem,
+    max-width: 20vw,
+  ),
+  border: (
+    width: 2px,
+    animation-duration: 2s,
+  ),
+  avatar: (
+    width: 120px,
+    height: 100%,
+  ),
+);
 
-@keyframes disappear {
+@keyframes fade-out {
   0% {
     opacity: 1;
   }
@@ -12,98 +31,140 @@ $animation-duration: 2500ms;
   }
 }
 
-@property --angle {
-  syntax: '<angle>';
-  initial-value: 90deg;
-  inherits: true;
+@keyframes translate-x-right {
+  to {
+    transform: translateX(100%);
+  }
 }
 
-@keyframes pixelatedBorderRotate {
-  0% {
-    --angle: 90deg;
-  }
-  25% {
-    --angle: 180deg;
-  }
-  50% {
-    --angle: 270deg;
-  }
-  75% {
-    --angle: 360deg;
-  }
-  100% {
-    --angle: 450deg;
+@keyframes translate-x-left {
+  to {
+    transform: translateX(-100%);
   }
 }
+
+@keyframes translate-y-up {
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes translate-y-down {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@mixin border-line($is-vertical: false) {
+  content: '';
+  position: absolute;
+  background-color: var(--color-spec1);
+
+  @if $is-vertical {
+    width: map-get($character, border, width);
+    height: calc(100% + 24px);
+  } @else {
+    width: 100%;
+    height: map-get($character, border, width);
+  }
+}
+
 app-character {
-  --d: #{$animation-duration};
-  $card-max-height: 140px;
-  $card-margin: 1rem;
-  $card-padding: 10px;
-  $name-font-size: 1rem;
-  $name-max-width: 20vw;
-
   .character-card {
-    height: 140px;
+    position: relative;
+    height: map-get($character, card, height);
     background: var(--color-footer);
     border: 1px solid var(--color-text);
-    padding: $card-padding;
-    margin-top: $card-margin;
-
-    &.active {
-      border: 2px solid;
-      border-image: conic-gradient(
-          from var(--angle),
-          var(--color-footer),
-          var(--color-spec1) 0.25turn,
-          var(--color-spec1) 0.25turn,
-          var(--color-footer) 0.27turn
-        )
-        30;
-      animation: pixelatedBorderRotate var(--d) steps(16) infinite;
-    }
+    padding: map-get($character, card, padding);
+    margin-top: map-get($character, card, margin);
+    overflow: hidden;
 
     &.previous {
-      animation: disappear 1s ease-out;
+      animation: fade-out 1s ease-out;
     }
 
     &.exhausted {
       border-color: grey;
       opacity: 0.7;
     }
+
+    &.preview {
+      border: 1px solid var(--color-spec2);
+    }
+
+    &.active {
+      border: none;
+
+      .content::before,
+      .content::after {
+        @include border-line(true);
+        top: -12px;
+      }
+
+      .content::before {
+        left: 0;
+        transform: translateY(100%);
+        animation: translate-y-up
+          map-get($character, border, animation-duration) infinite linear;
+        animation-delay: -1s;
+      }
+
+      .content::after {
+        right: 0;
+        transform: translateY(-100%);
+        animation: translate-y-down
+          map-get($character, border, animation-duration) infinite linear;
+        animation-delay: -1s;
+      }
+
+      &::before,
+      &::after {
+        @include border-line;
+      }
+
+      &::before {
+        top: 0;
+        transform: translateX(-100%);
+        animation: translate-x-right
+          map-get($character, border, animation-duration) infinite linear;
+      }
+
+      &::after {
+        bottom: 0;
+        transform: translateX(100%);
+        animation: translate-x-left
+          map-get($character, border, animation-duration) infinite linear;
+      }
+    }
   }
 
   .avatar {
     float: right;
-    width: 120px;
-    height: 100%;
+    width: map-get($character, avatar, width);
+    height: map-get($character, avatar, height);
   }
 
   .name-section {
     text-align: start;
-    font-size: $name-font-size;
+    font-size: map-get($character, name, font-size);
 
     input {
       text-align: start;
-      max-width: $name-max-width;
+      max-width: map-get($character, name, max-width);
     }
   }
 
   .damage-section {
-    margin-top: 1rem;
+    margin-top: map-get($character, card, margin);
   }
 
-  %button-visibility {
+  .edit-mode {
     .edit {
       display: none;
     }
     .save {
       display: initial;
     }
-  }
-
-  .edit-mode {
-    @extend %button-visibility;
   }
 
   .view-mode {

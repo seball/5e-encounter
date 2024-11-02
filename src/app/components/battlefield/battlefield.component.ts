@@ -46,8 +46,4 @@ export class BattlefieldComponent {
     private readonly characterFacade: CharacterFacade,
     private readonly viewManagerService: ViewManagerService
   ) {}
-
-  protected onCharacterDelete(id: string): void {
-    this.characterFacade.deleteCharacter(id);
-  }
 }

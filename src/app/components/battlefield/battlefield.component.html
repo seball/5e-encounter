@@ -5,8 +5,7 @@
       <div class="character-container">
         <app-character
           *ngFor="let character of characters.allies()"
-          [character]="character"
-          (delete)="onCharacterDelete($event)">
+          [character]="character">
         </app-character>
       </div>
       <app-create-character characterType="ally"></app-create-character>
@@ -21,8 +20,7 @@
       <div class="character-container">
         <app-character
           *ngFor="let character of characters.enemies()"
-          [character]="character"
-          (delete)="onCharacterDelete($event)">
+          [character]="character">
         </app-character>
       </div>
       <app-create-character characterType="enemy"></app-create-character>

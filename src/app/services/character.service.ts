@@ -10,6 +10,8 @@ import { v4 as uuid } from 'uuid';
 export class CharacterService {
   private charactersSignal = signal<Character[]>([]);
   private activeCharacterIdSignal = signal<string | null>(null);
+  private editingCharacterIdSignal = signal<string | null>(null);
+  private editingCharacterOriginalStateSignal = signal<Character | null>(null);
   private initiativeChangedSignal = signal<boolean>(false);
 
   constructor() {
@@ -27,6 +29,9 @@ export class CharacterService {
   get initiativeChanged() {
     return this.initiativeChangedSignal.asReadonly();
   }
+  get editingCharacterId() {
+    return this.editingCharacterIdSignal.asReadonly();
+  }
 
   public getAllies = computed(() =>
     this.characters()
@@ -39,6 +44,72 @@ export class CharacterService {
       .filter(c => c.type === 'enemy')
       .sort((a, b) => (a.id > b.id ? 1 : -1))
   );
+
+  public switchSides(id: string): void {
+    const character = this.charactersSignal().find(c => c.id === id);
+    if (!character) return;
+    const updatedCharacter: Character = {
+      ...character,
+      type: character.type === 'ally' ? 'enemy' : 'ally',
+    };
+    this.updateCharacter(updatedCharacter);
+  }
+
+  public duplicateCharacter(id: string): void {
+    const originalCharacter = this.charactersSignal().find(c => c.id === id);
+    if (!originalCharacter) return;
+    const originalTimestamp = parseInt(originalCharacter.id.split('-')[0]);
+
+    const duplicatedCharacter: Character = {
+      ...structuredClone(originalCharacter),
+      id: `${originalTimestamp + 1}${uuid()}`,
+      name: `${originalCharacter.name}`,
+      initiativeRoll: null,
+      initiativeScore: null,
+      hasRolledInitiative: false,
+    };
+
+    if (duplicatedCharacter.statblock) {
+      duplicatedCharacter.statblock = {
+        ...duplicatedCharacter.statblock,
+        id: uuid(),
+      };
+    }
+
+    this.addCharacter(duplicatedCharacter);
+  }
+
+  public hasUnsavedChanges = computed(() => {
+    const originalState = this.editingCharacterOriginalStateSignal();
+    const editingId = this.editingCharacterIdSignal();
+    if (!originalState || !editingId) return false;
+    const currentCharacter = this.charactersSignal().find(
+      c => c.id === editingId
+    );
+    if (!currentCharacter) return false;
+    return this.hasCharacterChanged(originalState, currentCharacter);
+  });
+
+  public startEditingCharacter(id: string): void {
+    const character = this.charactersSignal().find(c => c.id === id);
+    if (character) {
+      this.editingCharacterOriginalStateSignal.set(structuredClone(character));
+      this.editingCharacterIdSignal.set(id);
+    }
+  }
+
+  public stopEditingCharacter(): void {
+    this.editingCharacterIdSignal.set(null);
+    this.editingCharacterOriginalStateSignal.set(null);
+  }
+
+  public revertEditingChanges(): void {
+    const originalState = this.editingCharacterOriginalStateSignal();
+    const editingId = this.editingCharacterIdSignal();
+    if (originalState && editingId) {
+      this.updateCharacter(structuredClone(originalState));
+    }
+  }
 
   public activateCharacter(id: string): void {
     if (this.charactersSignal().some(c => c.id === id)) {
@@ -189,5 +260,14 @@ export class CharacterService {
       initiativeScore: null,
       hasRolledInitiative: false,
     };
+  }
+
+  private hasCharacterChanged(
+    original: Character,
+    current: Character
+  ): boolean {
+    return (
+      JSON.stringify(original.statblock) !== JSON.stringify(current.statblock)
+    );
   }
 }

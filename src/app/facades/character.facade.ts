@@ -20,6 +20,10 @@ export class CharacterFacade {
     this.characterService.initiativeChanged()
   );
 
+  readonly editingCharacterId = computed(() =>
+    this.characterService.editingCharacterId()
+  );
+
   constructor(
     private readonly characterService: CharacterService,
     private readonly dnd5eApiService: Dnd5eApiService,
@@ -55,7 +59,6 @@ export class CharacterFacade {
   }
 
   updateCharacter(character: Character): void {
-    console.log(character);
     this.characterService.updateCharacter(character);
   }
 
@@ -86,5 +89,21 @@ export class CharacterFacade {
 
   updateCharacterImage(updatedCharacter: Character, avatarSrc: string): void {
     this.characterService.updateCharacterImage(updatedCharacter, avatarSrc);
+  }
+
+  startEditingCharacter(id: string): void {
+    this.characterService.startEditingCharacter(id);
+  }
+
+  stopEditingCharacter(): void {
+    this.characterService.stopEditingCharacter();
+  }
+
+  duplicateCharacter(id: string): void {
+    this.characterService.duplicateCharacter(id);
+  }
+
+  switchSides(id: string): void {
+    this.characterService.switchSides(id);
   }
 }

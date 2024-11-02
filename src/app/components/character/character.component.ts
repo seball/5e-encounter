@@ -3,11 +3,9 @@ import {
   computed,
   effect,
   ElementRef,
-  EventEmitter,
   HostBinding,
   Input,
   OnInit,
-  Output,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
@@ -50,13 +48,14 @@ import { AvatarGalleryComponent } from '../../shared/ui/avatar-gallery/avatar-ga
 })
 export class CharacterComponent implements OnInit {
   @Input() character!: Character;
-  @Output() delete = new EventEmitter<string>();
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
-  @ViewChild('characterCard', { static: true }) characterCard!: ElementRef;
+  @ViewChild('content', { static: true }) content!: ElementRef;
   @HostBinding('style.order') characterOrder: number | null = null;
 
   protected showGallery = false;
-
+  protected isViewing = computed(
+    () => this.characterFacade.activeCharacterId() === this.character.id
+  );
   onAvatarSelected(avatarPath: string) {
     this.showGallery = false;
     this.state.avatarSrc = avatarPath;
@@ -94,20 +93,29 @@ export class CharacterComponent implements OnInit {
       title: 'View',
     },
     {
-      action: () => this.edit(),
+      action: () => this.editCharacter(),
       icon: ContextMenuIconType.Edit,
       title: 'Edit',
     },
     {
-      action: () => this.save(),
+      action: () => this.saveCharacter(),
       icon: ContextMenuIconType.Save,
       title: 'Save',
     },
-
     {
       action: () => this.openGallery(),
       icon: ContextMenuIconType.Image,
       title: 'Change Image',
+    },
+    {
+      action: () => this.duplicateCharacter(),
+      icon: ContextMenuIconType.Duplicate,
+      title: 'Duplicate',
+    },
+    {
+      action: () => this.switcSides(),
+      icon: ContextMenuIconType.Switch,
+      title: 'Switch Sides',
     },
     {
       action: () => this.confirmDelete(),
@@ -154,7 +162,8 @@ export class CharacterComponent implements OnInit {
       ),
     };
 
-    effect(() => this.updateCharacterOrder());
+    this.initializeCharacterOrderEffect();
+    this.initializeEditingEffect();
   }
 
   ngOnInit(): void {
@@ -236,44 +245,35 @@ export class CharacterComponent implements OnInit {
     this.state.hpAdjustment = 0;
   }
 
-  protected save(): void {
-    this.state.editMode = false;
+  protected saveCharacter(): void {
+    this.characterFacade.stopEditingCharacter();
     this.characterFacade.updateCharacter(this.character);
   }
 
-  protected edit(): void {
-    this.state.editMode = true;
+  protected editCharacter(): void {
+    this.characterFacade.startEditingCharacter(this.character.id);
     this.characterFacade.activateCharacter(this.character.id);
   }
 
   protected deleteCharacter(): void {
-    this.delete.emit(this.character.id);
+    this.characterFacade.deleteCharacter(this.character.id);
   }
 
   protected viewCharacter(): void {
+    this.characterFacade.stopEditingCharacter();
     this.characterFacade.activateCharacter(this.character.id);
+  }
+
+  protected duplicateCharacter(): void {
+    this.characterFacade.duplicateCharacter(this.character.id);
+  }
+
+  protected switcSides(): void {
+    this.characterFacade.switchSides(this.character.id);
   }
 
   protected onImageError(): void {
     this.state.avatarSrc = `https://api.dicebear.com/9.x/lorelei/svg?seed=${this.character.id}`;
-  }
-
-  private updateCharacterOrder(): void {
-    const orderList = this.battleFacade.characterOrderList();
-    const currentCharacter = orderList.find(
-      char => char.id === this.character.id
-    );
-
-    if (!currentCharacter) {
-      this.characterOrder = null;
-      return;
-    }
-
-    if (this.battleFacade.isFirstTurn()) {
-      this.setCharacterOrder(currentCharacter.order);
-    } else {
-      this.delayedOrderUpdate(currentCharacter.order);
-    }
   }
 
   private setCharacterOrder(order: number | null): void {
@@ -283,8 +283,8 @@ export class CharacterComponent implements OnInit {
   private delayedOrderUpdate(order: number | null): void {
     setTimeout(() => {
       this.setCharacterOrder(order);
-      if (this.characterCard) {
-        this.characterCard.nativeElement.click();
+      if (this.content) {
+        this.content.nativeElement.click();
       }
     }, 1000);
   }
@@ -297,10 +297,37 @@ export class CharacterComponent implements OnInit {
   }
 
   protected onDeleteConfirm(): void {
-    this.delete.emit(this.character.id);
+    this.deleteCharacter();
   }
 
   protected onDeleteCancel(): void {
     this.state.showDeleteConfirmation = false;
+  }
+
+  private initializeEditingEffect(): void {
+    effect(() => {
+      const editingId = this.characterFacade.editingCharacterId();
+      this.state.editMode = editingId === this.character?.id;
+    });
+  }
+
+  private initializeCharacterOrderEffect(): void {
+    effect(() => {
+      const orderList = this.battleFacade.characterOrderList();
+      const currentCharacter = orderList.find(
+        char => char.id === this.character.id
+      );
+
+      if (!currentCharacter) {
+        this.characterOrder = null;
+        return;
+      }
+
+      if (this.battleFacade.isFirstTurn()) {
+        this.setCharacterOrder(currentCharacter.order);
+      } else {
+        this.delayedOrderUpdate(currentCharacter.order);
+      }
+    });
   }
 }

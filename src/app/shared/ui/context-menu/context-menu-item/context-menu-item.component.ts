@@ -7,6 +7,8 @@ import {
   ViewIcon,
   SaveIcon,
   ImageIcon,
+  CopyIcon,
+  ArrowLeftRightIcon,
 } from 'lucide-angular';
 
 export enum ContextMenuIconType {
@@ -16,6 +18,8 @@ export enum ContextMenuIconType {
   Default = 'default',
   Save = 'save',
   Image = 'image',
+  Duplicate = 'duplicate',
+  Switch = 'switch',
 }
 
 @Component({
@@ -33,6 +37,8 @@ export class ContextMenuItemComponent {
     [ContextMenuIconType.Default]: TerminalIcon,
     [ContextMenuIconType.Save]: SaveIcon,
     [ContextMenuIconType.Image]: ImageIcon,
+    [ContextMenuIconType.Duplicate]: CopyIcon,
+    [ContextMenuIconType.Switch]: ArrowLeftRightIcon,
   };
 
   @Input() icon: ContextMenuIconType = ContextMenuIconType.Default;
