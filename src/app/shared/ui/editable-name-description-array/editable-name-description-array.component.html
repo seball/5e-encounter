@@ -86,6 +86,7 @@
       placeholder="Description"></textarea>
   </div>
 </div>
+
 <button *ngIf="editMode" (click)="addItem()" class="add-button">
   <lucide-angular
     [img]="addIcon"
@@ -93,3 +94,11 @@
     class="context-menu-icon"></lucide-angular>
   <span class="add-text"> {{ buttonText }} </span>
 </button>
+
+<app-confirm-action
+  [isOpen]="isConfirmDialogOpen"
+  [title]="confirmTitle"
+  [message]="confirmMessage"
+  (confirm)="onConfirmRemove()"
+  (cancel)="onCancelRemove()">
+</app-confirm-action>

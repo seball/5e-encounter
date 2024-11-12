@@ -14,6 +14,7 @@ export class BattleService {
   private readonly roundCounter = signal<number>(1);
   readonly isFirstTurn = signal<boolean>(true);
   readonly orderedCharacterIds = signal<string[]>([]);
+  readonly isBattleMode = signal<boolean>(false);
 
   readonly activeCharacter: Signal<string | null> = computed(() => {
     const ids = this.characterIds();
@@ -69,6 +70,7 @@ export class BattleService {
       throw new Error('Cannot initialize battle with empty character list');
     }
     this.resetState(ids);
+    this.isBattleMode.set(true);
   }
 
   activateNext(): void {
@@ -102,6 +104,7 @@ export class BattleService {
 
   reset(): void {
     this.resetState([]);
+    this.isBattleMode.set(false);
   }
 
   isCharacterActive(id: string): boolean {

@@ -44,6 +44,7 @@ export class CharacterFacade {
           characterType
         );
         this.characterService.addCharacter(newCharacter);
+        this.activateLastCreatedCharacter();
       },
       error: error => {
         console.error(
@@ -56,6 +57,8 @@ export class CharacterFacade {
 
   addDefaultCharacter(type: 'ally' | 'enemy'): void {
     this.characterService.addDefaultCharacter(type);
+    this.activateLastCreatedCharacter();
+    this.characterService.startEditingLastCreatedCharacter();
   }
 
   updateCharacter(character: Character): void {
@@ -72,6 +75,11 @@ export class CharacterFacade {
 
   activateCharacter(id: string): void {
     this.characterService.activateCharacter(id);
+    this.viewManagerService.setCurrentView(ViewType.StatBlock);
+  }
+
+  activateLastCreatedCharacter(): void {
+    this.characterService.activateLastCreatedCharacter();
     this.viewManagerService.setCurrentView(ViewType.StatBlock);
   }
 

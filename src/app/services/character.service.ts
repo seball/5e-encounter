@@ -4,6 +4,12 @@ import { Character } from '../interfaces/character.interface';
 import { Statblock } from '../interfaces/statblock.interface';
 import { v4 as uuid } from 'uuid';
 
+interface ImportData {
+  characters: unknown[];
+  version: string;
+  exportDate: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -79,22 +85,19 @@ export class CharacterService {
     this.addCharacter(duplicatedCharacter);
   }
 
-  public hasUnsavedChanges = computed(() => {
-    const originalState = this.editingCharacterOriginalStateSignal();
-    const editingId = this.editingCharacterIdSignal();
-    if (!originalState || !editingId) return false;
-    const currentCharacter = this.charactersSignal().find(
-      c => c.id === editingId
-    );
-    if (!currentCharacter) return false;
-    return this.hasCharacterChanged(originalState, currentCharacter);
-  });
-
   public startEditingCharacter(id: string): void {
     const character = this.charactersSignal().find(c => c.id === id);
     if (character) {
       this.editingCharacterOriginalStateSignal.set(structuredClone(character));
       this.editingCharacterIdSignal.set(id);
+    }
+  }
+
+  public startEditingLastCreatedCharacter(): void {
+    const character = this.charactersSignal().at(-1);
+    if (character) {
+      this.editingCharacterOriginalStateSignal.set(structuredClone(character));
+      this.editingCharacterIdSignal.set(character.id);
     }
   }
 
@@ -114,6 +117,14 @@ export class CharacterService {
   public activateCharacter(id: string): void {
     if (this.charactersSignal().some(c => c.id === id)) {
       this.activeCharacterIdSignal.set(id);
+      this.saveActiveCharacterId();
+    }
+  }
+
+  public activateLastCreatedCharacter(): void {
+    const character = this.charactersSignal().at(-1);
+    if (character) {
+      this.activeCharacterIdSignal.set(character.id);
       this.saveActiveCharacterId();
     }
   }
@@ -147,6 +158,14 @@ export class CharacterService {
     this.updateCharacters(updatedCharacters);
   }
 
+  public updateActiveCharacter(): void {
+    const activeId = this.activeCharacterIdSignal();
+    if (!activeId) return;
+    const character = this.charactersSignal().find(c => c.id === activeId);
+    if (!character) return;
+    this.updateCharacter(character);
+  }
+
   public updateCharacterImage(
     updatedCharacter: Character,
     avatarSrc: string
@@ -160,6 +179,9 @@ export class CharacterService {
     this.updateCharacters(updatedCharacters);
     if (this.activeCharacterIdSignal() === id) {
       this.deactivateCharacter();
+    }
+    if (this.editingCharacterIdSignal() === id) {
+      this.stopEditingCharacter();
     }
   }
 
@@ -262,12 +284,97 @@ export class CharacterService {
     };
   }
 
-  private hasCharacterChanged(
-    original: Character,
-    current: Character
-  ): boolean {
+  public exportCharacters(filename: string = 'characters-export.json'): void {
+    const charactersToExport = this.charactersSignal();
+    const exportData: ImportData = {
+      characters: charactersToExport,
+      version: '1.0',
+      exportDate: new Date().toISOString(),
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+      type: 'application/json',
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  }
+
+  public async importCharacters(file: File): Promise<void> {
+    try {
+      const fileContent = await file.text();
+      const importData = JSON.parse(fileContent) as ImportData;
+
+      if (!importData.characters || !Array.isArray(importData.characters)) {
+        throw new Error('Invalid import file format');
+      }
+
+      const validatedCharacters: unknown[] = importData.characters.map(
+        (char: unknown) => {
+          if (!this.isValidCharacter(char)) {
+            const name = this.extractName(char);
+            throw new Error(`Invalid character data: ${name || 'unnamed'}`);
+          }
+
+          // Generate new IDs to avoid conflicts
+          const newId = Date.now() + uuid();
+          const newStatblockId = char.statblock ? uuid() : undefined;
+
+          return {
+            ...char,
+            id: newId,
+            statblock: char.statblock
+              ? { ...char.statblock, id: newStatblockId }
+              : undefined,
+            initiativeRoll: null,
+            initiativeScore: null,
+            hasRolledInitiative: false,
+          };
+        }
+      );
+
+      const updatedCharacters = [
+        ...this.charactersSignal(),
+        ...validatedCharacters,
+      ];
+      this.updateCharacters(updatedCharacters as Character[]);
+    } catch (error) {
+      console.error('Error importing characters:', error);
+      throw error;
+    }
+  }
+
+  private extractName(char: unknown): string {
+    if (typeof char === 'object' && char !== null && 'name' in char) {
+      return String((char as { name: unknown }).name);
+    }
+    return '';
+  }
+
+  private isValidCharacter(char: unknown): char is Character {
+    if (typeof char !== 'object' || char === null) {
+      return false;
+    }
+
+    const characterCheck = char as Partial<Character>;
+
     return (
-      JSON.stringify(original.statblock) !== JSON.stringify(current.statblock)
+      typeof characterCheck.name === 'string' &&
+      typeof characterCheck.type === 'string' &&
+      (characterCheck.type === 'ally' || characterCheck.type === 'enemy') &&
+      typeof characterCheck.maxHp === 'number' &&
+      typeof characterCheck.currentHp === 'number' &&
+      typeof characterCheck.initiativeModifier === 'number' &&
+      typeof characterCheck.armorClass === 'number' &&
+      (characterCheck.statblock === undefined ||
+        (typeof characterCheck.statblock === 'object' &&
+          characterCheck.statblock !== null))
     );
   }
 }

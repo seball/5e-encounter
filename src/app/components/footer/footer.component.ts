@@ -3,14 +3,21 @@ import {
   LucideAngularModule,
   HelpCircleIcon,
   ArrowBigRightDash,
+  ArrowBigLeftDash,
+  BanIcon,
+  DicesIcon,
+  DoorOpenIcon,
+  PlayIcon,
+  SaveIcon,
 } from 'lucide-angular/src/icons';
-import { ArrowBigLeftDash, DoorOpenIcon } from 'lucide-angular';
+
 import { CommonModule } from '@angular/common';
+
+import { ToolbarFacade } from '../../facades/toolbar.facade';
 import {
   ViewManagerService,
-  ViewType,
+  ViewState,
 } from '../../services/viewManager.service';
-import { BattleFacade } from '../../facades/battle.facade';
 
 @Component({
   selector: 'app-footer',
@@ -20,42 +27,48 @@ import { BattleFacade } from '../../facades/battle.facade';
   styleUrl: './footer.component.scss',
 })
 export class FooterComponent {
-  rollView = ViewType.InitiativeRoll;
-  manualView = ViewType.Manual;
-  statBlockView = ViewType.StatBlock;
   protected helpIcon = HelpCircleIcon;
   protected leftIcon = ArrowBigLeftDash;
   protected rightIcon = ArrowBigRightDash;
   protected exitIcon = DoorOpenIcon;
-  protected currentView = computed(() =>
-    this.viewManagerService.getCurrentView()()
-  );
-  protected isBattleMode = computed(() =>
-    this.viewManagerService.isInBattleMode()
-  );
+  protected saveIcon = SaveIcon;
+  protected discardIcon = BanIcon;
+  protected startIcon = PlayIcon;
+  protected rollIcon = DicesIcon;
+  protected state = ViewState;
+  protected viewState = computed(() => this.viewManagerService.appState());
   constructor(
-    private readonly viewManagerService: ViewManagerService,
-    private readonly battleFacade: BattleFacade
+    private readonly toolbarFacade: ToolbarFacade,
+    private readonly viewManagerService: ViewManagerService
   ) {}
 
-  protected isRollView(): boolean {
-    return this.currentView() === this.rollView;
-  }
-  switchView(view: ViewType): void {
-    this.viewManagerService.setCurrentView(view);
-  }
-  next() {
-    this.battleFacade.nextTurn();
+  nextTurn() {
+    this.toolbarFacade.nextTurn();
   }
 
   startBattle() {
-    this.battleFacade.initializeBattle();
+    this.toolbarFacade.initializeBattle();
   }
 
-  previous() {
-    this.battleFacade.previousTurn();
+  previousTurn() {
+    this.toolbarFacade.previousTurn();
   }
-  exit() {
-    this.battleFacade.exitBattle();
+  exitBattle() {
+    this.toolbarFacade.exitBattle();
+  }
+
+  saveCharacter() {
+    this.toolbarFacade.updateActiveCharacter();
+  }
+  cancelCharacter() {
+    this.toolbarFacade.discardCharacterChanges();
+  }
+
+  initiveView() {
+    this.toolbarFacade.initiativeView();
+  }
+
+  manulaView() {
+    this.toolbarFacade.manualView();
   }
 }

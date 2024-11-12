@@ -67,7 +67,6 @@ export class EditableInputComponent {
 
   @HostListener('wheel', ['$event'])
   onWheel(event: WheelEvent) {
-    console.log(event.deltaY);
     if (this.type !== 'number' || !this.isHovered) {
       return;
     }

@@ -113,7 +113,7 @@ export class CharacterComponent implements OnInit {
       title: 'Duplicate',
     },
     {
-      action: () => this.switcSides(),
+      action: () => this.switchSides(),
       icon: ContextMenuIconType.Switch,
       title: 'Switch Sides',
     },
@@ -268,7 +268,7 @@ export class CharacterComponent implements OnInit {
     this.characterFacade.duplicateCharacter(this.character.id);
   }
 
-  protected switcSides(): void {
+  protected switchSides(): void {
     this.characterFacade.switchSides(this.character.id);
   }
 

@@ -60,6 +60,13 @@
   </div>
   <hr />
 </div>
-<div *ngIf="!statblock() && activeCharacterId()" class="text-center">
-  <button (click)="addStatblock()">Add Statblock</button>
+<div *ngIf="!statblock() && activeCharacterId()" class="center-container">
+  <p class="top-text">No statblock found for this character</p>
+
+  <button (click)="addStatblock()" class="styled-button">Add Statblock</button>
+
+  <p class="bottom-text">
+    Click the button above to create a new statblock. If this will be a Player
+    Character, you probably don't need one
+  </p>
 </div>
