@@ -12,7 +12,6 @@ import {
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Character } from '../../interfaces/character.interface';
-import { NumberToStringPipe } from '../../shared/pipes/number-to-string.pipe';
 import {
   ContextMenuComponent,
   MenuItem,
@@ -35,7 +34,6 @@ import { AvatarGalleryComponent } from '../../shared/ui/avatar-gallery/avatar-ga
   imports: [
     CommonModule,
     FormsModule,
-    NumberToStringPipe,
     ContextMenuComponent,
     EditableInputComponent,
     D20Component,
@@ -69,7 +67,7 @@ export class CharacterComponent implements OnInit {
   };
 
   protected readonly viewState: {
-    currentView: ReturnType<ViewManagerService['getCurrentView']>;
+    currentView: ReturnType<ViewManagerService['currentView']>;
     isInitiativeRollView: ReturnType<typeof computed<boolean>>;
     columnSizes: ReturnType<
       typeof computed<{
@@ -122,6 +120,11 @@ export class CharacterComponent implements OnInit {
       icon: ContextMenuIconType.Delete,
       title: 'Delete',
     },
+    {
+      action: () => this.addToCollection(),
+      icon: ContextMenuIconType.Default,
+      title: 'Add to Collection',
+    },
   ];
 
   constructor(
@@ -130,18 +133,17 @@ export class CharacterComponent implements OnInit {
     private readonly battleFacade: BattleFacade
   ) {
     this.viewState = {
-      currentView: this.viewManagerService.getCurrentView(),
+      currentView: this.viewManagerService.currentView(),
       isInitiativeRollView: computed(
-        () =>
-          this.viewManagerService.getCurrentView()() === ViewType.InitiativeRoll
+        () => this.viewManagerService.currentView() === ViewType.InitiativeRoll
       ),
       columnSizes: computed(() => ({
         left:
-          this.viewManagerService.getCurrentView()() === ViewType.InitiativeRoll
+          this.viewManagerService.currentView() === ViewType.InitiativeRoll
             ? 'col-4'
             : 'col-8',
         right:
-          this.viewManagerService.getCurrentView()() === ViewType.InitiativeRoll
+          this.viewManagerService.currentView() === ViewType.InitiativeRoll
             ? 'col-2'
             : 'col-4',
       })),
@@ -250,6 +252,10 @@ export class CharacterComponent implements OnInit {
     this.characterFacade.updateCharacter(this.character);
   }
 
+  protected addToCollection(): void {
+    this.characterFacade.addToCollection(this.character);
+  }
+
   protected editCharacter(): void {
     this.characterFacade.startEditingCharacter(this.character.id);
     this.characterFacade.activateCharacter(this.character.id);
@@ -273,7 +279,7 @@ export class CharacterComponent implements OnInit {
   }
 
   protected onImageError(): void {
-    this.state.avatarSrc = `https://api.dicebear.com/9.x/lorelei/svg?seed=${this.character.id}`;
+    this.state.avatarSrc = 'assets/default.webp';
   }
 
   private setCharacterOrder(order: number | null): void {

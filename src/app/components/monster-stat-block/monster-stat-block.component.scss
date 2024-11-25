@@ -1,3 +1,4 @@
+// styles.scss or your component's styles
 app-monster-stat-block {
   .property-line {
     h4,
@@ -30,15 +31,6 @@ app-monster-stat-block {
     gap: 1rem;
   }
 
-  center-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    gap: 1rem;
-  }
-
   .top-text {
     font-size: 1.125rem;
     font-weight: 500;
@@ -46,6 +38,7 @@ app-monster-stat-block {
   }
 
   .bottom-text {
+    margin-top: 1rem;
     text-align: center;
     width: 50%;
     font-size: 0.875rem;
@@ -57,4 +50,53 @@ app-monster-stat-block {
     font-size: 2em;
   }
 
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
+
+  .dice-spin-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @keyframes spinBounce {
+    0% {
+      transform: rotate(0deg) scale(1);
+    }
+    50% {
+      transform: rotate(180deg) scale(1.1);
+    }
+    100% {
+      transform: rotate(360deg) scale(1);
+    }
+  }
+
+  .dice-spin {
+    display: inline-block;
+    animation: spinBounce 2s ease-in-out infinite;
+  }
+
+  .description-textarea {
+    max-width: none;
+    border-radius: 0;
+    color: var(--color-text);
+    background-color: rgba(236, 236, 236, 0.1);
+    width: 100%;
+    height: 10em;
+  }
+  .description-container {
+    width: 66%;
+  }
 }

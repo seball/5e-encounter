@@ -4,6 +4,9 @@ import { Dnd5eApiService } from '../services/dnd5eapi.service';
 import { ViewManagerService, ViewType } from '../services/viewManager.service';
 import { Character } from '../interfaces/character.interface';
 import { Statblock } from '../interfaces/statblock.interface';
+import { ToastService } from '../services/toast.service';
+import { GeminiService } from '../services/gemini.service';
+import { lastValueFrom } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
@@ -27,16 +30,15 @@ export class CharacterFacade {
   constructor(
     private readonly characterService: CharacterService,
     private readonly dnd5eApiService: Dnd5eApiService,
-    private readonly viewManagerService: ViewManagerService
+    private readonly viewManagerService: ViewManagerService,
+    private readonly toastService: ToastService,
+    private readonly geminiService: GeminiService
   ) {
     this.allies = this.characterService.getAllies;
     this.enemies = this.characterService.getEnemies;
   }
 
-  addPredefinedCharacter(
-    characterType: 'ally' | 'enemy',
-    monsterIndex: string
-  ): void {
+  addApiCharacter(characterType: 'ally' | 'enemy', monsterIndex: string): void {
     this.dnd5eApiService.getMonster(monsterIndex).subscribe({
       next: statblock => {
         const newCharacter = this.characterService.createCharacterFromStatblock(
@@ -53,6 +55,18 @@ export class CharacterFacade {
         );
       },
     });
+  }
+
+  addLocalStorageCharacter(
+    characterType: 'ally' | 'enemy',
+    statblock: Statblock
+  ): void {
+    const newCharacter = this.characterService.createCharacterFromStatblock(
+      statblock,
+      characterType
+    );
+    this.characterService.addCharacter(newCharacter);
+    this.activateLastCreatedCharacter();
   }
 
   addDefaultCharacter(type: 'ally' | 'enemy'): void {
@@ -81,6 +95,22 @@ export class CharacterFacade {
   activateLastCreatedCharacter(): void {
     this.characterService.activateLastCreatedCharacter();
     this.viewManagerService.setCurrentView(ViewType.StatBlock);
+  }
+
+  addToCollection(character: Character): void {
+    try {
+      this.characterService.addStatblockToLocalStorage(character);
+      this.toastService.showToast(
+        `${character.statblock?.name ?? character.name} added to collection`,
+        'success'
+      );
+    } catch (error) {
+      console.error('Error adding character to collection:', error);
+      this.toastService.showToast(
+        'Failed to add character to collection',
+        'error'
+      );
+    }
   }
 
   getActiveCharacterStatblock(): Statblock | undefined {
@@ -113,5 +143,17 @@ export class CharacterFacade {
 
   switchSides(id: string): void {
     this.characterService.switchSides(id);
+  }
+
+  async generateStatblock(description: string): Promise<void> {
+    try {
+      const response = await lastValueFrom(
+        this.geminiService.generateContent(description)
+      );
+      this.characterService.createStatblock(response);
+    } catch (error) {
+      this.toastService.showToast('Failed to generate statblock', 'error');
+      console.error('Error generating statblock:', error);
+    }
   }
 }

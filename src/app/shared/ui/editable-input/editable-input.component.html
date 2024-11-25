@@ -1,6 +1,7 @@
 <span *ngIf="!editMode">{{ prefix }}{{ displayValue }}{{ suffix }}</span>
 <span *ngIf="editMode">
   <input
+    [maxlength]="maxLength"
     [type]="type"
     [(ngModel)]="value"
     (ngModelChange)="onValueChange($event)" />

@@ -3,6 +3,7 @@ import { STATBLOCK_TEMPLATE } from '../config/statblock-template';
 import { Character } from '../interfaces/character.interface';
 import { Statblock } from '../interfaces/statblock.interface';
 import { v4 as uuid } from 'uuid';
+import { StorageService } from './storage.service';
 
 interface ImportData {
   characters: unknown[];
@@ -20,7 +21,7 @@ export class CharacterService {
   private editingCharacterOriginalStateSignal = signal<Character | null>(null);
   private initiativeChangedSignal = signal<boolean>(false);
 
-  constructor() {
+  constructor(private readonly storageService: StorageService) {
     this.loadFromStorage();
   }
 
@@ -171,6 +172,10 @@ export class CharacterService {
     avatarSrc: string
   ): void {
     updatedCharacter.avatarSrc = avatarSrc;
+    if (updatedCharacter.statblock) {
+      updatedCharacter.statblock.hasCustomImage = true;
+      updatedCharacter.statblock.image = avatarSrc;
+    }
     this.updateCharacter(updatedCharacter);
   }
 
@@ -226,50 +231,56 @@ export class CharacterService {
     }
   }
 
-  private updateCharacters(characters: Character[]): void {
-    this.charactersSignal.set(characters);
-    this.saveCharacters();
+  public createStatblock(statblock: Statblock): void {
+    const activeId = this.activeCharacterIdSignal();
+    if (!activeId) return;
+
+    const activeCharacter = this.charactersSignal().find(
+      c => c.id === activeId
+    );
+    if (activeCharacter) {
+      statblock.id = uuid();
+      activeCharacter.statblock = statblock;
+      this.updateCharacter(activeCharacter);
+    }
   }
 
   public addCharacter(newCharacter: Character): void {
     this.updateCharacters([...this.charactersSignal(), newCharacter]);
   }
 
+  private updateCharacters(characters: Character[]): void {
+    this.charactersSignal.set(characters);
+    this.saveCharacters();
+  }
+
   private loadFromStorage(): void {
-    const savedCharacters = localStorage.getItem('characters');
-    if (savedCharacters) {
-      this.charactersSignal.set(JSON.parse(savedCharacters));
+    const savedCharacters = this.storageService.getCharacters();
+    if (savedCharacters.length) {
+      this.charactersSignal.set(savedCharacters);
     }
 
-    const savedActiveCharacterId = localStorage.getItem('activeCharacterId');
+    const savedActiveCharacterId = this.storageService.getActiveCharacterId();
     if (savedActiveCharacterId) {
       this.activeCharacterIdSignal.set(savedActiveCharacterId);
     }
   }
 
   private saveCharacters(): void {
-    localStorage.setItem('characters', JSON.stringify(this.charactersSignal()));
-  }
-
-  private saveActiveCharacterId(): void {
-    localStorage.setItem(
-      'activeCharacterId',
-      this.activeCharacterIdSignal() || ''
-    );
-  }
-
-  private getInitiativeMod(dexterity: number): number {
-    return Math.floor((dexterity - 10) / 2);
+    this.storageService.setCharacters(this.charactersSignal());
   }
 
   public createCharacterFromStatblock(
     statblock: Statblock,
     characterType: 'ally' | 'enemy'
   ): Character {
-    const imageName = statblock.index || 'default';
+    const image = statblock.hasCustomImage
+      ? statblock.image
+      : `assets/${statblock.index}.webp`;
+
     statblock.id = uuid();
     return {
-      avatarSrc: `assets/${imageName}.webp`,
+      avatarSrc: image,
       currentHp: statblock.hit_points,
       maxHp: statblock.hit_points,
       id: Date.now() + uuid(),
@@ -299,7 +310,6 @@ export class CharacterService {
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
-
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -321,8 +331,6 @@ export class CharacterService {
             const name = this.extractName(char);
             throw new Error(`Invalid character data: ${name || 'unnamed'}`);
           }
-
-          // Generate new IDs to avoid conflicts
           const newId = Date.now() + uuid();
           const newStatblockId = char.statblock ? uuid() : undefined;
 
@@ -339,14 +347,24 @@ export class CharacterService {
         }
       );
 
-      const updatedCharacters = [
-        ...this.charactersSignal(),
-        ...validatedCharacters,
-      ];
-      this.updateCharacters(updatedCharacters as Character[]);
+      this.updateCharacters(validatedCharacters as Character[]);
     } catch (error) {
       console.error('Error importing characters:', error);
       throw error;
+    }
+  }
+
+  public addStatblockToLocalStorage(character: Character): void {
+    try {
+      if (!character.statblock) {
+        throw new Error('Character has no statblock');
+      }
+      this.storageService.addStatblock(character.statblock);
+    } catch (error) {
+      console.error('Error saving character statblock:', error);
+      throw error instanceof Error
+        ? error
+        : new Error('Failed to save character statblock');
     }
   }
 
@@ -376,5 +394,15 @@ export class CharacterService {
         (typeof characterCheck.statblock === 'object' &&
           characterCheck.statblock !== null))
     );
+  }
+
+  private saveActiveCharacterId(): void {
+    this.storageService.setActiveCharacterId(
+      this.activeCharacterIdSignal() || ''
+    );
+  }
+
+  private getInitiativeMod(dexterity: number): number {
+    return Math.floor((dexterity - 10) / 2);
   }
 }

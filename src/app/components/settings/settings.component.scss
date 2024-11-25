@@ -1,0 +1,73 @@
+app-settings {
+  .file-input {
+    max-width: none;
+    width: 100%;
+  }
+
+  .file-drop {
+    ngx-file-drop {
+      div.ngx-file-drop__drop-zone {
+        border: 1px solid var(--color-spec2);
+        border-radius: 0px;
+      }
+      p.text-spec2 {
+        color: var(--color-spec2);
+      }
+    }
+  }
+  .text-tip {
+    color: #666;
+  }
+  .error {
+    color: var(--color-fire);
+  }
+  .success {
+    color: var(--color-acid);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 2rem;
+    background: var(--color-footer);
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .table {
+    margin-top: 1rem;
+
+    th,
+    td {
+      vertical-align: middle;
+      background-color: var(--color-footer);
+      color: var(--color-text);
+      border: 1px solid var(--color-text);
+    }
+  }
+
+  .btn-icon {
+    padding: 0.25rem;
+    border: none;
+    background: none;
+    color: var(--color-fire);
+    box-shadow: none;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover,
+    &:active {
+      color: var(--color-text);
+      background-color: var(--color-fire);
+      box-shadow: none;
+    }
+  }
+
+  .table-responsive {
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+    overflow: auto;
+  }
+}

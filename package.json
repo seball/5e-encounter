@@ -27,6 +27,7 @@
     "angular-cli-ghpages": "^2.0.1",
     "bootstrap": "^5.3.3",
     "lucide-angular": "^0.446.0",
+    "ngx-file-drop": "^16.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "use-bootstrap-tag": "^2.2.2",

@@ -1,7 +1,12 @@
 <footer class="floating-footer">
   <div class="footer-content">
     <div class="row">
-      <div class="col-1">Currently: {{ viewState() }}</div>
+      <div class="col-1">
+        <button class="icon-button settings" (click)="settingsView()">
+          Settings
+          <lucide-angular [img]="settingsIcon" [size]="30"></lucide-angular>
+        </button>
+      </div>
       <div class="col-10">
         <ng-container [ngSwitch]="viewState()">
           <div *ngSwitchCase="state.Edit" class="controls-wrapper">
@@ -61,6 +66,19 @@
                 <button class="icon-button" (click)="initiveView()">
                   <lucide-angular [img]="rollIcon" [size]="30"></lucide-angular>
                   Set Initiative
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngSwitchCase="state.Loading" class="controls-wrapper">
+            <div class="controls-container">
+              <div class="navigation-controls">
+                <button class="icon-button" (click)="cancelRequest()">
+                  <lucide-angular
+                    [img]="cancelIcon"
+                    [size]="30"></lucide-angular>
+                  Cancel Generate
                 </button>
               </div>
             </div>

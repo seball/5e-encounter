@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { AvatarGalleryComponent } from '../../shared/ui/avatar-gallery/avatar-gallery.component';
+import { DiceTokenComponent } from '../../shared/ui/dice-token/dice-token.component';
 
 @Component({
   selector: 'app-manual',
   standalone: true,
-  imports: [AvatarGalleryComponent],
+  imports: [DiceTokenComponent],
   templateUrl: './manual.component.html',
   styleUrl: './manual.component.css',
 })

@@ -8,12 +8,11 @@ import {
   HostListener,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NumberToStringPipe } from '../../pipes/number-to-string.pipe';
 
 @Component({
   selector: 'app-editable-input',
   standalone: true,
-  imports: [CommonModule, FormsModule, NumberToStringPipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './editable-input.component.html',
   styleUrl: './editable-input.component.scss',
 })
@@ -23,10 +22,8 @@ export class EditableInputComponent {
   @Input() prefix: string = '';
   @Input() suffix: string = '';
   @Input() valuePipe: PipeTransform | null = null;
-  @Input() step: number = 1; // Step size for increment/decrement
-  @Input() min?: number = 0; // Optional minimum value
-  @Input() max?: number = 100; // Optional maximum value
-
+  @Input() step: number = 1;
+  @Input() maxLength: number | null = null;
   private _value: string | number = '';
   private isHovered = false;
 
@@ -70,39 +67,18 @@ export class EditableInputComponent {
     if (this.type !== 'number' || !this.isHovered) {
       return;
     }
-
-    // Prevent page scrolling
     event.preventDefault();
-
     const currentValue = Number(this._value) || 0;
     const delta = event.deltaY < 0 ? this.step : -this.step;
-    let newValue = currentValue + delta;
-
-    // Apply min/max constraints if they exist
-    if (this.min !== undefined) {
-      newValue = Math.max(this.min, newValue);
-    }
-    if (this.max !== undefined) {
-      newValue = Math.min(this.max, newValue);
-    }
-
+    const newValue = currentValue + delta;
     if (newValue !== currentValue) {
       this.value = newValue;
     }
   }
 
   onValueChange(newValue: string | number) {
-    // For direct input, also apply min/max constraints
     if (this.type === 'number') {
-      let numValue = Number(newValue);
-
-      if (this.min !== undefined) {
-        numValue = Math.max(this.min, numValue);
-      }
-      if (this.max !== undefined) {
-        numValue = Math.min(this.max, numValue);
-      }
-
+      const numValue = Number(newValue);
       this.value = numValue;
     } else {
       this.value = newValue;

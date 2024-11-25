@@ -100,4 +100,5 @@ export interface Statblock {
   reactions: Action[];
   image: URL;
   url: URL;
+  hasCustomImage: boolean;
 }

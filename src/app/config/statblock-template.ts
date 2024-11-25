@@ -54,6 +54,7 @@ export const STATBLOCK_TEMPLATE: Omit<Statblock, 'id' | 'index' | 'name'> = {
   ],
   reactions: [],
   legendary_actions: [],
+  hasCustomImage: false,
   image: '',
   url: '',
 };

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ViewManagerService, ViewType } from '../services/viewManager.service';
 import { CharacterService } from '../services/character.service';
 import { BattleService } from '../services/battle.service';
+import { GeminiService } from '../services/gemini.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,8 @@ export class ToolbarFacade {
   constructor(
     private readonly viewManagerService: ViewManagerService,
     private readonly characterService: CharacterService,
-    private readonly battleService: BattleService
+    private readonly battleService: BattleService,
+    private readonly geminiService: GeminiService
   ) {}
 
   exitBattle(): void {
@@ -80,5 +82,13 @@ export class ToolbarFacade {
 
   manualView(): void {
     this.viewManagerService.setCurrentView(ViewType.Manual);
+  }
+
+  settingsView(): void {
+    this.viewManagerService.setCurrentView(ViewType.Settings);
+  }
+
+  cancelRequest(): void {
+    this.geminiService.cancelRequest();
   }
 }

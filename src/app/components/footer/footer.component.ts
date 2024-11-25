@@ -9,6 +9,7 @@ import {
   DoorOpenIcon,
   PlayIcon,
   SaveIcon,
+  SettingsIcon,
 } from 'lucide-angular/src/icons';
 
 import { CommonModule } from '@angular/common';
@@ -35,6 +36,8 @@ export class FooterComponent {
   protected discardIcon = BanIcon;
   protected startIcon = PlayIcon;
   protected rollIcon = DicesIcon;
+  protected settingsIcon = SettingsIcon;
+  protected cancelIcon = BanIcon;
   protected state = ViewState;
   protected viewState = computed(() => this.viewManagerService.appState());
   constructor(
@@ -70,5 +73,12 @@ export class FooterComponent {
 
   manulaView() {
     this.toolbarFacade.manualView();
+  }
+  settingsView() {
+    this.toolbarFacade.settingsView();
+  }
+
+  cancelRequest() {
+    this.toolbarFacade.cancelRequest();
   }
 }

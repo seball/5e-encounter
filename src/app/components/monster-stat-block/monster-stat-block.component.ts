@@ -18,6 +18,9 @@ import { ContextMenuComponent } from '../../shared/ui/context-menu/context-menu.
 import { LegendaryActionsComponent } from './legendary-actions/legendary-actions.component';
 import { CharacterFacade } from '../../facades/character.facade';
 import { ReactionsComponent } from './reactions/reactions.component';
+import { FormsModule } from '@angular/forms';
+import { DiceTokenComponent } from '../../shared/ui/dice-token/dice-token.component';
+import { ViewManagerService } from '../../services/viewManager.service';
 
 @Component({
   selector: 'app-monster-stat-block',
@@ -30,9 +33,10 @@ import { ReactionsComponent } from './reactions/reactions.component';
     PropertiesComponent,
     SpecialAbilitiesComponent,
     ActionsComponent,
-    ContextMenuComponent,
     LegendaryActionsComponent,
     ReactionsComponent,
+    FormsModule,
+    DiceTokenComponent,
   ],
   templateUrl: './monster-stat-block.component.html',
   styleUrl: './monster-stat-block.component.scss',
@@ -41,8 +45,13 @@ import { ReactionsComponent } from './reactions/reactions.component';
 export class MonsterStatBlockComponent {
   @ViewChild('statblockDiv', { static: true }) statblockDiv!: ElementRef;
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
+  monsterDescription: string = '';
+  isLoading = computed(() => this.viewManagerService.isLoading());
 
-  constructor(private readonly characterFacade: CharacterFacade) {
+  constructor(
+    private readonly characterFacade: CharacterFacade,
+    private readonly viewManagerService: ViewManagerService
+  ) {
     effect(() => {
       const editingId = this.characterFacade.editingCharacterId();
       this.editMode = !!editingId;
@@ -64,5 +73,10 @@ export class MonsterStatBlockComponent {
 
   addStatblock() {
     this.characterFacade.createDefaultStatblock();
+  }
+
+  async generateStatblock(): Promise<void> {
+    await this.characterFacade.generateStatblock(this.monsterDescription);
+    this.monsterDescription = '';
   }
 }

@@ -13,6 +13,7 @@
         <div class="name-section">
           <span *ngIf="name === '' && !state.editMode">No Name...</span>
           <app-editable-input
+            [maxLength]="40"
             [editMode]="state.editMode"
             [type]="'text'"
             [(value)]="name">
