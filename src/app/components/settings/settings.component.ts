@@ -1,11 +1,17 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, computed, signal, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxFileDropEntry, NgxFileDropModule } from 'ngx-file-drop';
 import { SettingsFacade } from '../../facades/settings.facade';
-import { signal } from '@angular/core';
 import { ConfirmActionComponent } from '../../shared/ui/confirm-action/confirm-action.component';
 import { Statblock } from '../../interfaces/statblock.interface';
-import { LucideAngularModule, XIcon } from 'lucide-angular/src/icons';
+import { LucideAngularModule } from 'lucide-angular/src/icons';
+import { ImportEncounterComponent } from './import-encounter/import-encounter.component';
+import { ExportEncounterComponent } from './export-encounter/export-encounter.component';
+import { CustomStatblocksComponent } from './custom-statblocks/custom-statblocks.component';
+import { SaveBattlefieldComponent } from './save-battlefield/save-battlefield.component';
+import { BattlefieldListComponent } from './battlefield-list/battlefield-list.component';
+import { Battlefield } from '../../interfaces/battlefield.interface';
+import { ApiKeyComponent } from './api-key/api-key.component';
 
 @Component({
   selector: 'app-settings',
@@ -15,71 +21,143 @@ import { LucideAngularModule, XIcon } from 'lucide-angular/src/icons';
     NgxFileDropModule,
     ConfirmActionComponent,
     LucideAngularModule,
+    ImportEncounterComponent,
+    ExportEncounterComponent,
+    CustomStatblocksComponent,
+    SaveBattlefieldComponent,
+    BattlefieldListComponent,
+    ApiKeyComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class SettingsComponent {
-  exportFilename = signal<string>('');
-  showImportConfirm = signal<boolean>(false);
-  showDeleteConfirm = signal<boolean>(false);
-  pendingFiles = signal<NgxFileDropEntry[] | null>(null);
-  pendingDeleteStatblock = signal<Statblock | null>(null);
-  deleteConfirmMessage = signal<string>('');
-  xIcon = XIcon;
+  // Signals for various UI states
+  private importConfirmSignal = signal(false);
+  private deleteConfirmSignal = signal(false);
+  private pendingFilesSignal = signal<NgxFileDropEntry[] | null>(null);
+  private pendingDeleteStatblockSignal = signal<Statblock | null>(null);
+  private deleteConfirmMessageSignal = signal<string>('');
+  private battlefieldToDeleteSignal = signal<Battlefield | null>(null);
+  private battlefieldToLoadSignal = signal<Battlefield | null>(null);
 
-  constructor(public settingsFacade: SettingsFacade) {}
+  readonly statblocks = computed(() => this.settingsFacade.statblocks());
+  readonly battlefields = computed(() => this.settingsFacade.battlefields());
+  readonly showBattlefieldDeleteConfirm = computed(
+    () => this.battlefieldToDeleteSignal() !== null
+  );
+  readonly showBattlefieldLoadConfirm = computed(
+    () => this.battlefieldToLoadSignal() !== null
+  );
+  readonly showImportConfirm = computed(() => this.importConfirmSignal());
+  readonly showDeleteConfirm = computed(() => this.deleteConfirmSignal());
 
-  async dropped(files: NgxFileDropEntry[]): Promise<void> {
-    this.pendingFiles.set(files);
-    this.showImportConfirm.set(true);
+  readonly battlefieldDeleteConfirmMessage = computed(() =>
+    this.battlefieldToDeleteSignal()?.name
+      ? `Are you sure you want to delete the battlefield "${this.battlefieldToDeleteSignal()!.name}"?`
+      : ''
+  );
+  readonly battlefieldLoadConfirmMessage = computed(() =>
+    this.battlefieldToLoadSignal()?.name
+      ? `Loading "${this.battlefieldToLoadSignal()!.name}" will replace your current characters. Are you sure?`
+      : ''
+  );
+
+  readonly deleteConfirmMessage = computed(() =>
+    this.pendingDeleteStatblockSignal()?.name
+      ? `Are you sure you want to delete "${this.pendingDeleteStatblockSignal()!.name}" statblock? This action cannot be undone.`
+      : ''
+  );
+
+  constructor(private readonly settingsFacade: SettingsFacade) {}
+
+  dropped(files: NgxFileDropEntry[]): void {
+    this.pendingFilesSignal.set(files);
+    this.importConfirmSignal.set(true);
   }
 
   async handleImportConfirm(): Promise<void> {
-    const files = this.pendingFiles();
+    const files = this.pendingFilesSignal();
     if (files) {
       await this.settingsFacade.handleFileUpload(files);
-      this.pendingFiles.set(null);
+      this.clearImportState();
     }
-    this.showImportConfirm.set(false);
   }
 
   handleImportCancel(): void {
-    this.pendingFiles.set(null);
-    this.showImportConfirm.set(false);
+    this.clearImportState();
   }
 
-  exportData(): void {
-    if (this.exportFilename()) {
-      this.settingsFacade.exportCharacters(this.exportFilename());
-    }
-  }
-
-  updateExportFilename(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.exportFilename.set(input.value);
+  private clearImportState(): void {
+    this.pendingFilesSignal.set(null);
+    this.importConfirmSignal.set(false);
   }
 
   deleteStatblock(statblock: Statblock): void {
-    this.pendingDeleteStatblock.set(statblock);
-    this.deleteConfirmMessage.set(
-      `Are you sure you want to delete "${statblock.name}" statblock? This action cannot be undone.`
-    );
-    this.showDeleteConfirm.set(true);
+    this.pendingDeleteStatblockSignal.set(statblock);
+    this.deleteConfirmSignal.set(true);
   }
 
   handleDeleteConfirm(): void {
-    const statblock = this.pendingDeleteStatblock();
+    const statblock = this.pendingDeleteStatblockSignal();
     if (statblock) {
       this.settingsFacade.deleteStatblock(statblock.id, statblock.name);
+      this.clearDeleteState();
     }
-    this.handleDeleteCancel();
   }
 
   handleDeleteCancel(): void {
-    this.pendingDeleteStatblock.set(null);
-    this.showDeleteConfirm.set(false);
-    this.deleteConfirmMessage.set('');
+    this.clearDeleteState();
+  }
+
+  private clearDeleteState(): void {
+    this.pendingDeleteStatblockSignal.set(null);
+    this.deleteConfirmSignal.set(false);
+    this.deleteConfirmMessageSignal.set('');
+  }
+
+  saveBattlefield(name: string): void {
+    this.settingsFacade.saveBattlefield(name.trim());
+  }
+
+  loadBattlefield(battlefield: Battlefield): void {
+    this.battlefieldToLoadSignal.set(battlefield);
+  }
+
+  deleteBattlefield(battlefield: Battlefield): void {
+    this.battlefieldToDeleteSignal.set(battlefield);
+  }
+
+  handleBattlefieldDeleteConfirm(): void {
+    const battlefield = this.battlefieldToDeleteSignal();
+    if (battlefield) {
+      this.settingsFacade.deleteBattlefield(battlefield.id);
+    }
+    this.battlefieldToDeleteSignal.set(null);
+  }
+
+  handleBattlefieldDeleteCancel(): void {
+    this.battlefieldToDeleteSignal.set(null);
+  }
+
+  handleBattlefieldLoadConfirm(): void {
+    const battlefield = this.battlefieldToLoadSignal();
+    if (battlefield) {
+      this.settingsFacade.loadBattlefield(battlefield.id);
+    }
+    this.battlefieldToLoadSignal.set(null);
+  }
+
+  handleBattlefieldLoadCancel(): void {
+    this.battlefieldToLoadSignal.set(null);
+  }
+
+  exportData(filename: string): void {
+    this.settingsFacade.exportCharacters(filename);
+  }
+
+  saveApiKey(apiKey: string): void {
+    this.settingsFacade.saveApiKey(apiKey);
   }
 }

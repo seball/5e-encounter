@@ -1,0 +1,15 @@
+<h3>Export Encounter</h3>
+<p class="text-tip">Export your encounter to a JSON file</p>
+<div class="row">
+  <div class="col-sm-8">
+    <input
+      class="file-input"
+      type="text"
+      [value]="filename()"
+      (input)="updateFilename($event)"
+      placeholder="file name" />
+  </div>
+  <div class="col-sm-4">
+    <button (click)="export()">Export</button>
+  </div>
+</div>

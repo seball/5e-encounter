@@ -3,7 +3,7 @@ import { STATBLOCK_TEMPLATE } from '../config/statblock-template';
 import { Character } from '../interfaces/character.interface';
 import { Statblock } from '../interfaces/statblock.interface';
 import { v4 as uuid } from 'uuid';
-import { StorageService } from './storage.service';
+import { StorageFacade } from '../facades/storage.facade';
 
 interface ImportData {
   characters: unknown[];
@@ -21,7 +21,7 @@ export class CharacterService {
   private editingCharacterOriginalStateSignal = signal<Character | null>(null);
   private initiativeChangedSignal = signal<boolean>(false);
 
-  constructor(private readonly storageService: StorageService) {
+  constructor(private readonly storageFacade: StorageFacade) {
     this.loadFromStorage();
   }
 
@@ -240,6 +240,7 @@ export class CharacterService {
     );
     if (activeCharacter) {
       statblock.id = uuid();
+      activeCharacter.currentHp = statblock.hit_points;
       activeCharacter.statblock = statblock;
       this.updateCharacter(activeCharacter);
     }
@@ -249,25 +250,29 @@ export class CharacterService {
     this.updateCharacters([...this.charactersSignal(), newCharacter]);
   }
 
+  public isAtLeastTwoCharacters(): boolean {
+    return this.charactersSignal().length >= 2;
+  }
+
   private updateCharacters(characters: Character[]): void {
     this.charactersSignal.set(characters);
     this.saveCharacters();
   }
 
   private loadFromStorage(): void {
-    const savedCharacters = this.storageService.getCharacters();
+    const savedCharacters = this.storageFacade.getCharacters();
     if (savedCharacters.length) {
       this.charactersSignal.set(savedCharacters);
     }
 
-    const savedActiveCharacterId = this.storageService.getActiveCharacterId();
+    const savedActiveCharacterId = this.storageFacade.getActiveCharacterId();
     if (savedActiveCharacterId) {
       this.activeCharacterIdSignal.set(savedActiveCharacterId);
     }
   }
 
   private saveCharacters(): void {
-    this.storageService.setCharacters(this.charactersSignal());
+    this.storageFacade.setCharacters(this.charactersSignal());
   }
 
   public createCharacterFromStatblock(
@@ -276,7 +281,7 @@ export class CharacterService {
   ): Character {
     const image = statblock.hasCustomImage
       ? statblock.image
-      : `assets/${statblock.index}.webp`;
+      : `assets/monsters/${statblock.index}.webp`;
 
     statblock.id = uuid();
     return {
@@ -354,12 +359,37 @@ export class CharacterService {
     }
   }
 
+  public setCharactersFromBattlefield(characters: Character[]): void {
+    try {
+      const validatedCharacters: Character[] = characters.map(
+        (char: Character) => {
+          if (!this.isValidCharacter(char)) {
+            const name = this.extractName(char);
+            throw new Error(`Invalid character data: ${name || 'unnamed'}`);
+          }
+
+          return {
+            ...char,
+            initiativeRoll: null,
+            initiativeScore: null,
+            hasRolledInitiative: false,
+          };
+        }
+      );
+
+      this.updateCharacters(validatedCharacters as Character[]);
+    } catch (error) {
+      console.error('Error setting characters from battlefield:', error);
+      throw error;
+    }
+  }
+
   public addStatblockToLocalStorage(character: Character): void {
     try {
       if (!character.statblock) {
         throw new Error('Character has no statblock');
       }
-      this.storageService.addStatblock(character.statblock);
+      this.storageFacade.addStatblock(character.statblock);
     } catch (error) {
       console.error('Error saving character statblock:', error);
       throw error instanceof Error
@@ -397,7 +427,7 @@ export class CharacterService {
   }
 
   private saveActiveCharacterId(): void {
-    this.storageService.setActiveCharacterId(
+    this.storageFacade.setActiveCharacterId(
       this.activeCharacterIdSignal() || ''
     );
   }

@@ -7,7 +7,9 @@
           <app-character [character]="character"> </app-character>
         }
       </div>
-      <app-create-character characterType="ally"></app-create-character>
+      @if (!isBattleMode()) {
+        <app-create-character characterType="ally"></app-create-character>
+      }
     </div>
 
     <div [class]="columnSizes().center">
@@ -21,7 +23,9 @@
           <app-character [character]="character"> </app-character>
         }
       </div>
-      <app-create-character characterType="enemy"></app-create-character>
+      @if (!isBattleMode()) {
+        <app-create-character characterType="enemy"></app-create-character>
+      }
     </div>
   </div>
 </div>

@@ -6,30 +6,45 @@ import {
   Output,
   PipeTransform,
   HostListener,
+  OnDestroy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
+type InputType = 'text' | 'number';
 
 @Component({
   selector: 'app-editable-input',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './editable-input.component.html',
-  styleUrl: './editable-input.component.scss',
+  styleUrls: ['./editable-input.component.scss'],
 })
-export class EditableInputComponent {
-  @Input() editMode: boolean = false;
-  @Input() type: 'text' | 'number' = 'text';
-  @Input() prefix: string = '';
-  @Input() suffix: string = '';
+export class EditableInputComponent implements OnDestroy {
+  @Input() editMode = false;
+  @Input() type: InputType = 'text';
+  @Input() prefix = '';
+  @Input() suffix = '';
   @Input() valuePipe: PipeTransform | null = null;
-  @Input() step: number = 1;
+  @Input() step = 1;
   @Input() maxLength: number | null = null;
+  @Output() readonly valueChange = new EventEmitter<string | number>();
+
   private _value: string | number = '';
-  private isHovered = false;
+  private _isFocused = false;
+  private readonly wheelHandler: (event: WheelEvent) => void;
+  private static readonly MIN_VALUE = 0;
+
+  constructor() {
+    this.wheelHandler = this.handleWheel.bind(this);
+  }
 
   @Input()
   set value(val: string | number) {
-    this._value = this.type === 'number' ? Number(val) : String(val);
+    const formattedValue = this.formatValue(val);
+    this._value =
+      this.type === 'number'
+        ? Math.max(Number(formattedValue), EditableInputComponent.MIN_VALUE)
+        : formattedValue;
     this.valueChange.emit(this._value);
   }
 
@@ -37,51 +52,73 @@ export class EditableInputComponent {
     return this._value;
   }
 
-  @Output() valueChange: EventEmitter<string | number> = new EventEmitter<
-    string | number
-  >();
-
   get displayValue(): string {
-    if (this.type === 'number' && this.valuePipe) {
-      return String(this.valuePipe.transform(this._value));
-    }
-    return String(this._value);
+    return this.isNumberWithPipe
+      ? String(this.valuePipe!.transform(this._value))
+      : String(this._value);
   }
 
   get inputValue(): string | number {
     return this.type === 'number' ? Number(this._value) : this._value;
   }
 
-  @HostListener('mouseenter')
-  onMouseEnter() {
-    this.isHovered = true;
+  private get isNumberWithPipe(): boolean {
+    return this.type === 'number' && !!this.valuePipe;
   }
 
-  @HostListener('mouseleave')
-  onMouseLeave() {
-    this.isHovered = false;
+  @HostListener('focusin')
+  onFocusIn(): void {
+    this._isFocused = true;
+    this.addWheelListener();
   }
 
-  @HostListener('wheel', ['$event'])
-  onWheel(event: WheelEvent) {
-    if (this.type !== 'number' || !this.isHovered) {
-      return;
-    }
+  @HostListener('focusout')
+  onFocusOut(): void {
+    this._isFocused = false;
+    this.removeWheelListener();
+  }
+
+  ngOnDestroy(): void {
+    this.removeWheelListener();
+  }
+
+  onValueChange(newValue: string | number): void {
+    this.value = newValue;
+  }
+
+  private formatValue(val: string | number): string | number {
+    return this.type === 'number' ? Number(val) : String(val);
+  }
+
+  private handleWheel(event: WheelEvent): void {
+    if (!this.isWheelEventValid()) return;
+
     event.preventDefault();
+    const newValue = this.calculateNewValue(event);
+    if (this.hasValueChanged(newValue)) {
+      this.value = newValue;
+    }
+  }
+
+  private isWheelEventValid(): boolean {
+    return this.type === 'number' && this._isFocused;
+  }
+
+  private calculateNewValue(event: WheelEvent): number {
     const currentValue = Number(this._value) || 0;
     const delta = event.deltaY < 0 ? this.step : -this.step;
-    const newValue = currentValue + delta;
-    if (newValue !== currentValue) {
-      this.value = newValue;
-    }
+    return Math.max(currentValue + delta, EditableInputComponent.MIN_VALUE);
   }
 
-  onValueChange(newValue: string | number) {
-    if (this.type === 'number') {
-      const numValue = Number(newValue);
-      this.value = numValue;
-    } else {
-      this.value = newValue;
-    }
+  private hasValueChanged(newValue: number): boolean {
+    return newValue !== Number(this._value);
+  }
+
+  private addWheelListener(): void {
+    window.addEventListener('wheel', this.wheelHandler, { passive: false });
+  }
+
+  private removeWheelListener(): void {
+    window.removeEventListener('wheel', this.wheelHandler);
   }
 }

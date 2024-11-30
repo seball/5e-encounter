@@ -2,7 +2,10 @@
   <div class="footer-content">
     <div class="row">
       <div class="col-1">
-        <button class="icon-button settings" (click)="settingsView()">
+        <button
+          class="icon-button settings"
+          [disabled]="isSideButtonDisabled()"
+          (click)="settingsView()">
           Settings
           <lucide-angular [img]="settingsIcon" [size]="30"></lucide-angular>
         </button>
@@ -50,13 +53,21 @@
           <div *ngSwitchCase="state.Initiative" class="controls-wrapper">
             <div class="controls-container">
               <div class="navigation-controls">
-                <button class="icon-button" (click)="startBattle()">
-                  <lucide-angular
-                    [img]="startIcon"
-                    [size]="30"></lucide-angular>
-                  Start Battle
-                </button>
+                @if (canStartBattle()) {
+                  <button class="icon-button" (click)="startBattle()">
+                    <lucide-angular
+                      [img]="startIcon"
+                      [size]="30"></lucide-angular>
+                    Start Battle
+                  </button>
+                } @else {
+                  <p>At least 2 characters required to start a battle</p>
+                }
               </div>
+              <button class="icon-button back" (click)="goBack()">
+                Go Back
+                <lucide-angular [img]="goBackIcon" [size]="30"></lucide-angular>
+              </button>
             </div>
           </div>
 
@@ -87,7 +98,10 @@
       </div>
 
       <div class="col-1">
-        <button class="icon-button help" (click)="manulaView()">
+        <button
+          class="icon-button help"
+          [disabled]="isSideButtonDisabled()"
+          (click)="manulaView()">
           Help
           <lucide-angular [img]="helpIcon" [size]="30"></lucide-angular>
         </button>

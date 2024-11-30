@@ -45,11 +45,15 @@ app-settings {
     }
   }
 
+  .action-buttons {
+    display: inline-flex;
+    gap: 8px; /* Adjust the spacing between buttons */
+  }
   .btn-icon {
     padding: 0.25rem;
     border: none;
     background: none;
-    color: var(--color-fire);
+
     box-shadow: none;
     cursor: pointer;
     border-radius: 0.25rem;
@@ -60,8 +64,14 @@ app-settings {
     &:hover,
     &:active {
       color: var(--color-text);
-      background-color: var(--color-fire);
+
       box-shadow: none;
+    }
+    &.delete {
+      color: var(--color-fire);
+    }
+    &.load {
+      color: var(--color-acid);
     }
   }
 

@@ -8,10 +8,6 @@
   z-index: 1000;
 }
 
-.footer-content {
-  padding: 15px;
-}
-
 .controls-wrapper {
   height: 100%;
   display: flex;
@@ -55,8 +51,16 @@
     border: none;
     box-shadow: none;
   }
+
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    border: none;
+    box-shadow: none;
+  }
 }
 
+.back,
 .exit {
   margin-left: auto;
 }

@@ -1,0 +1,66 @@
+.textarea-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+}
+
+.expandable-textarea {
+  width: 100%;
+  min-height: 45px;
+  padding: 8px 12px;
+  padding-right: 50px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1.5;
+  resize: none;
+  overflow-y: hidden;
+  transition: height 0.15s ease-out;
+  max-width: none;
+  color: var(--color-text);
+  background-color: rgba(236, 236, 236, 0.1);
+}
+
+.expandable-textarea:focus {
+  outline: none;
+  border-color: var(--color-spec2);
+}
+
+.enter-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px;
+  background-color: var(--color-spec2);
+  color: var(--color-text);
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+}
+
+.enter-button {
+  &:hover,
+  &:disabled,
+  &:disabled:hover {
+    opacity: 0.8;
+    background-color: var(--color-spec2);
+    color: var(--color-text);
+    box-shadow: none;
+  }
+
+  &:disabled,
+  &:disabled:hover {
+    opacity: 1;
+    filter: grayscale(1);
+    border: none;
+  }
+}
+.expand-icon {
+  color: inherit;
+}

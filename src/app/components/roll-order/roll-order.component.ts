@@ -28,7 +28,7 @@ interface OrderedCharacter {
 export class RollOrderComponent {
   protected readonly uiState = {
     gripIcon: GripVerticalIcon,
-    title: 'ROLL ORDER',
+    title: 'Round Order',
     subtitle: 'adjust by drag and drop',
     confirmButtonText: 'CONFIRM ORDER',
   };

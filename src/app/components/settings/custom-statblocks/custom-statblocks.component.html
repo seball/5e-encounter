@@ -1,0 +1,41 @@
+<h3>Custom Statblocks</h3>
+<p class="text-tip">Manage your saved custom statblocks</p>
+@if (statblocks().length) {
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>AC</th>
+          <th>HP</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (statblock of statblocks(); track statblock.id) {
+          <tr>
+            <td>{{ statblock.name }}</td>
+            <td>{{ statblock.armor_class[0].value }}</td>
+            <td>{{ statblock.hit_points }}</td>
+            <td>{{ statblock.type }}</td>
+            <td>
+              <div class="action-buttons">
+                <button
+                  class="btn-icon delete"
+                  (click)="deleteStatblock(statblock)"
+                  title="Delete statblock">
+                  <lucide-angular [img]="xIcon" [size]="20"></lucide-angular>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="empty-state">
+    <p>No custom statblocks saved</p>
+  </div>
+}

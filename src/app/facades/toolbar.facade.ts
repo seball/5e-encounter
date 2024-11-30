@@ -66,6 +66,10 @@ export class ToolbarFacade {
     }
   }
 
+  canStartBattle(): boolean {
+    return this.characterService.isAtLeastTwoCharacters();
+  }
+
   updateActiveCharacter(): void {
     this.characterService.updateActiveCharacter();
     this.characterService.stopEditingCharacter();
@@ -90,5 +94,9 @@ export class ToolbarFacade {
 
   cancelRequest(): void {
     this.geminiService.cancelRequest();
+  }
+
+  statblockView(): void {
+    this.viewManagerService.setCurrentView(ViewType.StatBlock);
   }
 }

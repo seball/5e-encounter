@@ -1,43 +1,53 @@
 export const STATBLOCK_REQUEST_MESSAGE = (monsterDescription: string) => `
-Generate a JSON object representing a D&D monster statblock. The JSON should adhere to the following requirements:
+Create a unique and imaginative Dungeons & Dragons monster statblock in JSON format, adhering to the following guidelines:
 
-General Rules:
-Use the provided Statblock TypeScript interface structure (detailed below).
-The id should be a random generated UUID create one.
-Set image and url to empty strings.
-Populate fields with plausible values unless specified otherwise.
-Use the description to fill relevant fields such as desc and infer other attributes as needed.
-Be creative and imaginative, write very detailed statblock output.
-Monster Description:
+**General Instructions:**
+- **Structure:** Follow the provided Statblock TypeScript interface structure detailed below.
+- **Unique Identifier:** Generate a random UUID for the 'id' field.
+- **Media Fields:** Set 'image' and 'url' fields to empty strings.
+- **Field Population:** Use plausible and creative values for all fields, unless specified otherwise.
+- **Description Utilization:** Leverage the provided monster description to populate relevant fields such as 'desc' and infer other attributes as needed.
+- **Creativity:** Ensure the statblock is detailed, original, and imaginative.
 
+**Monster Description:**
 "${monsterDescription}"
 
+**Proficiencies:**
+- Include at least one Saving Throw in the 'proficiencies' array with:
+  - 'index' starting with 'saving-throw-'.
+  - 'name' prefixed with 'Saving Throw:'.
+  - Available options: 'saving-throw-str', 'saving-throw-dex', 'saving-throw-con', 'saving-throw-int', 'saving-throw-wis', 'saving-throw-cha'.
+- Include one or more Skills in the 'proficiencies' array with:
+  - 'index' starting with 'skill-'.
+  - 'name' prefixed with 'Skill:'.
+  - Available options: 'skill-acrobatics', 'skill-animal-handling', 'skill-arcana', 'skill-athletics', 'skill-deception', 'skill-history', 'skill-insight', 'skill-intimidation', 'skill-investigation', 'skill-medicine', 'skill-nature', 'skill-perception', 'skill-performance', 'skill-persuasion', 'skill-religion', 'skill-sleight-of-hand', 'skill-stealth', 'skill-survival'.
 
-Proficiencies:
-Include at least one Saving Throw in the proficiencies array with:index starting with saving-throw-.
-name prefixed with Saving Throw:.
-availabe optios are (saving-throw-str, saving-throw-dex, saving-throw-con, saving-throw-int, saving-throw-wis, saving-throw-cha).
-Include one  or more Skills in the proficiencies array with:index starting with skill-.
-name prefixed with Skill:.
-availabe options are (skill-acrobatics, skill-animal-handling, skill-arcana, skill-athletics, skill-deception, skill-history, skill-insight, skill-intimidation, skill-investigation, skill-medicine, skill-nature, skill-perception, skill-performance, skill-persuasion, skill-religion, skill-sleight-of-hand, skill-stealth, skill-survival).
-Armor Class, Damage, and Conditions:
-Add at least one ArmorClass entry with a valid type and value.
-Include plausible entries in damage_vulnerabilities, damage_resistances, damage_immunities, and condition_immunities.
-Include at least two senses (e.g., darkvision, blindsight).
-Populate special_abilities, actions, and reactions with relevant details.
-Use a default speed object with at least a walk value.
-Aligments: get one from the list of aligments.
-available options are (lawful evil, any alignment, chaotic evil, chaotic good, lawful good, neutral, lawful neutral, unaligned, any non-good alignment, any non-lawful alignment, neutral evil, any chaotic alignment, neutral good, chaotic neutral, neutral good (50%) or neutral evil (50%), any evil alignment)
-Types: get one from the list of types.
-available options are (beast, monstrosity, dragon, humanoid, undead, fiend, celestial, construct, giant, elemental, fey, aberration, ooze, swarm, plant)
-Sizes: get one from the list of sizes.
-available options are (Tiny, Small, Medium, Large, Huge, Gargantuan)
-Contitions: get any number of contuions from the list of conditions.
-available options are (poisoned, exhaustion, grappled, paralyzed, petrified, prone, restrained, unconscious, charmed, frightened, blinded, deafened, stunned) don't use contition prefix here.
-Actions: at least one action is required.
-If action is attack, add to hit modifier and hit dmg, optionaly add reach.
+**Armor Class, Damage, and Conditions:**
+- Add at least one 'ArmorClass' entry with a valid type and value.
+- Include plausible entries in 'damage_vulnerabilities', 'damage_resistances', 'damage_immunities', and 'condition_immunities'.
+- Include at least two senses (e.g., darkvision, blindsight).
+- Populate 'special_abilities', 'actions', and 'reactions' with relevant details.
+- Use a default 'speed' object with at least a 'walk' value.
 
-Statblock Interfaces for Reference:
+**Alignments:**
+- Select one from the following list: 'lawful evil', 'any alignment', 'chaotic evil', 'chaotic good', 'lawful good', 'neutral', 'lawful neutral', 'unaligned', 'any non-good alignment', 'any non-lawful alignment', 'neutral evil', 'any chaotic alignment', 'neutral good', 'chaotic neutral', 'neutral good (50%) or neutral evil (50%)', 'any evil alignment'.
+
+**Types:**
+- Choose one from the following list: 'beast', 'monstrosity', 'dragon', 'humanoid', 'undead', 'fiend', 'celestial', 'construct', 'giant', 'elemental', 'fey', 'aberration', 'ooze', 'swarm', 'plant'.
+
+**Sizes:**
+- Select one from the following list: 'Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'.
+
+**Conditions:**
+- Include any number from the following list: 'poisoned', 'exhaustion', 'grappled', 'paralyzed', 'petrified', 'prone', 'restrained', 'unconscious', 'charmed', 'frightened', 'blinded', 'deafened', 'stunned'. Do not use the 'condition' prefix here.
+
+**Actions:**
+- At least one action is required.
+- If the action is an attack, add 'to hit' modifier and hit damage; optionally add reach.
+- For numeric fields, avoid using a '+' sign for positive numbers and always use a '-' sign for negative numbers.
+
+**Statblock Interfaces for Reference:**
+
 type URL = string;
 type DiceRoll = string;
 interface APIReference {

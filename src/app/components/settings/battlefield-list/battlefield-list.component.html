@@ -1,0 +1,45 @@
+<h3>Saved Battlefields</h3>
+<p class="text-tip">Manage your saved battlefield states</p>
+@if (battlefields().length) {
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Characters</th>
+          <th>Saved Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (battlefield of battlefields(); track battlefield.id) {
+          <tr>
+            <td>{{ battlefield.name }}</td>
+            <td>{{ battlefield.characters.length }}</td>
+            <td>{{ battlefield.timestamp | date: 'medium' }}</td>
+            <td>
+              <div class="action-buttons">
+                <button
+                  class="btn-icon load"
+                  (click)="load(battlefield)"
+                  title="Load battlefield">
+                  <lucide-angular [img]="loadIcon" [size]="20"></lucide-angular>
+                </button>
+                <button
+                  class="btn-icon delete"
+                  (click)="delete(battlefield)"
+                  title="Delete battlefield">
+                  <lucide-angular [img]="xIcon" [size]="20"></lucide-angular>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="empty-state">
+    <p>No battlefields saved</p>
+  </div>
+}

@@ -5,94 +5,47 @@
 
       <div class="row mb-4">
         <div class="col-12">
-          <h3>Import Encounter</h3>
-          <p class="text-tip">Import your encounter from a JSON file</p>
-          <div class="file-drop">
-            <ngx-file-drop
-              [accept]="'.json'"
-              [multiple]="false"
-              (onFileDrop)="dropped($event)">
-              <ng-template
-                ngx-file-drop-content-tmp
-                let-openFileSelector="openFileSelector">
-                <div class="text-center">
-                  <p class="text-spec2">Drop your JSON file here or</p>
-                  <button (click)="openFileSelector()">Choose File</button>
-                </div>
-              </ng-template>
-            </ngx-file-drop>
-          </div>
+          <app-import-encounter (fileDropped)="dropped($event)">
+          </app-import-encounter>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <app-export-encounter (exportRequested)="exportData($event)">
+          </app-export-encounter>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <app-custom-statblocks
+            [statblocks]="statblocks"
+            (deleteRequested)="deleteStatblock($event)">
+          </app-custom-statblocks>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <app-save-battlefield (saveRequested)="saveBattlefield($event)">
+          </app-save-battlefield>
         </div>
       </div>
 
       <div class="row">
         <div class="col-12">
-          <h3>Export Encounter</h3>
-          <p class="text-tip">Export your encounter to a JSON file</p>
-
-          <div class="row">
-            <div class="col-sm-8">
-              <input
-                class="file-input"
-                type="text"
-                [value]="exportFilename()"
-                (input)="updateExportFilename($event)"
-                placeholder="file name" />
-            </div>
-            <div class="col-sm-4">
-              <button (click)="exportData()">Export</button>
-            </div>
-          </div>
+          <app-battlefield-list
+            [battlefields]="battlefields"
+            (loadRequested)="loadBattlefield($event)"
+            (deleteRequested)="deleteBattlefield($event)">
+          </app-battlefield-list>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row mb-4">
         <div class="col-12">
-          <h3>Custom Statblocks</h3>
-          <p class="text-tip">Manage your saved custom statblocks</p>
-
-          @if (settingsFacade.statblocks().length) {
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>AC</th>
-                    <th>HP</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (
-                    statblock of settingsFacade.statblocks();
-                    track statblock.id
-                  ) {
-                    <tr>
-                      <td>{{ statblock.name }}</td>
-                      <td>{{ statblock.armor_class[0].value }}</td>
-                      <td>{{ statblock.hit_points }}</td>
-                      <td>{{ statblock.type }}</td>
-                      <td>
-                        <button
-                          class="btn-icon"
-                          (click)="deleteStatblock(statblock)"
-                          title="Delete statblock">
-                          <lucide-angular
-                            [img]="xIcon"
-                            [size]="20"></lucide-angular>
-                        </button>
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          } @else {
-            <div class="empty-state">
-              <p>No custom statblocks saved</p>
-            </div>
-          }
+          <app-api-key (saveRequested)="saveApiKey($event)"></app-api-key>
         </div>
       </div>
     </div>
@@ -103,12 +56,30 @@
     title="Import Encounter"
     message="Are you sure you want to import this encounter? This action will add new characters to your existing ones."
     (confirm)="handleImportConfirm()"
-    (cancel)="handleImportCancel()"></app-confirm-action>
+    (cancel)="handleImportCancel()">
+  </app-confirm-action>
+
   <app-confirm-action
     [isOpen]="showDeleteConfirm()"
     title="Delete Statblock"
     [message]="deleteConfirmMessage()"
     (confirm)="handleDeleteConfirm()"
     (cancel)="handleDeleteCancel()">
+  </app-confirm-action>
+
+  <app-confirm-action
+    [isOpen]="showBattlefieldDeleteConfirm()"
+    title="Delete Battlefield"
+    [message]="battlefieldDeleteConfirmMessage()"
+    (confirm)="handleBattlefieldDeleteConfirm()"
+    (cancel)="handleBattlefieldDeleteCancel()">
+  </app-confirm-action>
+
+  <app-confirm-action
+    [isOpen]="showBattlefieldLoadConfirm()"
+    title="Load Battlefield"
+    [message]="battlefieldLoadConfirmMessage()"
+    (confirm)="handleBattlefieldLoadConfirm()"
+    (cancel)="handleBattlefieldLoadCancel()">
   </app-confirm-action>
 </div>

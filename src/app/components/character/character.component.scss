@@ -79,6 +79,9 @@ app-character {
     margin-top: map-get($character, card, margin);
     overflow: hidden;
 
+    .content {
+      height: 100%;
+    }
     &.previous {
       animation: fade-out 1s ease-out;
     }
@@ -94,7 +97,6 @@ app-character {
 
     &.active {
       border: none;
-
       .content::before,
       .content::after {
         @include border-line(true);
@@ -139,11 +141,50 @@ app-character {
   }
 
   .avatar {
+    position: relative;
     float: right;
     width: map-get($character, avatar, width);
     height: map-get($character, avatar, height);
+    &.dead {
+      img {
+        filter: grayscale(100%);
+      }
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 1em;
+        background-color: var(--color-fire);
+        transform-origin: center;
+      }
+
+      &::before {
+        z-index: 1;
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+
+      &::after {
+        z-index: 1;
+        transform: translate(-50%, -50%) rotate(-45deg);
+      }
+    }
   }
 
+  .base-info {
+    height: inherit;
+  }
+
+  .flex-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .damage-section {
+    margin-top: auto; /* Pushes the damage-section to the bottom */
+  }
   .name-section {
     text-align: start;
     font-size: map-get($character, name, font-size);
@@ -155,7 +196,7 @@ app-character {
   }
 
   .damage-section {
-    margin-top: map-get($character, card, margin);
+    margin-top: auto;
   }
 
   .edit-mode {
@@ -174,5 +215,21 @@ app-character {
     .save {
       display: none;
     }
+  }
+
+  .battle-state {
+    .switch,
+    .edit,
+    .delete,
+    .duplicate {
+      display: none;
+    }
+  }
+
+  .damage-button {
+    background-color: var(--color-fire);
+  }
+  .heal-button {
+    background-color: var(--color-acid);
   }
 }

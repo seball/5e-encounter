@@ -47,6 +47,10 @@ export class BattlefieldComponent {
     );
   }
 
+  isBattleMode(): boolean {
+    return this.viewManagerService.isBattleMode();
+  }
+
   private calculateColumnSizes(view: ViewType): ColumnSizes {
     const isInitiativeRoll = view === ViewType.InitiativeRoll;
 

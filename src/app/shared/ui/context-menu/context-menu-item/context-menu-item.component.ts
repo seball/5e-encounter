@@ -10,6 +10,7 @@ import {
   CopyIcon,
   ArrowLeftRightIcon,
 } from 'lucide-angular';
+import { UserRoundPlusIcon } from 'lucide-angular/src/icons';
 
 export enum ContextMenuIconType {
   Delete = 'delete',
@@ -20,6 +21,7 @@ export enum ContextMenuIconType {
   Image = 'image',
   Duplicate = 'duplicate',
   Switch = 'switch',
+  Add = 'add',
 }
 
 @Component({
@@ -39,6 +41,7 @@ export class ContextMenuItemComponent {
     [ContextMenuIconType.Image]: ImageIcon,
     [ContextMenuIconType.Duplicate]: CopyIcon,
     [ContextMenuIconType.Switch]: ArrowLeftRightIcon,
+    [ContextMenuIconType.Add]: UserRoundPlusIcon,
   };
 
   @Input() icon: ContextMenuIconType = ContextMenuIconType.Default;

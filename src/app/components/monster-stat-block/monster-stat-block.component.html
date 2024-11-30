@@ -63,29 +63,45 @@
 <div *ngIf="!statblock() && activeCharacterId()" class="center-container">
   <p class="top-text">No statblock found for this character</p>
 
-  <button (click)="addStatblock()" class="styled-button">
-    Add Statblock Template
-  </button>
+  @if (!isBattleState()) {
+    <button (click)="addStatblock()" class="styled-button">
+      Add Statblock Template
+    </button>
 
-  <p class="bottom-text">OR</p>
+    <p class="bottom-text">OR</p>
 
-  <button (click)="generateStatblock()" class="styled-button">
-    Generate AI Statblock
-  </button>
-  <div class="description-container">
-    <textarea
-      id="monsterDescription"
-      [(ngModel)]="monsterDescription"
-      class="description-textarea"
-      placeholder="Enter a description of the monster you want to generate (e.g., 'A large dragon with fire breath that lives in volcanic mountains')"
-      rows="4"></textarea>
-  </div>
-
-  <div *ngIf="isLoading()">
-    <div class="dice-spin-container">
-      <div class="dice-spin">
-        <app-dice-token type="d20" size="150px"></app-dice-token>
-      </div>
+    <div class="description-container">
+      <app-expandable-textbox
+        [placeholder]="'Generate a statblock via AI and play with it!'"
+        (submit)="generateStatblock($event)">
+      </app-expandable-textbox>
     </div>
-  </div>
+
+    <ng-container *ngIf="!isLoadingModels()">
+      <ng-select
+        #select
+        class="custom model-select"
+        [items]="models()"
+        bindLabel="displayName"
+        bindValue="name"
+        placeholder="Optionally, select a model... PRO is the default."
+        (change)="onSelect($event)">
+      </ng-select>
+    </ng-container>
+
+    <div *ngIf="isLoadingModels()">Loading available models...</div>
+
+    <div *ngIf="modelsError()">
+      {{ 'Please check if you have provided a valid API Key in the Settings.' }}
+    </div>
+
+    <div *ngIf="isLoading()" class="loading-overlay">
+      <div class="dice-spin-container">
+        <div class="dice-spin">
+          <app-dice-token type="d20" size="75px"></app-dice-token>
+        </div>
+      </div>
+      <div class="loading-text">Generating statblock, please wait...</div>
+    </div>
+  }
 </div>

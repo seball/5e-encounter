@@ -2,7 +2,7 @@ import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, map, of } from 'rxjs';
 import { Statblock } from '../interfaces/statblock.interface';
-import { StorageService } from './storage.service';
+import { StorageFacade } from '../facades/storage.facade';
 
 export interface ApiResult {
   index: string;
@@ -27,7 +27,7 @@ export class Dnd5eApiService {
 
   private readonly apiMonstersSignal = signal<ApiResult[]>([]);
   private readonly localMonstersSignal = computed(() => {
-    const statblocks = this.storageService.statblocks();
+    const statblocks = this.storageFacade.statblocks();
     return this.formatLocalMonsters(statblocks);
   });
 
@@ -38,7 +38,7 @@ export class Dnd5eApiService {
 
   constructor(
     private http: HttpClient,
-    private storageService: StorageService
+    private storageFacade: StorageFacade
   ) {
     this.loadApiMonsters();
   }
@@ -76,22 +76,6 @@ export class Dnd5eApiService {
       ...result,
       source: 'api' as const,
     }));
-  }
-
-  private getLocalMonsters(): ApiResult[] {
-    try {
-      const statblocks = this.storageService.getStatblocks();
-      return statblocks.map(statblock => ({
-        index: statblock.index,
-        name: this.formatLocalMonsterName(statblock.name),
-        url: '',
-        source: 'local' as const,
-        statblock: statblock,
-      }));
-    } catch (error) {
-      console.error('Error loading local monsters:', error);
-      return [];
-    }
   }
 
   private formatLocalMonsterName(name: string): string {

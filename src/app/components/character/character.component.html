@@ -8,8 +8,8 @@
     preview: isViewing(),
   }">
   <div class="content" #content>
-    <div class="row">
-      <div [class]="viewState.columnSizes().left">
+    <div class="row base-info">
+      <div class="flex-container" [ngClass]="viewState.columnSizes().left">
         <div class="name-section">
           <span *ngIf="name === '' && !state.editMode">No Name...</span>
           <app-editable-input
@@ -19,7 +19,6 @@
             [(value)]="name">
           </app-editable-input>
         </div>
-
         <div class="hp-section">
           <span>HP: </span>
           <app-editable-input
@@ -34,7 +33,6 @@
             [(value)]="maxHp">
           </app-editable-input>
         </div>
-
         <div class="initiative-section">
           <span>AC: </span>
           <app-editable-input
@@ -43,9 +41,8 @@
             [(value)]="armorClass">
           </app-editable-input>
         </div>
-
         <div class="damage-section">
-          <button (click)="heal()">Heal</button>
+          <button class="heal-button" (click)="heal()">Heal</button>
 
           <app-editable-input
             [editMode]="true"
@@ -53,7 +50,7 @@
             [(value)]="state.hpAdjustment">
           </app-editable-input>
 
-          <button (click)="damage()">Damage</button>
+          <button class="damage-button" (click)="damage()">Damage</button>
         </div>
       </div>
 
@@ -74,7 +71,7 @@
       </ng-container>
 
       <div [class]="viewState.columnSizes().right">
-        <div class="avatar">
+        <div class="avatar" [class.dead]="isCharacterDead()">
           <img
             [src]="state.avatarSrc"
             (error)="onImageError()"
@@ -103,6 +100,7 @@
   [ngClass]="{
     'edit-mode': state.editMode,
     'view-mode': !state.editMode,
+    'battle-state': isBattleMode(),
   }"
   [targetElement]="content"
   [menuItems]="contextMenuItems">

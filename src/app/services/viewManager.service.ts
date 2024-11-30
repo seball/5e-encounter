@@ -1,8 +1,9 @@
 import { computed, Injectable, signal, Signal } from '@angular/core';
 import { CharacterService } from './character.service';
 import { BattleService } from './battle.service';
-import { StorageService, StorageKey } from './storage.service';
+
 import { GeminiService } from './gemini.service';
+import { StorageFacade } from '../facades/storage.facade';
 
 export enum ViewType {
   InitiativeRoll = 'initiativeRoll',
@@ -28,8 +29,7 @@ export class ViewManagerService {
   private readonly previousViewSignal;
 
   private readonly isEditingCharacter;
-  private readonly isBattleMode;
-
+  readonly isBattleMode;
   readonly appState;
   readonly isLoading = computed(() => this.geminiService.isLoading());
   readonly currentView: Signal<ViewType>;
@@ -38,7 +38,7 @@ export class ViewManagerService {
   constructor(
     private readonly characterService: CharacterService,
     private readonly battleService: BattleService,
-    private readonly storageService: StorageService,
+    private readonly storageFacade: StorageFacade,
     private readonly geminiService: GeminiService
   ) {
     this.currentViewSignal = signal<ViewType>(this.loadInitialView());
@@ -57,16 +57,24 @@ export class ViewManagerService {
   setCurrentView(view: ViewType): void {
     this.previousViewSignal.set(this.currentViewSignal());
     this.currentViewSignal.set(view);
-    this.storageService.set(StorageKey.VIEW, view);
+    this.storageFacade.setView(view);
   }
 
   isCurrentView(view: ViewType): boolean {
     return this.currentViewSignal() === view;
   }
 
+  isCurrentState(state: ViewState): boolean {
+    return this.appState() === state;
+  }
+
+  isBattleState(): Signal<boolean> {
+    return this.battleService.isBattleMode;
+  }
+
   private loadInitialView(): ViewType {
     try {
-      return this.storageService.get(StorageKey.VIEW) ?? ViewType.Manual;
+      return this.storageFacade.getView() ?? ViewType.Manual;
     } catch {
       return ViewType.Manual;
     }

@@ -122,8 +122,8 @@ export class CharacterComponent implements OnInit {
     },
     {
       action: () => this.addToCollection(),
-      icon: ContextMenuIconType.Default,
-      title: 'Add to Collection',
+      icon: ContextMenuIconType.Add,
+      title: 'Add to Monster List',
     },
   ];
 
@@ -246,6 +246,13 @@ export class CharacterComponent implements OnInit {
     );
     this.state.hpAdjustment = 0;
   }
+  protected isBattleMode(): boolean {
+    return this.viewManagerService.isBattleMode();
+  }
+
+  protected isCharacterDead(): boolean {
+    return this.character.currentHp <= 0;
+  }
 
   protected saveCharacter(): void {
     this.characterFacade.stopEditingCharacter();
@@ -279,7 +286,7 @@ export class CharacterComponent implements OnInit {
   }
 
   protected onImageError(): void {
-    this.state.avatarSrc = 'assets/default.webp';
+    this.state.avatarSrc = 'assets/monsters/default.webp';
   }
 
   private setCharacterOrder(order: number | null): void {
@@ -288,6 +295,9 @@ export class CharacterComponent implements OnInit {
 
   private delayedOrderUpdate(order: number | null): void {
     setTimeout(() => {
+      if (!this.isBattleMode()) {
+        order = null;
+      }
       this.setCharacterOrder(order);
       if (this.content) {
         this.content.nativeElement.click();

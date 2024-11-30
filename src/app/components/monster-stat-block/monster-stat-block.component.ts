@@ -21,11 +21,15 @@ import { ReactionsComponent } from './reactions/reactions.component';
 import { FormsModule } from '@angular/forms';
 import { DiceTokenComponent } from '../../shared/ui/dice-token/dice-token.component';
 import { ViewManagerService } from '../../services/viewManager.service';
+import { GeminiService, Model } from '../../services/gemini.service';
+import { NgSelectComponent } from '@ng-select/ng-select';
+import { ExpandableTextboxComponent } from '../../shared/ui/expandable-textbox/expandable-textbox.component';
 
 @Component({
   selector: 'app-monster-stat-block',
   standalone: true,
   imports: [
+    NgSelectComponent,
     CommonModule,
     CreatureHeadingComponent,
     TopStatsComponent,
@@ -37,6 +41,7 @@ import { ViewManagerService } from '../../services/viewManager.service';
     ReactionsComponent,
     FormsModule,
     DiceTokenComponent,
+    ExpandableTextboxComponent,
   ],
   templateUrl: './monster-stat-block.component.html',
   styleUrl: './monster-stat-block.component.scss',
@@ -45,12 +50,20 @@ import { ViewManagerService } from '../../services/viewManager.service';
 export class MonsterStatBlockComponent {
   @ViewChild('statblockDiv', { static: true }) statblockDiv!: ElementRef;
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
-  monsterDescription: string = '';
   isLoading = computed(() => this.viewManagerService.isLoading());
+
+  protected readonly models = computed(() => this.geminiService.models());
+  protected readonly isLoadingModels = computed(() =>
+    this.geminiService.isLoadingModels()
+  );
+  protected readonly modelsError = computed(() =>
+    this.geminiService.modelsError()
+  );
 
   constructor(
     private readonly characterFacade: CharacterFacade,
-    private readonly viewManagerService: ViewManagerService
+    private readonly viewManagerService: ViewManagerService,
+    private readonly geminiService: GeminiService
   ) {
     effect(() => {
       const editingId = this.characterFacade.editingCharacterId();
@@ -75,8 +88,16 @@ export class MonsterStatBlockComponent {
     this.characterFacade.createDefaultStatblock();
   }
 
-  async generateStatblock(): Promise<void> {
-    await this.characterFacade.generateStatblock(this.monsterDescription);
-    this.monsterDescription = '';
+  isBattleState(): boolean {
+    return this.viewManagerService.isBattleMode();
+  }
+
+  async generateStatblock(description: string): Promise<void> {
+    await this.characterFacade.generateStatblock(description);
+    console.log(description);
+  }
+
+  onSelect(model: Model): void {
+    this.geminiService.setModel(model.name);
   }
 }

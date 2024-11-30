@@ -10,7 +10,13 @@ export class AvatarService {
 
   getAvatarList(): Observable<string[]> {
     return this.http
-      .get<{ avatars: string[] }>('assets/portraits/avatars.json')
+      .get<{ avatars: string[] }>('assets/portraits.json')
+      .pipe(map(response => response.avatars));
+  }
+
+  getMonsterList(): Observable<string[]> {
+    return this.http
+      .get<{ avatars: string[] }>('assets/monsters.json')
       .pipe(map(response => response.avatars));
   }
 }

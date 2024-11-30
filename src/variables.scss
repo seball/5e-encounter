@@ -44,7 +44,6 @@ $font-stack: 'Courier New', Courier, 'Lucida Sans Typewriter',
   border-radius: 3px;
   border: 1px solid $color-text;
   transition: all 0.2s ease;
-  padding: 3px;
   &[type='number'],
   &[type='text'] {
     border-radius: 0px;

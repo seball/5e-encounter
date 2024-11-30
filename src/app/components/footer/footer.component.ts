@@ -10,6 +10,7 @@ import {
   PlayIcon,
   SaveIcon,
   SettingsIcon,
+  Undo2Icon,
 } from 'lucide-angular/src/icons';
 
 import { CommonModule } from '@angular/common';
@@ -38,6 +39,7 @@ export class FooterComponent {
   protected rollIcon = DicesIcon;
   protected settingsIcon = SettingsIcon;
   protected cancelIcon = BanIcon;
+  protected goBackIcon = Undo2Icon;
   protected state = ViewState;
   protected viewState = computed(() => this.viewManagerService.appState());
   constructor(
@@ -80,5 +82,17 @@ export class FooterComponent {
 
   cancelRequest() {
     this.toolbarFacade.cancelRequest();
+  }
+
+  isSideButtonDisabled() {
+    return this.viewState() === this.state.Loading;
+  }
+
+  canStartBattle() {
+    return this.toolbarFacade.canStartBattle();
+  }
+
+  goBack() {
+    this.toolbarFacade.statblockView();
   }
 }
