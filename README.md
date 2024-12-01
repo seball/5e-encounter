@@ -1,12 +1,16 @@
 # 5eEncounter
 
 <div align="center">
-    <img src="./src/assets/portraits/portrait-1.webp" alt="Battle Manager Preview 1" width="250" style="display: inline-block; margin: 0 10px"/>
-    <img src="./src/assets/portraits/portrait-2.webp" alt="Battle Manager Preview 2" width="250" style="display: inline-block; margin: 0 10px"/>
-    <img src="./src/assets/portraits/portrait-3.webp" alt="Battle Manager Preview 3" width="250" style="display: inline-block; margin: 0 10px"/>
+    <img src="./src/assets/portraits/portrait-3.webp" alt="Battle Manager Preview 1" width="250" style="display: inline-block; margin: 0 10px"/>
+    <img src="./src/assets/portraits/portrait-34.webp" alt="Battle Manager Preview 2" width="250" style="display: inline-block; margin: 0 10px"/>
+    <img src="./src/assets/portraits/portrait-41.webp" alt="Battle Manager Preview 3" width="250" style="display: inline-block; margin: 0 10px"/>
 </div>
 
 A powerful tool for managing your tabletop RPG encounters and battles.
+
+## Acknowledgments
+
+This project uses the [D&D 5E API](https://www.dnd5eapi.co/) for retrieving monster data. Special thanks to the team maintaining this fantastic resource.
 
 ## Getting Started
 
