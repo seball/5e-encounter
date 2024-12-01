@@ -17,7 +17,7 @@
     </div>
 
     <div [class]="columnSizes().side">
-      <h2>Enemies</h2>
+      <h2 class="enemy-title">Enemies</h2>
       <div class="character-container">
         @for (character of enemies(); track character.id) {
           <app-character [character]="character"> </app-character>
