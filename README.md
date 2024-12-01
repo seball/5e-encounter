@@ -2,8 +2,8 @@
 
 <div align="center">
     <img src="./src/assets/portraits/portrait-1.webp" alt="Battle Manager Preview 1" width="250" style="display: inline-block; margin: 0 10px"/>
-    <img src=".src/assets/portraits/portrait-2.webp" alt="Battle Manager Preview 2" width="250" style="display: inline-block; margin: 0 10px"/>
-    <img src="src/assets/portraits/portrait-3.webp" alt="Battle Manager Preview 3" width="250" style="display: inline-block; margin: 0 10px"/>
+    <img src="./src/assets/portraits/portrait-2.webp" alt="Battle Manager Preview 2" width="250" style="display: inline-block; margin: 0 10px"/>
+    <img src="./src/assets/portraits/portrait-3.webp" alt="Battle Manager Preview 3" width="250" style="display: inline-block; margin: 0 10px"/>
 </div>
 
 A powerful tool for managing your tabletop RPG encounters and battles.
@@ -89,7 +89,7 @@ Right-click menu on character cards provides quick access to most commonly used 
 
 If you find this app helpful please consider supporting me with $1
 
-[![Buy Me A Coffee](.src/assets/icons/blue-button.png)](https://buymeacoffee.com/s3ball)
+[![Buy Me A Coffee](./src/assets/icons/blue-button.png)](https://buymeacoffee.com/s3ball)
 
 ## Contact
 
