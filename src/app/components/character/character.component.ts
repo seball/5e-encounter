@@ -6,8 +6,10 @@ import {
   HostBinding,
   Input,
   OnInit,
+  signal,
   ViewChild,
   ViewEncapsulation,
+  WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -27,6 +29,7 @@ import { BattleFacade } from '../../facades/battle.facade';
 import { CharacterFacade } from '../../facades/character.facade';
 import { ConfirmActionComponent } from '../../shared/ui/confirm-action/confirm-action.component';
 import { AvatarGalleryComponent } from '../../shared/ui/avatar-gallery/avatar-gallery.component';
+import { DiceTokenComponent } from '../../shared/ui/dice-token/dice-token.component';
 
 @Component({
   selector: 'app-character',
@@ -39,6 +42,7 @@ import { AvatarGalleryComponent } from '../../shared/ui/avatar-gallery/avatar-ga
     D20Component,
     ConfirmActionComponent,
     AvatarGalleryComponent,
+    DiceTokenComponent,
   ],
   templateUrl: './character.component.html',
   styleUrls: ['./character.component.scss'],
@@ -54,6 +58,7 @@ export class CharacterComponent implements OnInit {
   protected isViewing = computed(
     () => this.characterFacade.activeCharacterId() === this.character.id
   );
+  protected tokenValue: WritableSignal<number | null> = signal(1);
   onAvatarSelected(avatarPath: string) {
     this.showGallery = false;
     this.state.avatarSrc = avatarPath;
@@ -328,22 +333,27 @@ export class CharacterComponent implements OnInit {
   }
 
   private initializeCharacterOrderEffect(): void {
-    effect(() => {
-      const orderList = this.battleFacade.characterOrderList();
-      const currentCharacter = orderList.find(
-        char => char.id === this.character.id
-      );
+    effect(
+      () => {
+        const orderList = this.battleFacade.characterOrderList();
 
-      if (!currentCharacter) {
-        this.characterOrder = null;
-        return;
-      }
+        const currentCharacter = orderList.find(
+          char => char.id === this.character.id
+        );
 
-      if (this.battleFacade.isFirstTurn()) {
-        this.setCharacterOrder(currentCharacter.order);
-      } else {
-        this.delayedOrderUpdate(currentCharacter.order);
-      }
-    });
+        if (!currentCharacter) {
+          this.characterOrder = null;
+          return;
+        }
+
+        if (this.battleFacade.isFirstTurn()) {
+          this.setCharacterOrder(currentCharacter.order);
+          this.tokenValue.set(currentCharacter.order);
+        } else {
+          this.delayedOrderUpdate(currentCharacter.order);
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 }

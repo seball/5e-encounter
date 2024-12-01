@@ -141,6 +141,12 @@ app-character {
   }
 
   .avatar {
+    .dice-token {
+      position: absolute;
+      translate: -50% -100%;
+      z-index: 1;
+    }
+
     position: relative;
     float: right;
     width: map-get($character, avatar, width);

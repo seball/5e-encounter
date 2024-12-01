@@ -19,7 +19,7 @@ export class DiceTokenComponent {
 
   @Input() type: DiceType = 'd4';
   @Input() color: string = '#1AA048';
-  @Input() value: string | number = '';
+  @Input() value: number | null = null;
   @Input() size: string = '64px';
 
   get diceConfig(): DiceConfig {

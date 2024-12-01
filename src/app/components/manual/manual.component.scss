@@ -1,0 +1,147 @@
+// Variables
+$primary-color: var(--color-spec1);
+$secondary-color: var(--color-spec2);
+$text-color: var(--color-text);
+$border-color: var(--color-text);
+$background-color: var(--color-bg);
+$tip-background: var(--color-footer);
+
+.manual {
+  margin: 0 auto;
+
+  &-title {
+    color: $primary-color;
+    font-size: 2rem;
+
+    margin-bottom: 2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid $primary-color;
+  }
+
+  &-section {
+    background: $background-color;
+    border-radius: 8px;
+  }
+
+  &-tip {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: $tip-background;
+    border-radius: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+.section {
+  &-title {
+    color: $secondary-color;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  &-content {
+    color: $text-color;
+  }
+}
+
+.content {
+  &-list {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+
+    li {
+      margin-bottom: 0.75rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &-sublist {
+    list-style-type: circle;
+    padding-left: 1.5rem;
+    margin-top: 0.5rem;
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+
+.tip {
+  &-icon {
+    font-size: 1.5rem;
+  }
+
+  &-content {
+    flex: 1;
+
+    p {
+      margin: 0.5rem 0 0;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .manual {
+    padding: 1rem;
+
+    &-title {
+      font-size: 1.75rem;
+    }
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+}
+
+.support {
+  &-section {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: $background-color;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: $text-color;
+  }
+
+  &-link {
+    display: inline-block;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  &-icon {
+    width: 33%;
+    height: auto;
+    vertical-align: middle;
+  }
+}
+
+.contact-info {
+  margin-top: 1rem;
+  color: $text-color;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  border-top: 1px solid $border-color;
+  text-align: center;
+
+  a {
+    color: $primary-color;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

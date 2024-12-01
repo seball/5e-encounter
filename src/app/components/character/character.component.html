@@ -77,6 +77,15 @@
             (error)="onImageError()"
             alt="Character Avatar"
             class="img-fluid" />
+          @if (isBattleMode()) {
+            <div class="dice-token">
+              <app-dice-token
+                color="#933DE3"
+                type="d8"
+                size="40px"
+                [value]="tokenValue()"></app-dice-token>
+            </div>
+          }
         </div>
       </div>
     </div>

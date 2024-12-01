@@ -16,8 +16,10 @@
     </ng-container>
   </svg>
   <div class="value-container">
-    <span class="dice-value">
-      {{ value }}
-    </span>
+    @if (value) {
+      <span class="dice-value">
+        {{ value }}
+      </span>
+    }
   </div>
 </div>

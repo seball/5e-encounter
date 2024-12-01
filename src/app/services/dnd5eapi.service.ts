@@ -32,8 +32,9 @@ export class Dnd5eApiService {
   });
 
   readonly monsterEntries = computed(() => [
-    ...this.apiMonstersSignal(),
     ...this.localMonstersSignal(),
+
+    ...this.apiMonstersSignal(),
   ]);
 
   constructor(
