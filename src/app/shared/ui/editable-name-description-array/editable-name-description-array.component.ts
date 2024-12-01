@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, PlusIcon } from 'lucide-angular';
 import { XIcon } from 'lucide-angular/src/icons';
+import { ConfirmActionComponent } from '../confirm-action/confirm-action.component';
 
 type UsageType =
   | 'none'
@@ -27,7 +28,12 @@ interface UsageValues {
 @Component({
   selector: 'app-editable-name-description-array',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    LucideAngularModule,
+    ConfirmActionComponent,
+  ],
   templateUrl: './editable-name-description-array.component.html',
   styleUrls: ['./editable-name-description-array.component.scss'],
 })
@@ -39,6 +45,11 @@ export class EditableNameDescriptionArrayComponent implements OnChanges {
 
   readonly deleteIcon = XIcon;
   readonly addIcon = PlusIcon;
+
+  isConfirmDialogOpen = false;
+  indexToRemove: number | null = null;
+  confirmMessage = '';
+  confirmTitle = '';
 
   usageTypes: UsageType[] = [
     'none',
@@ -73,10 +84,27 @@ export class EditableNameDescriptionArrayComponent implements OnChanges {
   }
 
   removeItem(index: number) {
-    const removedItem = this.items[index];
-    this.previousUsageValues.delete(removedItem);
-    this.items.splice(index, 1);
-    this.onItemChange();
+    this.indexToRemove = index;
+    const itemName = this.items[index].name || 'this item';
+    this.confirmTitle = itemName ? `Delete "${itemName}"` : 'Delete Action';
+    this.confirmMessage = `Are you sure you want to remove "${itemName}"?`;
+    this.isConfirmDialogOpen = true;
+  }
+
+  onConfirmRemove() {
+    if (this.indexToRemove !== null) {
+      const removedItem = this.items[this.indexToRemove];
+      this.previousUsageValues.delete(removedItem);
+      this.items.splice(this.indexToRemove, 1);
+      this.onItemChange();
+    }
+    this.isConfirmDialogOpen = false;
+    this.indexToRemove = null;
+  }
+
+  onCancelRemove() {
+    this.isConfirmDialogOpen = false;
+    this.indexToRemove = null;
   }
 
   updateUsage(item: Action, usageType: UsageType) {

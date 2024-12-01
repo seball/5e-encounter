@@ -97,6 +97,8 @@ export interface Statblock {
   special_abilities: NameDescription[];
   actions: Action[];
   legendary_actions: Action[];
+  reactions: Action[];
   image: URL;
   url: URL;
+  hasCustomImage: boolean;
 }

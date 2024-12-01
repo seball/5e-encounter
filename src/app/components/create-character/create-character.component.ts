@@ -1,34 +1,33 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CharacterService } from '../../services/character.service';
-import { CharacterComponent } from '../character/character.component';
-import { MonsterSearchComponent } from '../monster-search/monster-search.component';
+
 import { ApiResult } from '../../services/dnd5eapi.service';
+import { CharacterFacade } from '../../facades/character.facade';
+import { MonsterSearchComponent } from '../monster-search/monster-search.component';
 
 @Component({
   selector: 'app-create-character',
   standalone: true,
-  imports: [CommonModule, CharacterComponent, MonsterSearchComponent],
   templateUrl: './create-character.component.html',
   styleUrls: ['./create-character.component.css'],
+  imports: [MonsterSearchComponent],
 })
 export class CreateCharacterComponent {
   @Input() characterType: 'ally' | 'enemy' = 'ally';
 
-  constructor(private readonly characterService: CharacterService) {}
+  constructor(private readonly characterFacade: CharacterFacade) {}
 
   public addDefaultCharacter(): void {
-    this.characterService.addDefaultCharacter(this.characterType);
-  }
-
-  public addPredefinedCharacter(monsterIndex: string): void {
-    this.characterService.addPredefinedCharacter(
-      this.characterType,
-      monsterIndex
-    );
+    this.characterFacade.addDefaultCharacter(this.characterType);
   }
 
   public onMonsterSelected(monster: ApiResult): void {
-    this.addPredefinedCharacter(monster.index);
+    if (monster.source === 'local')
+      if (monster.statblock)
+        this.characterFacade.addLocalStorageCharacter(
+          this.characterType,
+          monster.statblock
+        );
+    if (monster.source === 'api')
+      this.characterFacade.addApiCharacter(this.characterType, monster.index);
   }
 }

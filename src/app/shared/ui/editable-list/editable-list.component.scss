@@ -80,10 +80,10 @@ app-editable-list {
 
   .tag-button {
     color: $tag-button-text-color-bright;
-
+    box-shadow: none;
     flex-grow: 1;
     padding: 5px;
-    margin: 0;
+    margin-right: 2px;
     border: none;
 
     cursor: pointer;
@@ -98,14 +98,15 @@ app-editable-list {
     white-space: nowrap;
 
     &:hover {
-      opacity: 0.9;
       transform: scale(1.05);
       z-index: 1;
       color: $tag-button-text-color-bright;
+      box-shadow: none;
     }
 
     &:active {
       transform: scale(0.95);
+      box-shadow: none;
     }
   }
 }

@@ -1,0 +1,58 @@
+<div class="dialog-overlay" *ngIf="isOpen">
+  <div class="dialog-container">
+    <h2 class="dialog-title">Choose Your Image</h2>
+
+    <div class="tabs">
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'avatars'"
+        (click)="switchTab('avatars')">
+        Portraits
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'monsters'"
+        (click)="switchTab('monsters')">
+        Monsters
+      </button>
+    </div>
+
+    <div
+      #scrollContainer
+      class="avatar-grid"
+      (scroll)="onScroll()"
+      *ngIf="!loading">
+      <div
+        *ngFor="let avatar of visibleAvatars; trackBy: trackById"
+        class="avatar-item"
+        [class.selected]="avatar.selected">
+        <div class="pixel-frame" (click)="selectAvatar(avatar)">
+          <img
+            [loading]="'lazy'"
+            [src]="avatar.path"
+            [alt]="'Avatar - ' + avatar.filename"
+            class="avatar-image"
+            (error)="handleImageError($event)"
+            [attr.fetchpriority]="avatar.priority" />
+        </div>
+      </div>
+      <div *ngIf="isLoadingMore" class="loading-indicator">Loading more...</div>
+    </div>
+
+    <div *ngIf="loading" class="skeleton-loader">
+      <div *ngFor="let _ of skeletonArray" class="skeleton-avatar"></div>
+    </div>
+
+    <div class="dialog-actions">
+      <button
+        class="dialog-button confirm-button"
+        [disabled]="!selectedAvatar"
+        (click)="onConfirm()">
+        Confirm
+      </button>
+      <button class="dialog-button cancel-button" (click)="onCancel()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

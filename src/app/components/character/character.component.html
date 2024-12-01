@@ -1,84 +1,116 @@
 <div
   class="character-card"
   [ngClass]="{
-    'edit-mode': state.editMode,
-    'view-mode': !state.editMode,
     exhausted: battleState.isExhausted(),
     active: battleState.isActive(),
     previous: battleState.isPrevious(),
-  }"
-  #characterCard>
-  <div class="row">
-    <div [class]="viewState.columnSizes().left">
-      <div class="name-section">
-        <span *ngIf="name === '' && !state.editMode">No Name...</span>
-        <app-editable-input
-          [editMode]="state.editMode"
-          [type]="'text'"
-          [(value)]="name">
-        </app-editable-input>
+    defeated: character.currentHp === 0,
+    preview: isViewing(),
+  }">
+  <div class="content" #content>
+    <div class="row base-info">
+      <div class="flex-container" [ngClass]="viewState.columnSizes().left">
+        <div class="name-section">
+          <span *ngIf="name === '' && !state.editMode">No Name...</span>
+          <app-editable-input
+            [maxLength]="40"
+            [editMode]="state.editMode"
+            [type]="'text'"
+            [(value)]="name">
+          </app-editable-input>
+        </div>
+        <div class="hp-section">
+          <span>HP: </span>
+          <app-editable-input
+            [editMode]="state.editMode"
+            [type]="'number'"
+            [(value)]="character.currentHp">
+          </app-editable-input>
+          <span> / </span>
+          <app-editable-input
+            [editMode]="state.editMode"
+            [type]="'number'"
+            [(value)]="maxHp">
+          </app-editable-input>
+        </div>
+        <div class="initiative-section">
+          <span>AC: </span>
+          <app-editable-input
+            [editMode]="state.editMode"
+            [type]="'number'"
+            [(value)]="armorClass">
+          </app-editable-input>
+        </div>
+        <div class="damage-section">
+          <button class="heal-button" (click)="heal()">Heal</button>
+
+          <app-editable-input
+            [editMode]="true"
+            [type]="'number'"
+            [(value)]="state.hpAdjustment">
+          </app-editable-input>
+
+          <button class="damage-button" (click)="damage()">Damage</button>
+        </div>
       </div>
 
-      <div class="hp-section">
-        <span>HP: </span>
-        <app-editable-input
-          [editMode]="state.editMode"
-          [type]="'number'"
-          [(value)]="character.currentHp">
-        </app-editable-input>
-        <span> / </span>
-        <app-editable-input
-          [editMode]="state.editMode"
-          [type]="'number'"
-          [(value)]="maxHp">
-        </app-editable-input>
-      </div>
+      <ng-container *ngIf="viewState.isInitiativeRollView()">
+        <div class="col-6">
+          <app-d20
+            [initiativeMod]="character.initiativeModifier"
+            [characterType]="character.type"
+            [initiativeRoll]="character.initiativeRoll"
+            [initiativeScore]="initiativeScore"
+            [hasRolledInitiative]="character.hasRolledInitiative"
+            (hasRolledInitiativeChange)="onInitiativeChange.hasRolled($event)"
+            (initiativeRollChange)="onInitiativeChange.roll($event)"
+            (initiativeModChange)="onInitiativeChange.mod($event)"
+            (initiativeScoreChange)="onInitiativeChange.score($event)">
+          </app-d20>
+        </div>
+      </ng-container>
 
-      <div class="initiative-section">
-        <span>AC: </span>
-        <app-editable-input
-          [editMode]="state.editMode"
-          [type]="'number'"
-          [(value)]="armorClass">
-        </app-editable-input>
-      </div>
-
-      <div class="damage-section">
-        <button (click)="heal()">Heal</button>
-        <input type="number" [(ngModel)]="state.hpAdjustment" />
-        <button (click)="damage()">Damage</button>
-      </div>
-    </div>
-
-    <ng-container *ngIf="viewState.isInitiativeRollView()">
-      <div class="col-6">
-        <app-d20
-          [initiativeMod]="character.initiativeModifier"
-          [characterType]="character.type"
-          [initiativeRoll]="character.initiativeRoll"
-          [initiativeScore]="initiativeScore"
-          [hasRolledInitiative]="character.hasRolledInitiative"
-          (hasRolledInitiativeChange)="onInitiativeChange.hasRolled($event)"
-          (initiativeRollChange)="onInitiativeChange.roll($event)"
-          (initiativeModChange)="onInitiativeChange.mod($event)"
-          (initiativeScoreChange)="onInitiativeChange.score($event)">
-        </app-d20>
-      </div>
-    </ng-container>
-
-    <div [class]="viewState.columnSizes().right">
-      <div class="avatar">
-        <img
-          [src]="state.avatarSrc"
-          (error)="onImageError()"
-          alt="Character Avatar"
-          class="img-fluid" />
+      <div [class]="viewState.columnSizes().right">
+        <div class="avatar" [class.dead]="isCharacterDead()">
+          <img
+            [src]="state.avatarSrc"
+            (error)="onImageError()"
+            alt="Character Avatar"
+            class="img-fluid" />
+          @if (isBattleMode()) {
+            <div class="dice-token">
+              <app-dice-token
+                color="#933DE3"
+                type="d8"
+                size="40px"
+                [value]="tokenValue()"></app-dice-token>
+            </div>
+          }
+        </div>
       </div>
     </div>
   </div>
 
-  <app-context-menu
-    [targetElement]="characterCard"
-    [menuItems]="contextMenuItems">
-  </app-context-menu>
+  <app-confirm-action
+    [isOpen]="state.showDeleteConfirmation"
+    title="Delete Character"
+    [message]="'Are you sure you want to delete ' + name + '?'"
+    (confirm)="onDeleteConfirm()"
+    (cancel)="onDeleteCancel()"></app-confirm-action>
 </div>
+
+<app-avatar-gallery
+  [isOpen]="showGallery"
+  (confirm)="onAvatarSelected($event)"
+  (cancel)="showGallery = false">
+</app-avatar-gallery>
+
+<app-context-menu
+  [ngClass]="{
+    'edit-mode': state.editMode,
+    'view-mode': !state.editMode,
+    'battle-state': isBattleMode(),
+  }"
+  [targetElement]="content"
+  [menuItems]="contextMenuItems">
+</app-context-menu>

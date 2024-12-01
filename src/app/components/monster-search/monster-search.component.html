@@ -4,5 +4,5 @@
   [items]="monsterEntries"
   bindLabel="name"
   placeholder="Find Monster..."
-  (change)="onSelect($event); select.clearModel()">
+  (change)="onSelect($event); select.handleClearClick()">
 </ng-select>

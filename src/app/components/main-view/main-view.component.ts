@@ -7,6 +7,7 @@ import {
   ViewManagerService,
   ViewType,
 } from '../../services/viewManager.service';
+import { SettingsComponent } from '../settings/settings.component';
 
 @Component({
   selector: 'app-main-view',
@@ -16,6 +17,7 @@ import {
     ManualComponent,
     CommonModule,
     RollOrderComponent,
+    SettingsComponent,
   ],
   templateUrl: './main-view.component.html',
   styleUrl: './main-view.component.scss',
@@ -25,6 +27,6 @@ export class MainViewComponent {
   view = ViewType;
 
   constructor(private readonly viewManagerService: ViewManagerService) {
-    this.currentView = this.viewManagerService.getCurrentView();
+    this.currentView = this.viewManagerService.currentView;
   }
 }

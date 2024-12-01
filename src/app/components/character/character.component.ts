@@ -3,20 +3,17 @@ import {
   computed,
   effect,
   ElementRef,
-  EventEmitter,
   HostBinding,
   Input,
   OnInit,
-  Output,
+  signal,
   ViewChild,
   ViewEncapsulation,
+  WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Character } from '../../interfaces/character.interface';
-import { CharacterService } from '../../services/character.service';
-import { BattleService } from '../../services/battle.service';
-import { NumberToStringPipe } from '../../shared/pipes/number-to-string.pipe';
 import {
   ContextMenuComponent,
   MenuItem,
@@ -28,6 +25,11 @@ import {
   ViewManagerService,
   ViewType,
 } from '../../services/viewManager.service';
+import { BattleFacade } from '../../facades/battle.facade';
+import { CharacterFacade } from '../../facades/character.facade';
+import { ConfirmActionComponent } from '../../shared/ui/confirm-action/confirm-action.component';
+import { AvatarGalleryComponent } from '../../shared/ui/avatar-gallery/avatar-gallery.component';
+import { DiceTokenComponent } from '../../shared/ui/dice-token/dice-token.component';
 
 @Component({
   selector: 'app-character',
@@ -35,10 +37,12 @@ import {
   imports: [
     CommonModule,
     FormsModule,
-    NumberToStringPipe,
     ContextMenuComponent,
     EditableInputComponent,
     D20Component,
+    ConfirmActionComponent,
+    AvatarGalleryComponent,
+    DiceTokenComponent,
   ],
   templateUrl: './character.component.html',
   styleUrls: ['./character.component.scss'],
@@ -46,19 +50,29 @@ import {
 })
 export class CharacterComponent implements OnInit {
   @Input() character!: Character;
-  @Output() delete = new EventEmitter<string>();
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
-  @ViewChild('characterCard', { static: true }) characterCard!: ElementRef;
+  @ViewChild('content', { static: true }) content!: ElementRef;
   @HostBinding('style.order') characterOrder: number | null = null;
 
+  protected showGallery = false;
+  protected isViewing = computed(
+    () => this.characterFacade.activeCharacterId() === this.character.id
+  );
+  protected tokenValue: WritableSignal<number | null> = signal(1);
+  onAvatarSelected(avatarPath: string) {
+    this.showGallery = false;
+    this.state.avatarSrc = avatarPath;
+    this.characterFacade.updateCharacterImage(this.character, avatarPath);
+  }
   protected readonly state = {
     editMode: false,
     hpAdjustment: 0,
+    showDeleteConfirmation: false,
     avatarSrc: '',
   };
 
   protected readonly viewState: {
-    currentView: ReturnType<ViewManagerService['getCurrentView']>;
+    currentView: ReturnType<ViewManagerService['currentView']>;
     isInitiativeRollView: ReturnType<typeof computed<boolean>>;
     columnSizes: ReturnType<
       typeof computed<{
@@ -82,40 +96,59 @@ export class CharacterComponent implements OnInit {
       title: 'View',
     },
     {
-      action: () => this.edit(),
+      action: () => this.editCharacter(),
       icon: ContextMenuIconType.Edit,
       title: 'Edit',
     },
     {
-      action: () => this.save(),
+      action: () => this.saveCharacter(),
       icon: ContextMenuIconType.Save,
       title: 'Save',
     },
     {
-      action: () => this.deleteCharacter(),
+      action: () => this.openGallery(),
+      icon: ContextMenuIconType.Image,
+      title: 'Change Image',
+    },
+    {
+      action: () => this.duplicateCharacter(),
+      icon: ContextMenuIconType.Duplicate,
+      title: 'Duplicate',
+    },
+    {
+      action: () => this.switchSides(),
+      icon: ContextMenuIconType.Switch,
+      title: 'Switch Sides',
+    },
+    {
+      action: () => this.confirmDelete(),
       icon: ContextMenuIconType.Delete,
       title: 'Delete',
+    },
+    {
+      action: () => this.addToCollection(),
+      icon: ContextMenuIconType.Add,
+      title: 'Add to Monster List',
     },
   ];
 
   constructor(
-    private readonly characterService: CharacterService,
+    private readonly characterFacade: CharacterFacade,
     private readonly viewManagerService: ViewManagerService,
-    private readonly battleService: BattleService
+    private readonly battleFacade: BattleFacade
   ) {
     this.viewState = {
-      currentView: this.viewManagerService.getCurrentView(),
+      currentView: this.viewManagerService.currentView(),
       isInitiativeRollView: computed(
-        () =>
-          this.viewManagerService.getCurrentView()() === ViewType.InitiativeRoll
+        () => this.viewManagerService.currentView() === ViewType.InitiativeRoll
       ),
       columnSizes: computed(() => ({
         left:
-          this.viewManagerService.getCurrentView()() === ViewType.InitiativeRoll
+          this.viewManagerService.currentView() === ViewType.InitiativeRoll
             ? 'col-4'
             : 'col-8',
         right:
-          this.viewManagerService.getCurrentView()() === ViewType.InitiativeRoll
+          this.viewManagerService.currentView() === ViewType.InitiativeRoll
             ? 'col-2'
             : 'col-4',
       })),
@@ -123,20 +156,21 @@ export class CharacterComponent implements OnInit {
 
     this.battleState = {
       isActive: computed(() =>
-        this.battleService.isCharacterActive(this.character.id)
+        this.battleFacade.isCharacterActive(this.character.id)
       ),
       isPrevious: computed(() =>
-        this.battleService.isCharacterPrevious(this.character.id)
+        this.battleFacade.isCharacterPrevious(this.character.id)
       ),
       isNext: computed(() =>
-        this.battleService.isCharacterNext(this.character.id)
+        this.battleFacade.isCharacterNext(this.character.id)
       ),
       isExhausted: computed(() =>
-        this.battleService.isCharacterExhausted(this.character.id)
+        this.battleFacade.isCharacterExhausted(this.character.id)
       ),
     };
 
-    effect(() => this.updateCharacterOrder());
+    this.initializeCharacterOrderEffect();
+    this.initializeEditingEffect();
   }
 
   ngOnInit(): void {
@@ -217,53 +251,109 @@ export class CharacterComponent implements OnInit {
     );
     this.state.hpAdjustment = 0;
   }
-
-  protected save(): void {
-    this.state.editMode = false;
-    this.characterService.updateCharacter(this.character);
+  protected isBattleMode(): boolean {
+    return this.viewManagerService.isBattleMode();
   }
 
-  protected edit(): void {
-    this.state.editMode = true;
+  protected isCharacterDead(): boolean {
+    return this.character.currentHp <= 0;
+  }
+
+  protected saveCharacter(): void {
+    this.characterFacade.stopEditingCharacter();
+    this.characterFacade.updateCharacter(this.character);
+  }
+
+  protected addToCollection(): void {
+    this.characterFacade.addToCollection(this.character);
+  }
+
+  protected editCharacter(): void {
+    this.characterFacade.startEditingCharacter(this.character.id);
+    this.characterFacade.activateCharacter(this.character.id);
   }
 
   protected deleteCharacter(): void {
-    this.delete.emit(this.character.id);
+    this.characterFacade.deleteCharacter(this.character.id);
   }
 
   protected viewCharacter(): void {
-    this.characterService.activateCharacter(this.character.id);
+    this.characterFacade.stopEditingCharacter();
+    this.characterFacade.activateCharacter(this.character.id);
+  }
+
+  protected duplicateCharacter(): void {
+    this.characterFacade.duplicateCharacter(this.character.id);
+  }
+
+  protected switchSides(): void {
+    this.characterFacade.switchSides(this.character.id);
   }
 
   protected onImageError(): void {
-    this.state.avatarSrc = `https://api.dicebear.com/9.x/lorelei/svg?seed=${this.character.id}`;
+    this.state.avatarSrc = 'assets/monsters/default.webp';
   }
 
-  private updateCharacterOrder(): void {
-    const orderList = this.battleService.characterOrderList();
-    const currentCharacter = orderList.find(
-      char => char.id === this.character.id
-    );
-
-    if (!currentCharacter) return;
-
-    if (this.battleService.isFirstTurn()) {
-      this.setCharacterOrder(currentCharacter.order);
-    } else {
-      this.delayedOrderUpdate(currentCharacter.order);
-    }
-  }
-
-  private setCharacterOrder(order: number): void {
+  private setCharacterOrder(order: number | null): void {
     this.characterOrder = order;
   }
 
-  private delayedOrderUpdate(order: number): void {
+  private delayedOrderUpdate(order: number | null): void {
     setTimeout(() => {
+      if (!this.isBattleMode()) {
+        order = null;
+      }
       this.setCharacterOrder(order);
-      if (this.characterCard) {
-        this.characterCard.nativeElement.click();
+      if (this.content) {
+        this.content.nativeElement.click();
       }
     }, 1000);
+  }
+
+  protected openGallery(): void {
+    this.showGallery = true;
+  }
+  protected confirmDelete(): void {
+    this.state.showDeleteConfirmation = true;
+  }
+
+  protected onDeleteConfirm(): void {
+    this.deleteCharacter();
+  }
+
+  protected onDeleteCancel(): void {
+    this.state.showDeleteConfirmation = false;
+  }
+
+  private initializeEditingEffect(): void {
+    effect(() => {
+      const editingId = this.characterFacade.editingCharacterId();
+      this.state.editMode = editingId === this.character?.id;
+    });
+  }
+
+  private initializeCharacterOrderEffect(): void {
+    effect(
+      () => {
+        const orderList = this.battleFacade.characterOrderList();
+
+        const currentCharacter = orderList.find(
+          char => char.id === this.character.id
+        );
+
+        if (!currentCharacter) {
+          this.characterOrder = null;
+          return;
+        }
+
+        if (this.battleFacade.isFirstTurn()) {
+          this.setCharacterOrder(currentCharacter.order);
+          this.tokenValue.set(currentCharacter.order);
+        } else {
+          this.delayedOrderUpdate(currentCharacter.order);
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 }

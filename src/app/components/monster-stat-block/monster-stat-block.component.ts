@@ -1,8 +1,8 @@
 import {
   Component,
   computed,
+  effect,
   ElementRef,
-  OnInit,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
@@ -14,18 +14,22 @@ import { AbilitiesComponent } from './abilities/abilities.component';
 import { PropertiesComponent } from './properties/properties.component';
 import { SpecialAbilitiesComponent } from './special-abilities/special-abilities.component';
 import { ActionsComponent } from './actions/actions.component';
-import { CharacterService } from '../../services/character.service';
-import {
-  ContextMenuComponent,
-  MenuItem,
-} from '../../shared/ui/context-menu/context-menu.component';
-import { ContextMenuIconType } from '../../shared/ui/context-menu/context-menu-item/context-menu-item.component';
+import { ContextMenuComponent } from '../../shared/ui/context-menu/context-menu.component';
 import { LegendaryActionsComponent } from './legendary-actions/legendary-actions.component';
+import { CharacterFacade } from '../../facades/character.facade';
+import { ReactionsComponent } from './reactions/reactions.component';
+import { FormsModule } from '@angular/forms';
+import { DiceTokenComponent } from '../../shared/ui/dice-token/dice-token.component';
+import { ViewManagerService } from '../../services/viewManager.service';
+import { GeminiService, Model } from '../../services/gemini.service';
+import { NgSelectComponent } from '@ng-select/ng-select';
+import { ExpandableTextboxComponent } from '../../shared/ui/expandable-textbox/expandable-textbox.component';
 
 @Component({
   selector: 'app-monster-stat-block',
   standalone: true,
   imports: [
+    NgSelectComponent,
     CommonModule,
     CreatureHeadingComponent,
     TopStatsComponent,
@@ -33,52 +37,67 @@ import { LegendaryActionsComponent } from './legendary-actions/legendary-actions
     PropertiesComponent,
     SpecialAbilitiesComponent,
     ActionsComponent,
-    ContextMenuComponent,
     LegendaryActionsComponent,
+    ReactionsComponent,
+    FormsModule,
+    DiceTokenComponent,
+    ExpandableTextboxComponent,
   ],
   templateUrl: './monster-stat-block.component.html',
   styleUrl: './monster-stat-block.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class MonsterStatBlockComponent implements OnInit {
+export class MonsterStatBlockComponent {
   @ViewChild('statblockDiv', { static: true }) statblockDiv!: ElementRef;
   @ViewChild(ContextMenuComponent) contextMenu!: ContextMenuComponent;
+  isLoading = computed(() => this.viewManagerService.isLoading());
 
-  statblock = computed(() =>
-    this.characterService.getActiveCharacterStatblock()
+  protected readonly models = computed(() => this.geminiService.models());
+  protected readonly isLoadingModels = computed(() =>
+    this.geminiService.isLoadingModels()
   );
-  activeCharacterId = computed(() => this.characterService.activeCharacterId());
-  editMode: boolean = false;
+  protected readonly modelsError = computed(() =>
+    this.geminiService.modelsError()
+  );
 
-  contextMenuItems: MenuItem[] = [
-    {
-      action: () => {
-        this.edit();
-      },
-      icon: ContextMenuIconType.Edit,
-      title: 'Edit',
-    },
-    {
-      action: () => {
-        this.save();
-      },
-      icon: ContextMenuIconType.Save,
-      title: 'Save',
-    },
-  ];
+  constructor(
+    private readonly characterFacade: CharacterFacade,
+    private readonly viewManagerService: ViewManagerService,
+    private readonly geminiService: GeminiService
+  ) {
+    effect(() => {
+      const editingId = this.characterFacade.editingCharacterId();
+      this.editMode = !!editingId;
+    });
+  }
+  statblock = computed(() =>
+    this.characterFacade.getActiveCharacterStatblock()
+  );
+  activeCharacterId = computed(() => this.characterFacade.activeCharacterId());
+  editMode: boolean = false;
 
   edit(): void {
     this.editMode = true;
   }
   save(): void {
     this.editMode = false;
-    this.characterService.updateCharacterByStatblockId(this.statblock()!.id);
+    this.characterFacade.updateCharacterByStatblockId(this.statblock()!.id);
   }
 
   addStatblock() {
-    this.characterService.createDefaultStatblock();
+    this.characterFacade.createDefaultStatblock();
   }
 
-  constructor(private readonly characterService: CharacterService) {}
-  ngOnInit() {}
+  isBattleState(): boolean {
+    return this.viewManagerService.isBattleMode();
+  }
+
+  async generateStatblock(description: string): Promise<void> {
+    await this.characterFacade.generateStatblock(description);
+    console.log(description);
+  }
+
+  onSelect(model: Model): void {
+    this.geminiService.setModel(model.name);
+  }
 }

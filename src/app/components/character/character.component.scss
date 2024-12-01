@@ -1,6 +1,25 @@
-$animation-duration: 2500ms;
+// Variables
+$character: (
+  card: (
+    height: 140px,
+    padding: 10px,
+    margin: 1rem,
+  ),
+  name: (
+    font-size: 1rem,
+    max-width: 20vw,
+  ),
+  border: (
+    width: 2px,
+    animation-duration: 2s,
+  ),
+  avatar: (
+    width: 120px,
+    height: 100%,
+  ),
+);
 
-@keyframes disappear {
+@keyframes fade-out {
   0% {
     opacity: 1;
   }
@@ -12,86 +31,187 @@ $animation-duration: 2500ms;
   }
 }
 
-@property --angle {
-  syntax: '<angle>';
-  initial-value: 90deg;
-  inherits: true;
-}
-
-@keyframes borderRotate {
-  100% {
-    --angle: 450deg;
+@keyframes translate-x-right {
+  to {
+    transform: translateX(100%);
   }
 }
-app-character {
-  --d: #{$animation-duration};
-  $card-max-height: 140px;
-  $card-margin: 1rem;
-  $card-padding: 10px;
-  $name-font-size: 1rem;
-  $name-max-width: 20vw;
 
+@keyframes translate-x-left {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes translate-y-up {
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes translate-y-down {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@mixin border-line($is-vertical: false) {
+  content: '';
+  position: absolute;
+  background-color: var(--color-spec1);
+
+  @if $is-vertical {
+    width: map-get($character, border, width);
+    height: calc(100% + 24px);
+  } @else {
+    width: 100%;
+    height: map-get($character, border, width);
+  }
+}
+
+app-character {
   .character-card {
-    height: 140px;
+    position: relative;
+    height: map-get($character, card, height);
     background: var(--color-footer);
     border: 1px solid var(--color-text);
-    padding: $card-padding;
-    margin-top: $card-margin;
+    padding: map-get($character, card, padding);
+    margin-top: map-get($character, card, margin);
+    overflow: hidden;
 
-    &.active {
-      border: 2px solid;
-      border-image: conic-gradient(
-          from var(--angle),
-          var(--color-footer),
-          var(--color-spec1) 0.25turn,
-          var(--color-spec1) 0.5turn,
-          var(--color-footer) 0.75turn
-        )
-        30;
-      animation: borderRotate var(--d) linear infinite forwards;
+    .content {
+      height: 100%;
     }
-
     &.previous {
-      animation: disappear 1s ease-out;
+      animation: fade-out 1s ease-out;
     }
 
     &.exhausted {
       border-color: grey;
       opacity: 0.7;
     }
+
+    &.preview {
+      border: 1px solid var(--color-spec2);
+    }
+
+    &.active {
+      border: none;
+      .content::before,
+      .content::after {
+        @include border-line(true);
+        top: -12px;
+      }
+
+      .content::before {
+        left: 0;
+        transform: translateY(100%);
+        animation: translate-y-up
+          map-get($character, border, animation-duration) infinite linear;
+        animation-delay: -1s;
+      }
+
+      .content::after {
+        right: 0;
+        transform: translateY(-100%);
+        animation: translate-y-down
+          map-get($character, border, animation-duration) infinite linear;
+        animation-delay: -1s;
+      }
+
+      &::before,
+      &::after {
+        @include border-line;
+      }
+
+      &::before {
+        top: 0;
+        transform: translateX(-100%);
+        animation: translate-x-right
+          map-get($character, border, animation-duration) infinite linear;
+      }
+
+      &::after {
+        bottom: 0;
+        transform: translateX(100%);
+        animation: translate-x-left
+          map-get($character, border, animation-duration) infinite linear;
+      }
+    }
   }
 
   .avatar {
+    .dice-token {
+      position: absolute;
+      translate: -50% -100%;
+      z-index: 1;
+    }
+
+    position: relative;
     float: right;
-    width: 120px;
-    height: 100%;
+    width: map-get($character, avatar, width);
+    height: map-get($character, avatar, height);
+    &.dead {
+      img {
+        filter: grayscale(100%);
+      }
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 1em;
+        background-color: var(--color-fire);
+        transform-origin: center;
+      }
+
+      &::before {
+        z-index: 1;
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+
+      &::after {
+        z-index: 1;
+        transform: translate(-50%, -50%) rotate(-45deg);
+      }
+    }
   }
 
+  .base-info {
+    height: inherit;
+  }
+
+  .flex-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .damage-section {
+    margin-top: auto; /* Pushes the damage-section to the bottom */
+  }
   .name-section {
     text-align: start;
-    font-size: $name-font-size;
+    font-size: map-get($character, name, font-size);
 
     input {
       text-align: start;
-      max-width: $name-max-width;
+      max-width: map-get($character, name, max-width);
     }
   }
 
   .damage-section {
-    margin-top: 1rem;
+    margin-top: auto;
   }
 
-  %button-visibility {
+  .edit-mode {
     .edit {
       display: none;
     }
     .save {
       display: initial;
     }
-  }
-
-  .edit-mode {
-    @extend %button-visibility;
   }
 
   .view-mode {
@@ -101,5 +221,21 @@ app-character {
     .save {
       display: none;
     }
+  }
+
+  .battle-state {
+    .switch,
+    .edit,
+    .delete,
+    .duplicate {
+      display: none;
+    }
+  }
+
+  .damage-button {
+    background-color: var(--color-fire);
+  }
+  .heal-button {
+    background-color: var(--color-acid);
   }
 }

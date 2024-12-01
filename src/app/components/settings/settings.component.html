@@ -1,0 +1,85 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h2>Settings</h2>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <app-import-encounter (fileDropped)="dropped($event)">
+          </app-import-encounter>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <app-export-encounter (exportRequested)="exportData($event)">
+          </app-export-encounter>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <app-custom-statblocks
+            [statblocks]="statblocks"
+            (deleteRequested)="deleteStatblock($event)">
+          </app-custom-statblocks>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <app-save-battlefield (saveRequested)="saveBattlefield($event)">
+          </app-save-battlefield>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <app-battlefield-list
+            [battlefields]="battlefields"
+            (loadRequested)="loadBattlefield($event)"
+            (deleteRequested)="deleteBattlefield($event)">
+          </app-battlefield-list>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <app-api-key (saveRequested)="saveApiKey($event)"></app-api-key>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-confirm-action
+    [isOpen]="showImportConfirm()"
+    title="Import Encounter"
+    message="Are you sure you want to import this encounter? This action will add new characters to your existing ones."
+    (confirm)="handleImportConfirm()"
+    (cancel)="handleImportCancel()">
+  </app-confirm-action>
+
+  <app-confirm-action
+    [isOpen]="showDeleteConfirm()"
+    title="Delete Statblock"
+    [message]="deleteConfirmMessage()"
+    (confirm)="handleDeleteConfirm()"
+    (cancel)="handleDeleteCancel()">
+  </app-confirm-action>
+
+  <app-confirm-action
+    [isOpen]="showBattlefieldDeleteConfirm()"
+    title="Delete Battlefield"
+    [message]="battlefieldDeleteConfirmMessage()"
+    (confirm)="handleBattlefieldDeleteConfirm()"
+    (cancel)="handleBattlefieldDeleteCancel()">
+  </app-confirm-action>
+
+  <app-confirm-action
+    [isOpen]="showBattlefieldLoadConfirm()"
+    title="Load Battlefield"
+    [message]="battlefieldLoadConfirmMessage()"
+    (confirm)="handleBattlefieldLoadConfirm()"
+    (cancel)="handleBattlefieldLoadCancel()">
+  </app-confirm-action>
+</div>

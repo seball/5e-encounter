@@ -3,16 +3,21 @@
   cursor: pointer;
   padding: 4px;
   align-items: center;
-  border-bottom: 1px solid #1d262b;
+  border-bottom: 1px solid var(--color-bg);
   line-height: 0em;
   min-width: 150px;
+  padding-right: 1em;
 }
 
 .context-menu-icon {
   position: relative;
   margin-right: 10px;
-  color: #1d262b;
+  color: var(--color-bg);
 }
 .context-menu-item:hover {
-  background-color: #c7c7c7;
+  background-color: var(--color-spec2);
+  color: var(--color-text);
+  .context-menu-icon {
+    color: var(--color-text);
+  }
 }

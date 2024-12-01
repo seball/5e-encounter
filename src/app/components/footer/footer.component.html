@@ -1,31 +1,109 @@
 <footer class="floating-footer">
   <div class="footer-content">
     <div class="row">
-      <div class="col-1">Currently: --</div>
+      <div class="col-1">
+        <button
+          class="icon-button settings"
+          [disabled]="isSideButtonDisabled()"
+          (click)="settingsView()">
+          Settings
+          <lucide-angular [img]="settingsIcon" [size]="30"></lucide-angular>
+        </button>
+      </div>
       <div class="col-10">
-        <ng-container *ngIf="isBattleMode()">
-          <button class="icon-button next" (click)="previous()">
-            <lucide-angular [img]="leftIcon" [size]="30"></lucide-angular>
-            Prev
-          </button>
-          <button class="icon-button next" (click)="next()">
-            Next
-            <lucide-angular [img]="rightIcon" [size]="30"></lucide-angular>
-          </button>
-          <button class="icon-button exit" (click)="exit()">
-            Exit Battle
-            <lucide-angular [img]="exitIcon" [size]="30"></lucide-angular>
-          </button>
-        </ng-container>
-        <ng-container *ngIf="!isBattleMode()">
-          <button (click)="switchView(rollView)">Set Initiative</button>
+        <ng-container [ngSwitch]="viewState()">
+          <div *ngSwitchCase="state.Edit" class="controls-wrapper">
+            <div class="controls-container">
+              <div class="navigation-controls">
+                <button class="icon-button save" (click)="saveCharacter()">
+                  <lucide-angular [img]="saveIcon" [size]="30"></lucide-angular>
+                  Save
+                </button>
+                <button class="icon-button cancel" (click)="cancelCharacter()">
+                  <lucide-angular
+                    [img]="discardIcon"
+                    [size]="30"></lucide-angular>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngSwitchCase="state.Battle" class="controls-wrapper">
+            <div class="controls-container">
+              <div class="navigation-controls">
+                <button class="icon-button prev" (click)="previousTurn()">
+                  <lucide-angular [img]="leftIcon" [size]="30"></lucide-angular>
+                  Prev
+                </button>
+                <button class="icon-button next" (click)="nextTurn()">
+                  Next
+                  <lucide-angular
+                    [img]="rightIcon"
+                    [size]="30"></lucide-angular>
+                </button>
+              </div>
+              <button class="icon-button exit" (click)="exitBattle()">
+                Exit Battle
+                <lucide-angular [img]="exitIcon" [size]="30"></lucide-angular>
+              </button>
+            </div>
+          </div>
+
+          <div *ngSwitchCase="state.Initiative" class="controls-wrapper">
+            <div class="controls-container">
+              <div class="navigation-controls">
+                @if (canStartBattle()) {
+                  <button class="icon-button" (click)="startBattle()">
+                    <lucide-angular
+                      [img]="startIcon"
+                      [size]="30"></lucide-angular>
+                    Start Battle
+                  </button>
+                } @else {
+                  <p>At least 2 characters required to start a battle</p>
+                }
+              </div>
+              <button class="icon-button back" (click)="goBack()">
+                Go Back
+                <lucide-angular [img]="goBackIcon" [size]="30"></lucide-angular>
+              </button>
+            </div>
+          </div>
+
+          <div *ngSwitchCase="state.View" class="controls-wrapper">
+            <div class="controls-container">
+              <div class="navigation-controls">
+                <button class="icon-button" (click)="initiveView()">
+                  <lucide-angular [img]="rollIcon" [size]="30"></lucide-angular>
+                  Set Initiative
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngSwitchCase="state.Loading" class="controls-wrapper">
+            <div class="controls-container">
+              <div class="navigation-controls">
+                <button class="icon-button" (click)="cancelRequest()">
+                  <lucide-angular
+                    [img]="cancelIcon"
+                    [size]="30"></lucide-angular>
+                  Cancel Generate
+                </button>
+              </div>
+            </div>
+          </div>
         </ng-container>
       </div>
 
       <div class="col-1">
-        <button class="icon-button help" (click)="switchView(manualView)">
-          <lucide-angular [img]="helpIcon" [size]="30"></lucide-angular>
+        <button
+          class="icon-button help"
+          [disabled]="isSideButtonDisabled()"
+          (click)="manulaView()">
           Help
+          <lucide-angular [img]="helpIcon" [size]="30"></lucide-angular>
         </button>
       </div>
     </div>

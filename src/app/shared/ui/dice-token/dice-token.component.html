@@ -1,0 +1,25 @@
+<div
+  class="dice-container"
+  [style.width]="size"
+  [style.height]="size"
+  [ngClass]="type">
+  <svg
+    version="1.1"
+    [attr.viewBox]="diceConfig.viewBox"
+    class="dice"
+    xmlns="http://www.w3.org/2000/svg">
+    <ng-container *ngFor="let face of diceConfig.faces">
+      <path
+        [attr.d]="face.path"
+        [style.fill]="color"
+        [style.filter]="getFaceFilter(face.brightnessFactor)" />
+    </ng-container>
+  </svg>
+  <div class="value-container">
+    @if (value) {
+      <span class="dice-value">
+        {{ value }}
+      </span>
+    }
+  </div>
+</div>

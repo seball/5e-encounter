@@ -1,0 +1,16 @@
+<div class="textarea-wrapper">
+  <textarea
+    #textareaElement
+    [(ngModel)]="text"
+    (input)="adjustHeight()"
+    (keydown)="onKeyDown($event)"
+    [placeholder]="placeholder"
+    class="expandable-textarea"
+    rows="1"></textarea>
+  <button class="enter-button" [disabled]="isDisabled" (click)="handleSubmit()">
+    <lucide-angular
+      [img]="enterIcon"
+      [size]="20"
+      class="expand-icon"></lucide-angular>
+  </button>
+</div>

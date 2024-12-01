@@ -1,10 +1,15 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { Character } from '../interfaces/character.interface';
-import { v4 as uuid } from 'uuid';
-import { Dnd5eApiService } from './dnd5eapi.service';
-import { Statblock } from '../interfaces/statblock.interface';
-import { ViewManagerService, ViewType } from './viewManager.service';
 import { STATBLOCK_TEMPLATE } from '../config/statblock-template';
+import { Character } from '../interfaces/character.interface';
+import { Statblock } from '../interfaces/statblock.interface';
+import { v4 as uuid } from 'uuid';
+import { StorageFacade } from '../facades/storage.facade';
+
+interface ImportData {
+  characters: unknown[];
+  version: string;
+  exportDate: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -12,22 +17,12 @@ import { STATBLOCK_TEMPLATE } from '../config/statblock-template';
 export class CharacterService {
   private charactersSignal = signal<Character[]>([]);
   private activeCharacterIdSignal = signal<string | null>(null);
+  private editingCharacterIdSignal = signal<string | null>(null);
+  private editingCharacterOriginalStateSignal = signal<Character | null>(null);
   private initiativeChangedSignal = signal<boolean>(false);
 
-  constructor(
-    private readonly dnd5eApiService: Dnd5eApiService,
-    private readonly viewManagerService: ViewManagerService
-  ) {
-    this.loadCharacters();
-    this.loadActiveCharacterId();
-  }
-
-  get initiativeChanged() {
-    return this.initiativeChangedSignal.asReadonly();
-  }
-
-  notifyInitiativeChanged(): void {
-    this.initiativeChangedSignal.set(!this.initiativeChangedSignal());
+  constructor(private readonly storageFacade: StorageFacade) {
+    this.loadFromStorage();
   }
 
   get characters() {
@@ -36,6 +31,13 @@ export class CharacterService {
 
   get activeCharacterId() {
     return this.activeCharacterIdSignal.asReadonly();
+  }
+
+  get initiativeChanged() {
+    return this.initiativeChangedSignal.asReadonly();
+  }
+  get editingCharacterId() {
+    return this.editingCharacterIdSignal.asReadonly();
   }
 
   public getAllies = computed(() =>
@@ -50,35 +52,240 @@ export class CharacterService {
       .sort((a, b) => (a.id > b.id ? 1 : -1))
   );
 
-  public addPredefinedCharacter(
-    characterType: 'ally' | 'enemy',
-    monsterIndex: string
-  ): void {
-    this.dnd5eApiService.getMonster(monsterIndex).subscribe({
-      next: monsterData => {
-        const newCharacter = this.createCharacterFromStatblock(
-          monsterData,
-          characterType
-        );
-        this.updateCharacters([...this.charactersSignal(), newCharacter]);
-      },
-      error: error => {
-        console.error(
-          `Error fetching monster data for ${monsterIndex}:`,
-          error
-        );
-      },
-    });
+  public switchSides(id: string): void {
+    const character = this.charactersSignal().find(c => c.id === id);
+    if (!character) return;
+    const updatedCharacter: Character = {
+      ...character,
+      type: character.type === 'ally' ? 'enemy' : 'ally',
+    };
+    this.updateCharacter(updatedCharacter);
   }
 
-  private createCharacterFromStatblock(
+  public duplicateCharacter(id: string): void {
+    const originalCharacter = this.charactersSignal().find(c => c.id === id);
+    if (!originalCharacter) return;
+    const originalTimestamp = parseInt(originalCharacter.id.split('-')[0]);
+
+    const duplicatedCharacter: Character = {
+      ...structuredClone(originalCharacter),
+      id: `${originalTimestamp + 1}${uuid()}`,
+      name: `${originalCharacter.name}`,
+      initiativeRoll: null,
+      initiativeScore: null,
+      hasRolledInitiative: false,
+    };
+
+    if (duplicatedCharacter.statblock) {
+      duplicatedCharacter.statblock = {
+        ...duplicatedCharacter.statblock,
+        id: uuid(),
+      };
+    }
+
+    this.addCharacter(duplicatedCharacter);
+  }
+
+  public startEditingCharacter(id: string): void {
+    const character = this.charactersSignal().find(c => c.id === id);
+    if (character) {
+      this.editingCharacterOriginalStateSignal.set(structuredClone(character));
+      this.editingCharacterIdSignal.set(id);
+    }
+  }
+
+  public startEditingLastCreatedCharacter(): void {
+    const character = this.charactersSignal().at(-1);
+    if (character) {
+      this.editingCharacterOriginalStateSignal.set(structuredClone(character));
+      this.editingCharacterIdSignal.set(character.id);
+    }
+  }
+
+  public stopEditingCharacter(): void {
+    this.editingCharacterIdSignal.set(null);
+    this.editingCharacterOriginalStateSignal.set(null);
+  }
+
+  public revertEditingChanges(): void {
+    const originalState = this.editingCharacterOriginalStateSignal();
+    const editingId = this.editingCharacterIdSignal();
+    if (originalState && editingId) {
+      this.updateCharacter(structuredClone(originalState));
+    }
+  }
+
+  public activateCharacter(id: string): void {
+    if (this.charactersSignal().some(c => c.id === id)) {
+      this.activeCharacterIdSignal.set(id);
+      this.saveActiveCharacterId();
+    }
+  }
+
+  public activateLastCreatedCharacter(): void {
+    const character = this.charactersSignal().at(-1);
+    if (character) {
+      this.activeCharacterIdSignal.set(character.id);
+      this.saveActiveCharacterId();
+    }
+  }
+
+  public deactivateCharacter(): void {
+    this.activeCharacterIdSignal.set(null);
+    this.saveActiveCharacterId();
+  }
+
+  public addDefaultCharacter(type: 'ally' | 'enemy'): void {
+    const newCharacter: Character = {
+      id: Date.now() + uuid(),
+      name: `${type === 'ally' ? 'Ally' : 'Enemy'} ${this.characters().length + 1}`,
+      type: type,
+      maxHp: 10,
+      currentHp: 10,
+      initiativeModifier: 0,
+      initiativeRoll: null,
+      avatarSrc: '',
+      armorClass: 15,
+      initiativeScore: null,
+      hasRolledInitiative: false,
+    };
+    this.addCharacter(newCharacter);
+  }
+
+  public updateCharacter(updatedCharacter: Character): void {
+    const updatedCharacters = this.charactersSignal().map(character =>
+      character.id === updatedCharacter.id ? updatedCharacter : character
+    );
+    this.updateCharacters(updatedCharacters);
+  }
+
+  public updateActiveCharacter(): void {
+    const activeId = this.activeCharacterIdSignal();
+    if (!activeId) return;
+    const character = this.charactersSignal().find(c => c.id === activeId);
+    if (!character) return;
+    this.updateCharacter(character);
+  }
+
+  public updateCharacterImage(
+    updatedCharacter: Character,
+    avatarSrc: string
+  ): void {
+    updatedCharacter.avatarSrc = avatarSrc;
+    if (updatedCharacter.statblock) {
+      updatedCharacter.statblock.hasCustomImage = true;
+      updatedCharacter.statblock.image = avatarSrc;
+    }
+    this.updateCharacter(updatedCharacter);
+  }
+
+  public deleteCharacter(id: string): void {
+    const updatedCharacters = this.charactersSignal().filter(c => c.id !== id);
+    this.updateCharacters(updatedCharacters);
+    if (this.activeCharacterIdSignal() === id) {
+      this.deactivateCharacter();
+    }
+    if (this.editingCharacterIdSignal() === id) {
+      this.stopEditingCharacter();
+    }
+  }
+
+  public notifyInitiativeChanged(): void {
+    this.initiativeChangedSignal.update(value => !value);
+  }
+
+  public getActiveCharacterStatblock(): Statblock | undefined {
+    const activeId = this.activeCharacterIdSignal();
+    if (!activeId) return undefined;
+
+    const activeCharacter = this.charactersSignal().find(
+      c => c.id === activeId
+    );
+    return activeCharacter?.statblock;
+  }
+
+  public updateCharacterByStatblockId(statblockId: string): void {
+    const updatedCharacter = this.charactersSignal().find(
+      c => c.statblock?.id === statblockId
+    );
+    if (!updatedCharacter) return;
+
+    this.updateCharacter(updatedCharacter);
+  }
+
+  public createDefaultStatblock(): void {
+    const activeId = this.activeCharacterIdSignal();
+    if (!activeId) return;
+
+    const activeCharacter = this.charactersSignal().find(
+      c => c.id === activeId
+    );
+    if (activeCharacter) {
+      activeCharacter.statblock = {
+        id: uuid(),
+        index: 'custom',
+        name: activeCharacter.name,
+        ...STATBLOCK_TEMPLATE,
+      };
+      this.updateCharacter(activeCharacter);
+    }
+  }
+
+  public createStatblock(statblock: Statblock): void {
+    const activeId = this.activeCharacterIdSignal();
+    if (!activeId) return;
+
+    const activeCharacter = this.charactersSignal().find(
+      c => c.id === activeId
+    );
+    if (activeCharacter) {
+      statblock.id = uuid();
+      activeCharacter.currentHp = statblock.hit_points;
+      activeCharacter.statblock = statblock;
+      this.updateCharacter(activeCharacter);
+    }
+  }
+
+  public addCharacter(newCharacter: Character): void {
+    this.updateCharacters([...this.charactersSignal(), newCharacter]);
+  }
+
+  public isAtLeastTwoCharacters(): boolean {
+    return this.charactersSignal().length >= 2;
+  }
+
+  private updateCharacters(characters: Character[]): void {
+    this.charactersSignal.set(characters);
+    this.saveCharacters();
+  }
+
+  private loadFromStorage(): void {
+    const savedCharacters = this.storageFacade.getCharacters();
+    if (savedCharacters.length) {
+      this.charactersSignal.set(savedCharacters);
+    }
+
+    const savedActiveCharacterId = this.storageFacade.getActiveCharacterId();
+    if (savedActiveCharacterId) {
+      this.activeCharacterIdSignal.set(savedActiveCharacterId);
+    }
+  }
+
+  private saveCharacters(): void {
+    this.storageFacade.setCharacters(this.charactersSignal());
+  }
+
+  public createCharacterFromStatblock(
     statblock: Statblock,
     characterType: 'ally' | 'enemy'
   ): Character {
-    const imageName = statblock.index || 'default';
+    const image = statblock.hasCustomImage
+      ? statblock.image
+      : `assets/monsters/${statblock.index}.webp`;
+
     statblock.id = uuid();
     return {
-      avatarSrc: `assets/${imageName}.webp`,
+      avatarSrc: image,
       currentHp: statblock.hit_points,
       maxHp: statblock.hit_points,
       id: Date.now() + uuid(),
@@ -93,118 +300,134 @@ export class CharacterService {
     };
   }
 
-  public addDefaultCharacter(type: 'ally' | 'enemy'): void {
-    const newCharacter: Character = {
-      id: Date.now() + uuid(),
-      name: `${type === 'ally' ? 'Ally' : 'Enemy'} ${
-        this.charactersSignal().length + 1
-      }`,
-      type: type,
-      maxHp: 100,
-      currentHp: 100,
-      initiativeModifier: 0,
-      initiativeRoll: null,
-      avatarSrc: '',
-      armorClass: 15,
-      initiativeScore: null,
-      hasRolledInitiative: false,
+  public exportCharacters(filename: string = 'characters-export.json'): void {
+    const charactersToExport = this.charactersSignal();
+    const exportData: ImportData = {
+      characters: charactersToExport,
+      version: '1.0',
+      exportDate: new Date().toISOString(),
     };
-    this.updateCharacters([...this.charactersSignal(), newCharacter]);
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+      type: 'application/json',
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   }
 
-  public deleteCharacter(id: string): void {
-    const updatedCharacters = this.charactersSignal().filter(c => c.id !== id);
-    this.updateCharacters(updatedCharacters);
-    if (this.activeCharacterIdSignal() === id) {
-      this.deactivateCharacter();
+  public async importCharacters(file: File): Promise<void> {
+    try {
+      const fileContent = await file.text();
+      const importData = JSON.parse(fileContent) as ImportData;
+
+      if (!importData.characters || !Array.isArray(importData.characters)) {
+        throw new Error('Invalid import file format');
+      }
+
+      const validatedCharacters: unknown[] = importData.characters.map(
+        (char: unknown) => {
+          if (!this.isValidCharacter(char)) {
+            const name = this.extractName(char);
+            throw new Error(`Invalid character data: ${name || 'unnamed'}`);
+          }
+          const newId = Date.now() + uuid();
+          const newStatblockId = char.statblock ? uuid() : undefined;
+
+          return {
+            ...char,
+            id: newId,
+            statblock: char.statblock
+              ? { ...char.statblock, id: newStatblockId }
+              : undefined,
+            initiativeRoll: null,
+            initiativeScore: null,
+            hasRolledInitiative: false,
+          };
+        }
+      );
+
+      this.updateCharacters(validatedCharacters as Character[]);
+    } catch (error) {
+      console.error('Error importing characters:', error);
+      throw error;
     }
   }
 
-  public updateCharacter(updatedCharacter: Character): void {
-    const updatedCharacters = this.charactersSignal().map(character =>
-      character.id === updatedCharacter.id ? updatedCharacter : character
+  public setCharactersFromBattlefield(characters: Character[]): void {
+    try {
+      const validatedCharacters: Character[] = characters.map(
+        (char: Character) => {
+          if (!this.isValidCharacter(char)) {
+            const name = this.extractName(char);
+            throw new Error(`Invalid character data: ${name || 'unnamed'}`);
+          }
+
+          return {
+            ...char,
+            initiativeRoll: null,
+            initiativeScore: null,
+            hasRolledInitiative: false,
+          };
+        }
+      );
+
+      this.updateCharacters(validatedCharacters as Character[]);
+    } catch (error) {
+      console.error('Error setting characters from battlefield:', error);
+      throw error;
+    }
+  }
+
+  public addStatblockToLocalStorage(character: Character): void {
+    try {
+      if (!character.statblock) {
+        throw new Error('Character has no statblock');
+      }
+      this.storageFacade.addStatblock(character.statblock);
+    } catch (error) {
+      console.error('Error saving character statblock:', error);
+      throw error instanceof Error
+        ? error
+        : new Error('Failed to save character statblock');
+    }
+  }
+
+  private extractName(char: unknown): string {
+    if (typeof char === 'object' && char !== null && 'name' in char) {
+      return String((char as { name: unknown }).name);
+    }
+    return '';
+  }
+
+  private isValidCharacter(char: unknown): char is Character {
+    if (typeof char !== 'object' || char === null) {
+      return false;
+    }
+
+    const characterCheck = char as Partial<Character>;
+
+    return (
+      typeof characterCheck.name === 'string' &&
+      typeof characterCheck.type === 'string' &&
+      (characterCheck.type === 'ally' || characterCheck.type === 'enemy') &&
+      typeof characterCheck.maxHp === 'number' &&
+      typeof characterCheck.currentHp === 'number' &&
+      typeof characterCheck.initiativeModifier === 'number' &&
+      typeof characterCheck.armorClass === 'number' &&
+      (characterCheck.statblock === undefined ||
+        (typeof characterCheck.statblock === 'object' &&
+          characterCheck.statblock !== null))
     );
-    console.log(updatedCharacter);
-    this.updateCharacters(updatedCharacters);
-  }
-
-  public updateCharacterByStatblockId(statblockId: string): void {
-    const updatedCharacter = this.charactersSignal().find(
-      c => c.statblock?.id === statblockId
-    );
-    if (!updatedCharacter) {
-      return;
-    }
-    this.updateCharacter(updatedCharacter);
-  }
-
-  public activateCharacter(id: string): void {
-    if (this.charactersSignal().some(c => c.id === id)) {
-      this.viewManagerService.setCurrentView(ViewType.StatBlock);
-      this.activeCharacterIdSignal.set(id);
-      this.saveActiveCharacterId();
-    }
-  }
-
-  public deactivateCharacter(): void {
-    this.activeCharacterIdSignal.set(null);
-    this.saveActiveCharacterId();
-  }
-
-  public getActiveCharacterStatblock(): Statblock | undefined {
-    const activeId = this.activeCharacterIdSignal();
-    if (!activeId) return undefined;
-
-    const activeCharacter = this.charactersSignal().find(
-      c => c.id === activeId
-    );
-    return activeCharacter?.statblock;
-  }
-
-  public createDefaultStatblock(): void {
-    const activeId = this.activeCharacterIdSignal();
-    if (!activeId) return undefined;
-    const activeCharacter = this.charactersSignal().find(
-      c => c.id === activeId
-    );
-
-    if (activeCharacter) {
-      activeCharacter.statblock = {
-        id: uuid(),
-        index: 'custom',
-        name: activeCharacter.name,
-        ...STATBLOCK_TEMPLATE,
-      };
-      this.updateCharacter(activeCharacter);
-    }
-  }
-
-  private updateCharacters(characters: Character[]): void {
-    this.charactersSignal.set(characters);
-    this.saveCharacters();
-  }
-
-  private loadCharacters(): void {
-    const savedCharacters = localStorage.getItem('characters');
-    if (savedCharacters) {
-      this.charactersSignal.set(JSON.parse(savedCharacters));
-    }
-  }
-
-  private saveCharacters(): void {
-    localStorage.setItem('characters', JSON.stringify(this.charactersSignal()));
-  }
-
-  private loadActiveCharacterId(): void {
-    const savedActiveCharacterId = localStorage.getItem('activeCharacterId');
-    if (savedActiveCharacterId) {
-      this.activeCharacterIdSignal.set(savedActiveCharacterId);
-    }
   }
 
   private saveActiveCharacterId(): void {
-    localStorage.setItem(
-      'activeCharacterId',
+    this.storageFacade.setActiveCharacterId(
       this.activeCharacterIdSignal() || ''
     );
   }

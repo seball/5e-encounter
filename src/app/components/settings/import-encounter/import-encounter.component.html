@@ -1,0 +1,17 @@
+<h3>Import Encounter</h3>
+<p class="text-tip">Import your encounter from a JSON file</p>
+<div class="file-drop">
+  <ngx-file-drop
+    [accept]="'.json'"
+    [multiple]="false"
+    (onFileDrop)="dropped($event)">
+    <ng-template
+      ngx-file-drop-content-tmp
+      let-openFileSelector="openFileSelector">
+      <div class="text-center">
+        <p class="text-spec2">Drop your JSON file here or</p>
+        <button (click)="openFileSelector()">Choose File</button>
+      </div>
+    </ng-template>
+  </ngx-file-drop>
+</div>

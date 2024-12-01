@@ -3,13 +3,13 @@
     <div [class]="columnSizes().side">
       <h2>Allies</h2>
       <div class="character-container">
-        <app-character
-          *ngFor="let character of characters.allies()"
-          [character]="character"
-          (delete)="onCharacterDelete($event)">
-        </app-character>
+        @for (character of allies(); track character.id) {
+          <app-character [character]="character"> </app-character>
+        }
       </div>
-      <app-create-character characterType="ally"></app-create-character>
+      @if (!isBattleMode()) {
+        <app-create-character characterType="ally"></app-create-character>
+      }
     </div>
 
     <div [class]="columnSizes().center">
@@ -19,13 +19,13 @@
     <div [class]="columnSizes().side">
       <h2>Enemies</h2>
       <div class="character-container">
-        <app-character
-          *ngFor="let character of characters.enemies()"
-          [character]="character"
-          (delete)="onCharacterDelete($event)">
-        </app-character>
+        @for (character of enemies(); track character.id) {
+          <app-character [character]="character"> </app-character>
+        }
       </div>
-      <app-create-character characterType="enemy"></app-create-character>
+      @if (!isBattleMode()) {
+        <app-create-character characterType="enemy"></app-create-character>
+      }
     </div>
   </div>
 </div>

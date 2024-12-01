@@ -7,10 +7,9 @@ import {
 } from '@angular/cdk/drag-drop';
 import { LucideAngularModule } from 'lucide-angular';
 import { GripVerticalIcon } from 'lucide-angular/src/icons';
-
-import { CharacterService } from '../../services/character.service';
-import { BattleService } from '../../services/battle.service';
 import { Character } from '../../interfaces/character.interface';
+import { BattleFacade } from '../../facades/battle.facade';
+import { CharacterFacade } from '../../facades/character.facade';
 
 interface OrderedCharacter {
   id: string;
@@ -29,36 +28,37 @@ interface OrderedCharacter {
 export class RollOrderComponent {
   protected readonly uiState = {
     gripIcon: GripVerticalIcon,
-    title: 'ROLL ORDER',
+    title: 'Round Order',
     subtitle: 'adjust by drag and drop',
     confirmButtonText: 'CONFIRM ORDER',
   };
 
   protected readonly characters = computed(() =>
-    this.characterService.characters().sort(this.compareCharacterInitiatives)
+    this.characterFacade.characters().sort(this.compareCharacterInitiatives)
   );
 
   protected readonly orderedCharacters = signal<OrderedCharacter[]>([]);
 
   constructor(
-    private readonly characterService: CharacterService,
-    private readonly battleService: BattleService
+    private readonly characterFacade: CharacterFacade,
+    private readonly battleFacade: BattleFacade
   ) {
-    effect(() => {
-      this.characterService.initiativeChanged();
-      this.characters().sort(this.compareCharacterInitiatives);
-    });
+    effect(
+      () => {
+        this.characterFacade.initiativeChanged();
+        this.updateOrder();
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   protected onDrop(event: CdkDragDrop<string[]>): void {
     const characters = this.characters();
     moveItemInArray(characters, event.previousIndex, event.currentIndex);
+    this.battleFacade.updateOrderedCharacterIds(
+      characters.map(char => char.id)
+    );
     this.updateOrderedCharacters();
-  }
-
-  protected onSaveOrder(): void {
-    const orderedCharacterIds = this.characters().map(char => char.id);
-    this.battleService.initializeCharacters(orderedCharacterIds);
   }
 
   protected getInitiativeDisplay(character: Character): string {
@@ -79,6 +79,15 @@ export class RollOrderComponent {
         initiativeScore: char.initiativeScore,
         hasRolledInitiative: char.hasRolledInitiative,
       }))
+    );
+  }
+
+  private updateOrder(): void {
+    const sortedCharacters = this.characters().sort(
+      this.compareCharacterInitiatives
+    );
+    this.battleFacade.updateOrderedCharacterIds(
+      sortedCharacters.map(char => char.id)
     );
   }
 

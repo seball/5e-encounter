@@ -1,0 +1,11 @@
+<div *ngIf="reactions.length || editMode">
+  <div>
+    <h2>Reactions</h2>
+    <hr class="border-top" />
+    <app-editable-name-description-array
+      [buttonText]="'ADD NEW REACTION'"
+      (itemsChange)="onReactionsChange($event)"
+      [items]="reactions"
+      [editMode]="editMode"></app-editable-name-description-array>
+  </div>
+</div>

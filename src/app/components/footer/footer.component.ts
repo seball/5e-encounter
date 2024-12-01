@@ -1,15 +1,24 @@
 import { Component, computed } from '@angular/core';
-import { BattleService } from '../../services/battle.service';
 import {
   LucideAngularModule,
   HelpCircleIcon,
   ArrowBigRightDash,
+  ArrowBigLeftDash,
+  BanIcon,
+  DicesIcon,
+  DoorOpenIcon,
+  PlayIcon,
+  SaveIcon,
+  SettingsIcon,
+  Undo2Icon,
 } from 'lucide-angular/src/icons';
-import { ArrowBigLeftDash, DoorOpenIcon } from 'lucide-angular';
+
 import { CommonModule } from '@angular/common';
+
+import { ToolbarFacade } from '../../facades/toolbar.facade';
 import {
   ViewManagerService,
-  ViewType,
+  ViewState,
 } from '../../services/viewManager.service';
 
 @Component({
@@ -20,34 +29,70 @@ import {
   styleUrl: './footer.component.scss',
 })
 export class FooterComponent {
-  rollView = ViewType.InitiativeRoll;
-  manualView = ViewType.Manual;
-  statBlockView = ViewType.StatBlock;
   protected helpIcon = HelpCircleIcon;
   protected leftIcon = ArrowBigLeftDash;
   protected rightIcon = ArrowBigRightDash;
   protected exitIcon = DoorOpenIcon;
-  protected currentView = computed(() =>
-    this.viewManagerService.getCurrentView()()
-  );
-  protected isBattleMode = computed(() =>
-    this.viewManagerService.isInBattleMode()
-  );
+  protected saveIcon = SaveIcon;
+  protected discardIcon = BanIcon;
+  protected startIcon = PlayIcon;
+  protected rollIcon = DicesIcon;
+  protected settingsIcon = SettingsIcon;
+  protected cancelIcon = BanIcon;
+  protected goBackIcon = Undo2Icon;
+  protected state = ViewState;
+  protected viewState = computed(() => this.viewManagerService.appState());
   constructor(
-    private readonly viewManagerService: ViewManagerService,
-    private readonly battleService: BattleService
+    private readonly toolbarFacade: ToolbarFacade,
+    private readonly viewManagerService: ViewManagerService
   ) {}
-  switchView(view: ViewType): void {
-    this.viewManagerService.setCurrentView(view);
-  }
-  next() {
-    this.battleService.activateNext();
+
+  nextTurn() {
+    this.toolbarFacade.nextTurn();
   }
 
-  previous() {
-    this.battleService.activatePrevious();
+  startBattle() {
+    this.toolbarFacade.initializeBattle();
   }
-  exit() {
-    this.battleService.exitBattle();
+
+  previousTurn() {
+    this.toolbarFacade.previousTurn();
+  }
+  exitBattle() {
+    this.toolbarFacade.exitBattle();
+  }
+
+  saveCharacter() {
+    this.toolbarFacade.updateActiveCharacter();
+  }
+  cancelCharacter() {
+    this.toolbarFacade.discardCharacterChanges();
+  }
+
+  initiveView() {
+    this.toolbarFacade.initiativeView();
+  }
+
+  manulaView() {
+    this.toolbarFacade.manualView();
+  }
+  settingsView() {
+    this.toolbarFacade.settingsView();
+  }
+
+  cancelRequest() {
+    this.toolbarFacade.cancelRequest();
+  }
+
+  isSideButtonDisabled() {
+    return this.viewState() === this.state.Loading;
+  }
+
+  canStartBattle() {
+    return this.toolbarFacade.canStartBattle();
+  }
+
+  goBack() {
+    this.toolbarFacade.statblockView();
   }
 }

@@ -1,12 +1,9 @@
 import { Injectable, signal, computed, type Signal } from '@angular/core';
-import { CharacterService } from './character.service';
-import { ViewManagerService } from './viewManager.service';
 
-interface CharacterOrder {
+export interface CharacterOrder {
   id: string;
-  order: number;
+  order: number | null;
 }
-
 @Injectable({
   providedIn: 'root',
 })
@@ -16,6 +13,8 @@ export class BattleService {
   private readonly exhaustedIds = signal<Set<string>>(new Set());
   private readonly roundCounter = signal<number>(1);
   readonly isFirstTurn = signal<boolean>(true);
+  readonly orderedCharacterIds = signal<string[]>([]);
+  readonly isBattleMode = signal<boolean>(false);
 
   readonly activeCharacter: Signal<string | null> = computed(() => {
     const ids = this.characterIds();
@@ -45,6 +44,10 @@ export class BattleService {
 
   readonly characterOrderList: Signal<CharacterOrder[]> = computed(() => {
     const ids = this.characterIds();
+    if (ids.length === 0) {
+      return [];
+    }
+
     const currentIndex = this.currentIndex();
     const exhausted = this.exhaustedIds();
     const totalCharacters = ids.length;
@@ -61,18 +64,13 @@ export class BattleService {
     }));
   });
 
-  constructor(
-    private readonly characterService: CharacterService,
-    private readonly viewManagerService: ViewManagerService
-  ) {}
-
-  initializeCharacters(ids: string[]): void {
+  initializeCharacters(): void {
+    const ids = this.orderedCharacterIds();
     if (!ids.length) {
       throw new Error('Cannot initialize battle with empty character list');
     }
-    this.viewManagerService.enterBattleMode();
     this.resetState(ids);
-    this.activateInitialCharacter(ids[0]);
+    this.isBattleMode.set(true);
   }
 
   activateNext(): void {
@@ -85,7 +83,7 @@ export class BattleService {
     const newIndex = this.calculateNextIndex(this.currentIndex(), ids.length);
     this.handleRoundTransition(newIndex);
 
-    this.updateBattleState(newIndex, ids[newIndex]);
+    this.updateBattleState(newIndex);
   }
 
   activatePrevious(): void {
@@ -101,12 +99,12 @@ export class BattleService {
       this.handleRoundTransitionReverse(ids);
     }
     this.unexhaustCharacter(previousCharacterId);
-    this.updateBattleState(newIndex, previousCharacterId);
+    this.updateBattleState(newIndex);
   }
 
-  exitBattle(): void {
-    this.viewManagerService.exitBattleMode();
+  reset(): void {
     this.resetState([]);
+    this.isBattleMode.set(false);
   }
 
   isCharacterActive(id: string): boolean {
@@ -125,6 +123,14 @@ export class BattleService {
     return this.exhaustedIds().has(id);
   }
 
+  updateOrderedCharacterIds(ids: string[]): void {
+    this.orderedCharacterIds.set([...ids]);
+  }
+
+  getOrderedCharacterIds(): string[] {
+    return this.orderedCharacterIds();
+  }
+
   private calculatePreviousIndex(currentIndex: number, length: number): number {
     return (currentIndex - 1 + length) % length;
   }
@@ -139,7 +145,11 @@ export class BattleService {
     currentIndex: number,
     totalCharacters: number,
     exhausted: Set<string>
-  ): number {
+  ): number | null {
+    if (this.characterIds().length === 0) {
+      return null;
+    }
+
     if (exhausted.has(id)) {
       return totalCharacters + index;
     }
@@ -154,10 +164,6 @@ export class BattleService {
     this.exhaustedIds.set(new Set());
     this.roundCounter.set(1);
     this.isFirstTurn.set(true);
-  }
-
-  private activateInitialCharacter(id: string): void {
-    this.characterService.activateCharacter(id);
   }
 
   private exhaustCurrentCharacter(id: string): void {
@@ -192,9 +198,8 @@ export class BattleService {
     this.roundCounter.update(round => Math.max(1, round - 1));
   }
 
-  private updateBattleState(newIndex: number, nextCharacterId: string): void {
+  private updateBattleState(newIndex: number): void {
     this.currentIndex.set(newIndex);
-    this.characterService.activateCharacter(nextCharacterId);
     this.isFirstTurn.set(false);
   }
 }
