@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 235">
+  <defs>
+    <style>
+      .die-face {
+        fill: #db59d0;
+      }
+      .front-face {
+        fill: #ff70f3;
+      }
+    </style>
+  </defs>
+  
+
+  <path class="die-face" d="M155 153 194 47l-96-1z" style="opacity: 1.0"/>
+  <path class="die-face" d="m155 153 39-106-2 105z" style="opacity: 0.8"/>
+  <path class="die-face" d="M155 153 98 217 41 153z" style="opacity: 0.8"/>
+  <path class="die-face" d="m98 217 57-64 37-1z" style="opacity: 0.6"/>
+  <path class="die-face" d="M41 153 2 151l96 66z" style="opacity: 0.6"/>
+  <path class="die-face" d="M2 46h96L41 153z" style="opacity: 1.0"/>
+  <path class="die-face" d="M41 153 2 151 2 46z" style="opacity: 0.8"/>
+  <path class="die-face" d="M2 46 98 0l96 47-96-1z" style="opacity: 0.8"/>
+  
+
+  <path class="front-face" d="M41 153 98 46l57 107z" style="opacity: 1.2"/>
+</svg>
