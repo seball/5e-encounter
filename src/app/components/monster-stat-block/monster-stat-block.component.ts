@@ -24,6 +24,7 @@ import { ViewManagerService } from '../../services/viewManager.service';
 import { GeminiService, Model } from '../../services/gemini.service';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { ExpandableTextboxComponent } from '../../shared/ui/expandable-textbox/expandable-textbox.component';
+import { LairActionsComponent } from './lair-actions/lair-actions.component';
 
 @Component({
   selector: 'app-monster-stat-block',
@@ -42,6 +43,7 @@ import { ExpandableTextboxComponent } from '../../shared/ui/expandable-textbox/e
     FormsModule,
     DiceTokenComponent,
     ExpandableTextboxComponent,
+    LairActionsComponent,
   ],
   templateUrl: './monster-stat-block.component.html',
   styleUrl: './monster-stat-block.component.scss',

@@ -10,6 +10,7 @@ import {
 import { CharacterFacade } from '../../facades/character.facade';
 import { computed, type Signal } from '@angular/core';
 import { Character } from '../../interfaces/character.interface';
+import { TipActionsComponent } from '../../shared/ui/tip-actions/tip-actions.component';
 
 interface ColumnSizes {
   side: string;
@@ -24,6 +25,7 @@ interface ColumnSizes {
     CharacterComponent,
     CreateCharacterComponent,
     MainViewComponent,
+    TipActionsComponent,
   ],
   templateUrl: './battlefield.component.html',
   styleUrls: ['./battlefield.component.scss'],

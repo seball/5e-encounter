@@ -5,7 +5,7 @@ import { ViewManagerService, ViewType } from '../services/viewManager.service';
 import { Character } from '../interfaces/character.interface';
 import { Statblock } from '../interfaces/statblock.interface';
 import { ToastService } from '../services/toast.service';
-import { GeminiService } from '../services/gemini.service';
+import { GeminiError, GeminiService } from '../services/gemini.service';
 import { lastValueFrom } from 'rxjs';
 @Injectable({
   providedIn: 'root',
@@ -152,7 +152,11 @@ export class CharacterFacade {
       );
       this.characterService.createStatblock(response);
     } catch (error) {
-      this.toastService.showToast('Failed to generate statblock', 'error');
+      const message =
+        error instanceof GeminiError
+          ? error.message
+          : 'Failed to generate statblock';
+      this.toastService.showToast(message, 'error');
       console.error('Error generating statblock:', error);
     }
   }

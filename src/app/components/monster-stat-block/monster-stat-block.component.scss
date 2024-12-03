@@ -50,6 +50,10 @@ app-monster-stat-block {
     font-size: 1.5em;
   }
 
+  .error-text {
+    color: var(--color-fire);
+  }
+
   .loading-overlay {
     position: fixed;
     top: 0;

@@ -1,0 +1,18 @@
+<div class="manual-tip" *ngIf="isVisible">
+  <span class="tip-icon">
+    <lucide-angular [img]="tipIcon" [size]="24"></lucide-angular>
+  </span>
+  <div class="tip-content">
+    <div class="tip-header">
+      <strong>Pro Tip:</strong>
+      <button (click)="dismiss()" class="close-btn">
+        <lucide-angular [img]="closeIcon" [size]="16"></lucide-angular>
+      </button>
+    </div>
+    <p>
+      Right-clicking or holding touch on mobile devices opens a context menu
+      with common options like delete, edit, and duplicate, plus additional
+      content management features.
+    </p>
+  </div>
+</div>

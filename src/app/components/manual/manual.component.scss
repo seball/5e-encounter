@@ -18,7 +18,6 @@ $colors: (
   padding: 1rem;
 }
 
-// Base styles
 .manual {
   margin: 0 auto;
 
@@ -33,16 +32,6 @@ $colors: (
   &-section {
     background: map-get($colors, background);
     border-radius: 8px;
-  }
-
-  &-tip {
-    margin-top: 2rem;
-    background: map-get($colors, tip);
-    border-radius: 6px;
-    padding: 1rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
   }
 }
 
@@ -82,20 +71,6 @@ $colors: (
 
     li {
       margin-bottom: 0.5rem;
-    }
-  }
-}
-
-.tip {
-  &-icon {
-    font-size: 1.5rem;
-  }
-
-  &-content {
-    flex: 1;
-
-    p {
-      margin: 0.5rem 0 0;
     }
   }
 }

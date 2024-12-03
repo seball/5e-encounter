@@ -1,0 +1,9 @@
+<div *ngIf="lairActions.length || editMode">
+  <h2>Lair Actions</h2>
+  <hr class="border-top" />
+  <app-editable-name-description-array
+    [buttonText]="'ADD NEW LAIR ACTION'"
+    (itemsChange)="onLairActionsChange($event)"
+    [items]="lairActions"
+    [editMode]="editMode"></app-editable-name-description-array>
+</div>

@@ -57,6 +57,10 @@
       [editMode]="editMode"
       [(legendaryActions)]="statblock.legendary_actions">
     </app-legendary-actions>
+    <app-lair-actions
+      [editMode]="editMode"
+      [(lairActions)]="statblock.lair_actions">
+    </app-lair-actions>
   </div>
   <hr />
 </div>
@@ -91,8 +95,8 @@
 
     <div *ngIf="isLoadingModels()">Loading available models...</div>
 
-    <div *ngIf="modelsError()">
-      {{ 'Please check if you have provided a valid API Key in the Settings.' }}
+    <div class="error-text" *ngIf="modelsError()">
+      {{ modelsError() }}
     </div>
 
     <div *ngIf="isLoading()" class="loading-overlay">

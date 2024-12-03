@@ -17,8 +17,31 @@ interface GeminiResponse {
         text: string;
       }>;
     };
+    finishReason?: string;
+    index?: number;
   }>;
+  usageMetadata?: {
+    promptTokenCount: number;
+    totalTokenCount: number;
+  };
+  modelVersion?: string;
 }
+
+const userErrorMessages: Record<string, string> = {
+  SAFETY:
+    "We couldn't generate this content as it may contain unsafe material.",
+  RECITATION:
+    'We stopped to avoid potential copyright issues with the generated content.',
+  SPII: 'Generation stopped to protect sensitive personal information.',
+  PROHIBITED_CONTENT:
+    "This content couldn't be generated as it violates our content policies.",
+  BLOCKLIST: 'Generation stopped due to restricted terms.',
+  MAX_TOKENS:
+    'The response exceeded our length limits. Try breaking your request into smaller parts.',
+  MALFORMED_FUNCTION_CALL:
+    'There was a technical issue with the function parameters.',
+  OTHER: 'An unexpected error occurred while generating content.',
+};
 
 interface RetryConfiguration {
   maxRetries: number;
@@ -39,6 +62,16 @@ interface ModelsState {
   data: Model[];
   loading: boolean;
   error?: string;
+}
+
+export class GeminiError extends Error {
+  constructor(
+    message: string,
+    public finishReason?: string
+  ) {
+    super(message);
+    this.name = 'GeminiError';
+  }
 }
 
 @Injectable({
@@ -79,8 +112,8 @@ export class GeminiService {
   ) {
     this.initializeModelState();
   }
+
   setModel(modelName: string): void {
-    console.log(`Selected model: ${modelName}`);
     if (this.models().some(model => model.name === modelName)) {
       this.selectedModel.set(modelName);
     } else {
@@ -105,6 +138,31 @@ export class GeminiService {
     );
   }
 
+  private processResponse(response: GeminiResponse): Statblock {
+    if (!response?.candidates?.[0]) {
+      throw new GeminiError('Invalid response format');
+    }
+
+    const candidate = response.candidates[0];
+
+    if (candidate.finishReason && candidate.finishReason !== 'STOP') {
+      const userMessage =
+        userErrorMessages[candidate.finishReason] || userErrorMessages['OTHER'];
+      throw new GeminiError(userMessage, candidate.finishReason);
+    }
+
+    if (!candidate.content?.parts?.[0]?.text) {
+      throw new GeminiError('No content in response');
+    }
+
+    try {
+      return JSON.parse(candidate.content.parts[0].text);
+    } catch (error) {
+      console.error('Failed to parse response as JSON:', error);
+      throw new GeminiError('Failed to parse response as JSON');
+    }
+  }
+
   cancelRequest(): void {
     this.destroy$.next();
   }
@@ -124,7 +182,7 @@ export class GeminiService {
           this.modelsState.update(state => ({
             ...state,
             data: [],
-            error: undefined,
+            error: 'API key not found, please set it in the settings.',
           }));
         }
       },
@@ -134,7 +192,6 @@ export class GeminiService {
 
   private loadModels(): void {
     this.modelsState.update(state => ({ ...state, loading: true }));
-
     this.fetchAvailableModels()
       .pipe(
         finalize(() => {
@@ -185,27 +242,9 @@ export class GeminiService {
   private buildRequestBody(description: string) {
     const text = STATBLOCK_REQUEST_MESSAGE(description);
     return {
-      contents: [
-        {
-          parts: [{ text }],
-        },
-      ],
+      contents: [{ parts: [{ text }] }],
       generation_config: this.generationConfig,
     };
-  }
-
-  private processResponse(response: GeminiResponse): Statblock {
-    if (!response?.candidates?.[0]?.content?.parts?.[0]?.text) {
-      throw new Error('Invalid response format from Gemini API');
-    }
-
-    const jsonText = response.candidates[0].content.parts[0].text;
-    try {
-      return JSON.parse(jsonText);
-    } catch (error) {
-      console.error('JSON parsing error:', error);
-      throw new Error('Failed to parse Gemini response as JSON');
-    }
   }
 
   private handleRetryDelay(
@@ -242,10 +281,15 @@ export class GeminiService {
     );
   }
 
-  private handleError(error: HttpErrorResponse): Observable<never> {
+  private handleError(
+    error: HttpErrorResponse | GeminiError
+  ): Observable<never> {
+    if (error instanceof GeminiError) {
+      return throwError(() => error);
+    }
     const errorMessage = this.buildErrorMessage(error);
     console.error('API Error:', errorMessage, error);
-    return throwError(() => new Error(errorMessage));
+    return throwError(() => new GeminiError(errorMessage));
   }
 
   private buildErrorMessage(error: HttpErrorResponse): string {

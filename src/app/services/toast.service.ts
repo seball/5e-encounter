@@ -28,7 +28,7 @@ export class ToastService {
 
     setTimeout(() => {
       this.removeToast(toast.id);
-    }, 3000);
+    }, 6000);
   }
 
   removeToast(id: number): void {

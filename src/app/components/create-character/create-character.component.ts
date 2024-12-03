@@ -8,7 +8,7 @@ import { MonsterSearchComponent } from '../monster-search/monster-search.compone
   selector: 'app-create-character',
   standalone: true,
   templateUrl: './create-character.component.html',
-  styleUrls: ['./create-character.component.css'],
+  styleUrls: ['./create-character.component.scss'],
   imports: [MonsterSearchComponent],
 })
 export class CreateCharacterComponent {
